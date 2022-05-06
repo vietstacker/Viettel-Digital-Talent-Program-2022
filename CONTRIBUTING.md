@@ -1,0 +1,1 @@
+Để nộp bài tập, mỗi thành viên fork repository về github cá nhân, tự tạo mới thư mục là `Ho-va-Ten-Day-Du-Khong-Dau` trong thư mục của Prace tương ứng và viết kết quả các bước thực hành vào file markdown (Có thể có cả hình ảnh). Sau đó, thực hiện đẩy Pull Request lên repository chung.
