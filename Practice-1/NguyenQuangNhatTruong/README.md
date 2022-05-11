@@ -2,10 +2,10 @@
 
 ---
 
-## **Author:** *Julian (Phong) Ng.* 
-**Date of issue**: *May 17th 2021*
+## **Author:** *Nguyễn Quang Nhật Trường* 
+**Date of issue**: *May 12th 2022*
 
-> Welcome back! This is the documentation for my second training project at **Viettel Network**. Enjoy ur time :smile_cat:. Feel free to hit me up if any edition is needed!
+
 
 ---
 
