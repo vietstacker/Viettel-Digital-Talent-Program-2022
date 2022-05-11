@@ -75,7 +75,7 @@ forks=100
 ansible -i multinode all -m ping
 ```
 > Ping Success:
-<img src="https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/img/ping_success.jpg">
+<img src="./imgs/ping_success.jpg">
 
 ## **5. Kolla passwords**
 - Passwords used in our deployment are stored in `/etc/kolla/passwords.yml` file. All passwords are blank in this file and have to be filled either manually or by running random password generator. Run:
@@ -98,21 +98,21 @@ enable_haproxy: "no"
 kolla-ansible -i ./all-in-one bootstrap-servers
 ```
 > Result:
-<img src="https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/img/ping_success.jpg">
+<img src="./imgs/bootstrap_servers.jpg">
 
 - Do pre-deployment checks for hosts
 ```
 kolla-ansible -i ./all-in-one prechecks
 ```
 > Result:
-<img src="https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/img/ping_success.jpg">
+<img src="./imgs/pre_deploy.jpg">
 
 - Finally proceed to actual OpenStack deployment
 ```
 kolla-ansible -i ./all-in-one deploy
 ```
 > Result:
-<img src="https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/img/ping_success.jpg">
+<img src="./imgs/deploy.png">
 
 ## **III. Access Horizon dashboard**
 - Use following account
@@ -122,10 +122,10 @@ kolla-ansible -i ./all-in-one deploy
 cat /etc/kolla/passwords.yml | grep -i keystone_admin_password
 ```
 > OpenStack Login Page:
-<img src="https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/img/ping_success.jpg">
+<img src="./imgs/openstack_login.png">
 
 > OpenStack Dashboard:
-<img src="https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/img/ping_success.jpg">
+<img src="./imgs/openstack_dashboard.png">
 
 ## **IV. References**
 - [Official Document of `Kolla Ansible` - Deploy All-in-one OpenStack](https://docs.openstack.org/kolla-ansible/latest/user/quickstart.html)
