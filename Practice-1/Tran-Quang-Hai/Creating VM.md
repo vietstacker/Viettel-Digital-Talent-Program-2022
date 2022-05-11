@@ -67,16 +67,32 @@ sudo ufw allow 22 | sudo ufw enable | sudo ufw reload
 ```
 <img src="imgs\10-Allow SSH connection.png">
 
+### **Step 5**: Enable SSH connection for VM
+In VM's terminal, type the command below to allow SSH connection:
+```
+sudo ufw allow 22
+```
 To use password login:
+In /etc/ssh/sshd_config file, replace this row:
 ```
+PasswordAuthentication no
 ```
+to:
+```
+PasswordAuthentication yes
+```
+
 ### **Step 6**: Connect to the VM from another device
 #### **Substep 6.1**: Find VM's IP address
+
+Check for VM's public IP address
+```
+curl ifconfig.co
+```
+
 #### **Substep 6.2**: Connect to the VM via SSH
 
 ```
-ssh root@<ip_address>
+ssh <username>@<ip_address>
 ```
 ip_address here could be internal IP from the network
-
-## **Task 2**: *Install OpenStack*
