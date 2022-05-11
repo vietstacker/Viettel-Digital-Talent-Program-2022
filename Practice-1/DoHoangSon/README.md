@@ -1,5 +1,6 @@
 # **Setup OpenStack AIO inside VM with Kolla**
 ## **Table of Contents**
+[I. Requirements](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#i-requirements)
 ## **I. Requirements**
 
 **Operating System**: Ubuntu Server (Ubuntu Server 20.04 is used in below practices).
