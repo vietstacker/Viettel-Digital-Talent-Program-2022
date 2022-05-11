@@ -1,5 +1,5 @@
 
-# WEEK 3: OpenStack
+# file này em chưa làm xong ạ
 
 ## Practice: Deploy Openstack AIO inside VM with Kolla
 
