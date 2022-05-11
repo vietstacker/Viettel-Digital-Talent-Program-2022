@@ -1,8 +1,8 @@
 # **Setup OpenStack AIO inside VM with Kolla**
 ## **Table of Contents**
 ## **I. Requirements**
-**Operating System**: Ubuntu Server (Ubuntu Server 20.04 is used in below practices)
-**Desktop Hypervisor**: Oracle Virtualbox (Oracle Virtualbox 6.1.34 is used in below practices)
+**Operating System**: Ubuntu Server (Ubuntu Server 20.04 is used in below practices).
+**Desktop Hypervisor**: Oracle Virtualbox (Oracle Virtualbox 6.1.34 is used in below practices).
 **VM Specifications:**
 | Specification(s) | Minimal | Personal Configuration |
 | ----------- | ----------- | ----------- |
