@@ -1,4 +1,4 @@
-# Practice 1: Deploy WordPress with Command Line #
+# Practice 1: Create Ubuntu virtual machine #
 ---
 #### Step 1: Create a network
 
