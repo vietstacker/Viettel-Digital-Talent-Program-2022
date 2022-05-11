@@ -1,9 +1,9 @@
 # Practice 1: Create Ubuntu virtual machine #
 ---
-#### Step 1: Create a network
+#### Step 1: Check if CPU supports hardware virtualization
 
 ```console
-$ docker network create wordpress-network
+$ egrep -c '(vmx|svm)' /proc/cpuinfo
 ```
 ### Setup Docker Engine
 ```sh
