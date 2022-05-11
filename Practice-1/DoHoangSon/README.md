@@ -1,9 +1,21 @@
 # **Setup OpenStack AIO inside VM with Kolla**
 ## **Table of Contents**
-[I. Requirements](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#i-requirements)
-[II. Step-by-step](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#ii-step-by-step)
-## **I. Requirements**
+[**I. Requirements**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#i-requirements)
 
+[**II. Step-by-step**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#ii-step-by-step)
+
+   - [**1. Install dependencies**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#1-install-dependencies)
+   - [**2. Install Kolla-ansible**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#2-install-kolla-ansible)
+   - [**3. Install Ansible Galaxy requirements**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#3-install-ansible-galaxy-requirements)
+   - [**4. Configure Ansible**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#4-configure-ansible)
+   - [**5. Kolla passwords**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#5-kolla-passwords)
+   - [**6. Kolla globals.yml**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#6-kolla-globalsyml)
+   - [**7. Deployment**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#7-deployment)
+
+[**III. Access Horizon dashboard**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#iii-access-horizon-dashboard)
+
+[**IV. References**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#iv-references)
+## **I. Requirements**
 **Operating System**: Ubuntu Server (Ubuntu Server 20.04 is used in below practices).
 
 **Desktop Hypervisor**: Oracle Virtualbox (Oracle Virtualbox 6.1.34 is used in below practices).
