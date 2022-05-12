@@ -1,21 +1,32 @@
 # Practice 1: Create Ubuntu virtual machine #
 ---
-#### Step 1: Check if CPU supports hardware virtualization
+#### Check if CPU supports hardware virtualization
 
 ```console
 $ egrep -c '(vmx|svm)' /proc/cpuinfo
 ```
-### Setup Docker Engine
+#### Check if system can use KVM acceleration
 ```sh
- $ sudo apt-get update
- $ sudo apt-get install docker-ce docker-ce-cli containerd.io 
+ $ sudo kvm-ok
 ```
- #### Kiểm tra trạng thái docker engine
+#### Install cpu-checker
 ```sh
- $ sudo systemctl status docker
+ $ sudo apt install cpu-checker
  ```
-$ sudo apt install curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-wordpress/master/docker-compose.yml > docker-compose.yml
-```
+ #### Update apt & install essentails dependencies
+```sh
+ $ sudo apt update
+ $ sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
+ ```
+ #### Authorize Users
+```sh
+ $ sudo adduser ‘username’ libvirt
+ $ sudo adduser ‘[username]’ kvm
+ ```
+ #### Activate virtualization daemon 
+```sh
+ $ sudo systemctl enable --now libvirtd
+ ```
 
 # Practice: 2 Deploy Openstack AIO inside VM with Kolla
 
