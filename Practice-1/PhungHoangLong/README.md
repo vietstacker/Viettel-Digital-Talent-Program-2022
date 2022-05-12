@@ -159,7 +159,7 @@ kolla-ansible -i ./all-in-one deploy
 
 > Dashboard
 
-<img src="./images/Dashboard.png">
+<img src="./images/dashboard.png">
 
 ## References
 
