@@ -19,9 +19,9 @@ ensures the product always meets professional quality criteria.
   <img width="300" height="300" src="assets/virtual-box-logo.png" alt="VirtualBox logo">
 </div>
 
-<p align="center" style="font-style: italic">
-    VirtualBox logo
-</p>
+<div align="center">
+  <i>VirtualBox logo</i>
+</div>
 
 
 ### Versions
@@ -42,13 +42,13 @@ which I will introduce you later.
 
 ### Operating systems supporting
 
-1/ Windows
+  1/ Windows
 
-2/ macOS (only **Intel-based** Macs)
+  2/ macOS (only **Intel-based** Macs)
 
-3/ Linux
+  3/ Linux
 
-4/ Solaris
+  4/ Solaris
 
 Presently, VirtualBox runs on Windows, Linux, Macintosh, and Solaris hosts and supports a large number of guest operating systems including but not limited to Windows (NT 4.0, 2000, XP, Server 2003, Vista, Windows 7, Windows 8, Windows 10), DOS/Windows 3.x, Linux (2.4, 2.6, 3.x and 4.x), Solaris and OpenSolaris, OS/2, and OpenBSD.
 
@@ -66,9 +66,9 @@ In this exercise, I will use `VirtualBox 6.1.34`, as mentioned before.
   <img width="1000" src="assets/install-virtual-box-1.jpeg" alt="VirtualBox installing step 1">
 </div>
 
-<p align="center" style="font-style: italic">
-    In this case, I used Ubuntu, which is a Linux distribution.
-</p>
+<div align="center" style="font-style: italic">
+  <i>In this case, I used Ubuntu, which is a Linux distribution.</i>
+</div>
 
 **2/ Check your operating system information (for Linux)**
 
@@ -80,6 +80,10 @@ lsb_release -a
 
 <div align="center">
   <img width="1000" src="assets/install-virtual-box-2.jpeg" alt="VirtualBox installing step 2">
+</div>
+
+<div align="center" style="font-style: italic">
+  <i>My Linux distro and version.</i>
 </div>
 
 Here is my OS information:
@@ -102,9 +106,9 @@ Linux distro.
   <img width="1000" src="assets/install-virtual-box-3.jpeg" alt="VirtualBox installing step 3">
 </div>
 
-<p align="center" style="font-style: italic">
-    In this case, I used Ubuntu 20.04.
-</p>
+<div align="center">
+  <i>In this practice, I used Ubuntu 20.04.</i>
+</div>
 
 **4/ Open the downloaded file** 
 
@@ -118,9 +122,9 @@ your VirtualBox application.
   <img width="1000" src="assets/install-virtual-box-4.jpeg" alt="VirtualBox installing step 4">
 </div>
 
-<p align="center" style="font-style: italic">
-    You can see some useful information here, for example version, installed size, etc.
-</p>
+<div align="center">
+  <i>You can see some useful information here, for example version, installed size, etc.</i>
+</div>
 
 **5/ Finish installing VirtualBox**
 
@@ -130,10 +134,10 @@ If you see the picture below, it means that you was successfully installed Virtu
   <img width="1000" src="assets/install-virtual-box-5.jpeg" alt="VirtualBox installing step 5">
 </div>
 
-<p align="center" style="font-style: italic">
-    In case you don't want to use VirtualBox anymore, click `Remove`
-to remove it from your computer.
-</p>
+<div align="center">
+    <i>In case you don't want to use VirtualBox anymore, click `Remove`
+      to remove it from your computer.</i>
+</div>
 
 
 ### Setting up the Ubuntu virtual machine
@@ -151,12 +155,24 @@ to install the ISO images.
   <img width="1000" src="assets/install-iso.jpeg" alt="Install ISO image of Ubuntu Desktop">
 </div>
 
+<div align="center">
+    <i>If you don't want to use VirtualBox anymore, click `Remove`
+      to remove it from your computer.</i>
+</div>
+
 **2/ Create a new virtual machine**
 
 Open the VirtualBox application, click `New` to create a new virtual machine instance.
+In case you already have a VM file, you use `Add` to add your VM.
+
+In this practice, I will create a new VM.
 
 <div align="center">
   <img width="1000" src="assets/setting-UbuntuVM-1.jpeg" alt="Setting new Ubuntu virtual machine step 1">
+</div>
+
+<div align="center">
+  <i>Click <strong>New</strong> to create a new VM.</i>
 </div>
 
 **3/ Set VM's name and OS**
@@ -173,9 +189,9 @@ I will use `Guide mode`.
   <img width="1000" src="assets/setting-UbuntuVM-2.jpeg" alt="Setting new Ubuntu virtual machine step 2">
 </div>
 
-<p align="center" style="font-style: italic">
-    In this practice, I named my VM as <strong>Practice1</strong>.
-</p>
+<div align="center">
+  <i>In this practice, I named my Ubuntu VM as <strong>Practice1</strong>.</i>
+</div>
 
 **4/ Select memory size**
 
@@ -193,9 +209,9 @@ In my case, which has `4GB` RAM, `1GB = 1024MB` is enough.
   <img width="1000" src="assets/setting-UbuntuVM-3.jpeg" alt="Setting new Ubuntu virtual machine step 3">
 </div>
 
-<p align="center" style="font-style: italic">
-    In this practice, I will use <strong>1024MB</strong> as recommended.
-</p>
+<div align="center">
+  <i>In this practice, I will use <strong>1024MB</strong> as recommended.</i>
+</div>
 
 **5/ Select hard disk**
 
@@ -219,9 +235,9 @@ you can reuse them which all the information before.
   <img width="1000" src="assets/setting-UbuntuVM-4.jpeg" alt="Setting new Ubuntu virtual machine step 4">
 </div>
 
-<p align="center" style="font-style: italic">
-    In this practice, I will choose <strong>Create a virtual hard disk now</strong>.
-</p>
+<div align="center">
+  <i>In this practice, I will choose <strong>Create a virtual hard disk now</strong>.</i>
+</div>
 
 **6/ Select virtual hard disk file type**
 
@@ -260,9 +276,9 @@ the impact of data loss on our VMs.
   <img width="1000" src="assets/setting-UbuntuVM-5.jpeg" alt="Setting new Ubuntu virtual machine step 5">
 </div>
 
-<p align="center" style="font-style: italic">
-    In this practice, I will choose <strong>VDI</strong> file type.
-</p>
+<div align="center">
+    <i>In this practice, I will choose <strong>VDI</strong> file type.</i>
+</div>
 
 **7/ Select strategy for storage on physical hard disk**
 
@@ -283,9 +299,9 @@ In this practice, I choose **Dynamically allocated** to optimize the storage.
   <img width="1000" src="assets/setting-UbuntuVM-6.jpeg" alt="Setting new Ubuntu virtual machine step 6">
 </div>
 
-<p align="center" style="font-style: italic">
-    In this practice, I will choose <strong>Dynamically allocated</strong> file type.
-</p>
+<div align="center">
+  <i>In this practice, I will choose <strong>Dynamically allocated</strong> file type.</i>
+</div>
 
 **8/ Select file location and size**
 
@@ -295,9 +311,9 @@ Select the location, where you will store your virtual hard file, and it's size.
   <img width="1000" src="assets/setting-UbuntuVM-7.jpeg" alt="Setting new Ubuntu virtual machine step 7">
 </div>
 
-<p align="center" style="font-style: italic">
-    In this practice, I will choose <strong>10GB</strong> as the size limit.
-</p>
+<div align="center">
+  <i>In this practice, I will choose <strong>10GB</strong> as the size limit.</i>
+</div>
 
 ### Running our Ubuntu VM first time
 
@@ -316,6 +332,10 @@ Click `Start` to start running our VM.
   <img width="1000" src="assets/running-UbuntuVM-1.jpeg" alt="Running Ubuntu virtual machine step 1">
 </div>
 
+<div align="center">
+  <i>List of your VM and it's information.</i>
+</div>
+
 **2/ Select start-up disk**
 
 Start-up disk is a virtual or physical disk that contain our OS. Click the the `Folder` icon 
@@ -325,9 +345,9 @@ to choose a start-up disk for your VM.
   <img width="1000" src="assets/running-UbuntuVM-2.jpeg" alt="Running Ubuntu virtual machine step 2">
 </div>
 
-<p align="center" style="font-style: italic">
-    Click the <strong>Folder</strong> icon to choose your start-up disk.
-</p>
+<div align="center">
+  <i>Choose your start-up disk.</i>
+</div>
 
 **3/ Add start-up disk from our install `iso`**
 
@@ -335,17 +355,20 @@ to choose a start-up disk for your VM.
   <img width="1000" src="assets/running-UbuntuVM-3.jpeg" alt="Running Ubuntu virtual machine step 3">
 </div>
 
-
-<p align="center" style="font-style: italic">
-    Click the <strong>Folder</strong> icon to choose your start-up disk.
-</p>
+<div align="center">
+  <i>Click the <strong>Folder</strong> icon to choose your start-up disk.</i>
+</div>
 
 **4/ Try our Ubuntu Desktop**
 
-Click `Try or Install Ubuntu` and choose `Try Ubuntu` to start our Ubuntu Desktop.
+Click `Try or Install Ubuntu` and then choose `Try Ubuntu` to start our Ubuntu Desktop.
 
 <div align="center">
   <img width="1000" src="assets/running-UbuntuVM-4.jpeg" alt="Running Ubuntu virtual machine step 4">
+</div>
+
+<div align="center">
+  <i>Booting screen.</i>
 </div>
 
 **5/ Finish our VM**
