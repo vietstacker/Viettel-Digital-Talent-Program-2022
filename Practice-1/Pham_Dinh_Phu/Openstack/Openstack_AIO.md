@@ -241,7 +241,7 @@ openstack token issue
 
 ### 5. Đăng nhập vào Horizon 
 - Lấy mật khẩu để đăng nhập tài khoản admin:  
-```  
+```    
 cat /etc/kolla/passwords.yml | grep keystone_admin    
 ```       
 - Kết quả:  
@@ -259,9 +259,9 @@ keystone_admin_password: ...
 ----    
 
 ## Author: PhuPham  
-### Date Issue: May 11th 2022       
+### Date Issue: May 12th 2022       
 
-- Mình sẽ cập nhật tiếp trong quá trình mình cài lại. 
+- Mình sẽ cập nhật tiếp trong quá trình mình cài lại.   
 
 <a name='Tài_liệu_tham_khảo'></a>    
 

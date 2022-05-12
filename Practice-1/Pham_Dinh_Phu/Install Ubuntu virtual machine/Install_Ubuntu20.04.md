@@ -135,7 +135,10 @@ Sau đó bạn chọn ngôn ngữ cài đặt.
 
 Như vậy, quá trình tạo máy ảo và chạy cài đặt Ubuntu Server 20.04 đã hoàn thành. Chúc các bạn cài đặt thành công.    
 
-<a name='3'></a>  
+<a name='3'></a>    
+
+## Author: PhuPham  
+### Date Issue: May 12th 2022
 
 ## Tài liệu tham khảo   
 [1]https://vinasupport.com/huong-dan-cai-dat-ubuntu-server-20-04-lts/     
