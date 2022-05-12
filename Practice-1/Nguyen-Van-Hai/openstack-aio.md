@@ -7,8 +7,8 @@
     - [2. Cấu hình OpenStack All In One](#2-cấu-hình-openstack-all-in-one)
     - [3. Cài đặt Ansible Galaxy](#3-cài-đặt-ansible-galaxy)
     - [4. Cấu hình cho Ansible](#4-cấu-hình-cho-ansible)
-    - [4. Cài đặt OpenStack All In One](#4-cài-đặt-openstack-all-in-one)
-    - [4. Cài đặt OpenstackClient](#4-cài-đặt-openstackclient)
+    - [5. Cài đặt OpenStack All In One](#5-cài-đặt-openstack-all-in-one)
+    - [6. Cài đặt OpenstackClient](#6-cài-đặt-openstackclient)
   - [III. Tài liệu tham khảo](#iii-tài-liệu-tham-khảo)
 ## I.Yêu cầu
 
@@ -118,7 +118,7 @@ forks=100
 ```
 
 
-### 4. Cài đặt OpenStack All In One
+### 5. Cài đặt OpenStack All In One
 
 - Khởi tạo môi trường dành cho Openstack Kolla
 
@@ -144,7 +144,7 @@ kolla-ansible -i ./all-in-one pull
 kolla-ansible -i ./all-in-one deploy
 ```
 
-### 4. Cài đặt OpenstackClient
+### 6. Cài đặt OpenstackClient
 
 - Cài đặt các package cần thiết
 
