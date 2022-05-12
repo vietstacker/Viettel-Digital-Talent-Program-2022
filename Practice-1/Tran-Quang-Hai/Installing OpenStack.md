@@ -4,6 +4,7 @@
 
 For this exercise, I will use 4 Digital Ocean VM instances instead since my laptop can not create a VM that meet the system requirements of OpenStack.
 <img src="imgs/17-Multinode-setup.png">
+<img src="imgs/23-VPS private IP.png">
 <br>
 I chose 1 host to clone and run kolla-ansible (vtonly). All the commands will be performed on this host.
 <br>
@@ -55,6 +56,7 @@ sudo pip3 install git+https://opendev.org/openstack/kolla-ansible@master
 sudo mkdir -p /etc/kolla
 sudo chown <username>:<username> /etc/kolla
 ```
+In my case, \<username> will be replaced with root
 
 #### **Substep 4.4**: Copy globals.yml and passwords.yml to /etc/kolla
 ```
@@ -130,10 +132,25 @@ The console will look like this while running the above command
 <img src="imgs/19-Final Result.png">
 
 <img src="imgs/20-OpenStack dashboard _ no GUI.png">
+Login to OpenStack dashboard with below credentials:
+<br>
+admin
+<br>
+password: Get from command
+
+```
+cat /etc/kolla/passwords.yml | grep -i keystone_admin_password
+```
+
+<img src="imgs/21-OpenStack dashboard _ no GUI.png">
 After finishing to run the command above, check to see whether those processes have been able to run
 
 ```
 docker ps -a
 ```
 <img src="imgs/15-Docker containers.png">
+Other containers live on the rest of those VMs. 
+<br>
+E.g: For 10.104.0.3
+<img src="imgs/22-Docker containers.png">
 
