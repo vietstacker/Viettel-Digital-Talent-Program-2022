@@ -154,3 +154,10 @@ Other containers live on the rest of those VMs.
 E.g: For 10.104.0.3
 <img src="imgs/22-Docker containers.png">
 
+To access OpenStack Horizon with Public IP, use command below:
+```
+/sbin/iptables -t nat -A PREROUTING -i <public interface> -p tcp -d <public IP> --dport 80 -j DNAT --to <kolla_internal_vip_IP>:80
+```
+
+<img src="imgs\24-Accessing OpenStack with Public IP.png">
+<img src="imgs\25-Accessing OpenStack with Public IP.png">
