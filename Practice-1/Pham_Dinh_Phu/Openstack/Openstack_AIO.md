@@ -226,13 +226,13 @@ $ kolla-ansible -i all-in-one post-deploy
 ```    
 cat /etc/kolla/passwords.yml | grep keystone_admin    
 ```       
-- Kết quả:  
+- Kết quả:   
 ``` 
-keystone_admin_password: ...      
+keystone_admin_password: G7J5dKrgQ1huOYtN0JbhjD9LVi5yPCNgVkFCKxIP        
 ```    
 - Sau đó, bạn chỉ cần truy cập vào địa chỉ `http://192.168.56.105/auth/login/?next=/`. Nhập các thông số:   
    - ` User Name`: admin  
-   - `Password`: ...     
+   - `Password`: G7J5dKrgQ1huOYtN0JbhjD9LVi5yPCNgVkFCKxIP            
 
 - Đăng nhập thành công:     
 
