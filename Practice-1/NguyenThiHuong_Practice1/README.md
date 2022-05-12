@@ -74,7 +74,7 @@ source /home/fil1/openstack/bin/activate
 pip install -U pip
 ```
 
-- Install Ansible.
+- Install Ansible. The Release is XENA. Kolla Ansible requires at least Ansible 2.10 and supports up to 4.
 
 ```
 pip install 'ansible<5.0'
@@ -126,8 +126,8 @@ Ansible -i all-in-one all -m ping
 - Create diskspace partition for Cinder
 
 ```
-sudo pvcreate /dev/vdb
-sudo vgcreate cinder-volumes /dev/vdb
+sudo pvcreate /dev/sdb
+sudo vgcreate cinder-volumes /dev/sdb
 ```
 <img src="imgs/anh6.png">
 
@@ -144,7 +144,7 @@ vi /etc/kolla/globals.yml
 ---
 kolla_base_distro: "ubuntu"
 kolla_install_type: "source"
-kolla_internal_vip_address: 192.168.56.104
+kolla_internal_vip_address: 192.168.56.106
 network_interface: enp0s8
 neutron_external_interface: enp0s3
 nova_compute_virt_type: "qemu"
@@ -246,11 +246,11 @@ keystone_admin_password: ySI0VU61uRNI5yNalwdmzx9sjMbkyHLIWrYnn6c7
 ```
 
 
-- Get access to : <http://192.168.56.106/auth/login/?next=/>. Fill in login information: *Admin / ySI0VU61uRNI5yNalwdmzx9sjMbkyHLIWrYnn6c7*
+- Get access to : <http://192.168.56.106/auth/login/?next=/>.
 
 <img src="imgs/anh15.png">
 
-
+- Fill in login information: *Admin / ySI0VU61uRNI5yNalwdmzx9sjMbkyHLIWrYnn6c7*
 <img src="imgs/anh16.png">
 
 ---
@@ -262,6 +262,5 @@ keystone_admin_password: ySI0VU61uRNI5yNalwdmzx9sjMbkyHLIWrYnn6c7
 - [OpenStack Docs - All-In-One Single VM](https://docs.op)
 - [Practice_week3_VDT_2021](https://github.com/vietstacker/Viettel-Digital-Talent-Program-2021/blob/main/Phase-1-Practices/Week-3/Julian-P-Nguyen/Openstack/README.md?fbclid=IwAR1TuOOjr9wcxsxlC5v4SE_bDZVFVNRU8_rBNWKZT1EEgJ3TRc80C87wIhQ)
 - [Quick Start - Kolla Ansible](https://docs.openstack.org/kolla-ansible/xena/user/quickstart.html?fbclid=IwAR0Ilbb0poLJ6CZedZfV1c92tG1Yps-clEj0KzTCOg3SPd3yPM1OjmEpSe4)
-- [Deploy-all-in-one-openstack-with-kolla-ansible](https://kifarunix.com/deploy-all-in-one-openstack-with-kolla-ansible-on-ubuntu-18-04/)
 - <https://docs.openstack.org/kolla-ansible/latest/>
 
