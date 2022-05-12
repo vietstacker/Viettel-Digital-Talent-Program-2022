@@ -1,31 +1,39 @@
 # Practice 1: Create Ubuntu virtual machine #
 ---
-#### Check if CPU supports hardware virtualization
+#### Check if CPU supports hardware virtualization:
 
 ```console
 $ egrep -c '(vmx|svm)' /proc/cpuinfo
 ```
-#### Check if system can use KVM acceleration
+#### Check if system can use KVM acceleration:
 ```sh
  $ sudo kvm-ok
 ```
-#### Install cpu-checker
+#### Install cpu-checker:
 ```sh
  $ sudo apt install cpu-checker
  ```
- #### Update apt & install essentails dependencies
+ #### Update apt & install essentails dependencies:
 ```sh
  $ sudo apt update
  $ sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
  ```
- #### Authorize Users
+ #### Authorize Users:
 ```sh
  $ sudo adduser ‘username’ libvirt
  $ sudo adduser ‘[username]’ kvm
  ```
- #### Activate virtualization daemon 
+ #### Activate virtualization daemon:
 ```sh
  $ sudo systemctl enable --now libvirtd
+ ```
+ #### Install virt-manager, a tool for creating and managing VMs:
+```sh
+ $ sudo apt install virt-manager
+ ```
+ #### Install virt-manager, a tool for creating and managing VMs:
+```sh
+ $ sudo apt install virt-manager
  ```
 
 # Practice: 2 Deploy Openstack AIO inside VM with Kolla
