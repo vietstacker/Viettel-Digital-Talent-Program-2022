@@ -109,7 +109,7 @@ echo -e $config >> sudo /etc/ansible/ansible.cfg
 - Chạy lệnh ping đặc biệt để kiểm tra cấu hình
 Ping thành công:
 
-<img src="./imgs/ping-aio-success.png">
+<img src="./imgs/ping success.jpg">
 
 - Tạo file chứa mật khẩu
 
