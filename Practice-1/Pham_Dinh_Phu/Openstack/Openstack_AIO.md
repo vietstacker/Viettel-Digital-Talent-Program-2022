@@ -28,7 +28,7 @@
 - Mọi người tham khảo tại [đây](https://github.com/phupham1805/Intership/blob/master/Openstack/04_Open%20Stack.md)  
 <a name='kolla-ansible'></a>     
 
-### 2. Kolla - Ansible     
+### 2. Kolla - Ansible    
 - `Openstack Kolla` là Project hay tools sử dụng để triển khai, vận hành Openstack.    
 - Mục đích: sẵn sàng cung cấp `container` và `tools` để triển khai, vận hành clouds Openstack.  
 - `Project Kolla` cung cấp sẵn các giải pháp bao gồm: `Monitoring`, `Rolling upgrades`, `HA`, etc.     
@@ -244,7 +244,7 @@ keystone_admin_password: ...
 ### Date Issue: May 12th 2022       
 
 - Mình sẽ cập nhật tiếp trong quá trình mình cài lại.   
-
+Hello world 
 <a name='Tài_liệu_tham_khảo'></a>    
 
 ## V. Tài liệu tham khảo   
