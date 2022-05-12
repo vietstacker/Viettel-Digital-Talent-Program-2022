@@ -7,6 +7,7 @@
   - [I. Requirement]()
   - [II. Setup]()
   - [III. Configure Openstack Train with Kolla Ansible]()
+  - [IV. Debug]()
   - [References]()
 
 ---
@@ -255,7 +256,8 @@ keystone_admin_password: ySI0VU61uRNI5yNalwdmzx9sjMbkyHLIWrYnn6c7
 
 ---
 
-
+## IV. Requirement
+- Thuc ra la co nhieu loi lam a, nhung em chi fix duoc mot it thoi a.
 
 ## References
 
