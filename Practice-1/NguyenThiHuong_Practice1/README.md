@@ -264,5 +264,6 @@ keystone_admin_password: ySI0VU61uRNI5yNalwdmzx9sjMbkyHLIWrYnn6c7
 - [OpenStack Docs - All-In-One Single VM](https://docs.op)
 - [Practice_week3_VDT_2021](https://github.com/vietstacker/Viettel-Digital-Talent-Program-2021/blob/main/Phase-1-Practices/Week-3/Julian-P-Nguyen/Openstack/README.md?fbclid=IwAR1TuOOjr9wcxsxlC5v4SE_bDZVFVNRU8_rBNWKZT1EEgJ3TRc80C87wIhQ)
 - [Quick Start - Kolla Ansible](https://docs.openstack.org/kolla-ansible/xena/user/quickstart.html?fbclid=IwAR0Ilbb0poLJ6CZedZfV1c92tG1Yps-clEj0KzTCOg3SPd3yPM1OjmEpSe4)
-- <https://docs.openstack.org/kolla-ansible/latest/>
-
+- [Installing Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+- [Bugs Kolla](https://bugs.launchpad.net/kolla/+bugs)
+- [Kolla ansible source code](https://github.com/openstack/kolla-ansible)
