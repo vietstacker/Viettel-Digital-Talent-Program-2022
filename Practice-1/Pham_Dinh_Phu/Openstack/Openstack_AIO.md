@@ -13,9 +13,8 @@
 - [III. Các bước thực hiện](#các_bước_thực_hiện)        
    - [1. Thiết lập môi trường ](#thiết_lập_môi_trường)    
    - [2. Cấu hình Openstack All In One](#cấu_hình_openstack_all_in_one)       
-   - [3. Cài đặt Openstack All In One](#cài_đặt_openstack_all_in_one)     
-   - [4. Cài đặt Openstack Client](#cài_đặt_openstack_client)              
-   - [5. Đăng nhập vào Horizon ](#đăng_nhập_vào_Horizon)          
+   - [3. Cài đặt Openstack All In One](#cài_đặt_openstack_all_in_one)                 
+   - [4. Đăng nhập vào Horizon ](#đăng_nhập_vào_Horizon)          
 - [IV. Tài liệu tham khảo](#Tài_liệu_tham_khảo)             
 
 ----  
@@ -64,7 +63,7 @@
 ***Note: Hướng dẫn cách thêm disk mới vào VM trong VirtualBox*** [tại đây](https://vdodata.vn/huong-dan-tao-o-dia-ao-cho-may-ao-chay-tren-virtualbox/#:~:text=%C4%90%E1%BB%83%20t%E1%BA%A1o%20%E1%BB%95%20%C4%91%C4%A9a%20m%E1%BB%9Bi,d%E1%BA%A1ng%20l%C3%A0%20vmdk%20ho%E1%BA%B7c%20vdi.)        
 
 - `Networks`: 2 NICs                
-  - 1 NIC: sử dụng host only có IP là `enp0s8 - 192.168.56.103/24` (Dải mạng sử dụng cho API của Openstack và MNGT Network)        
+  - 1 NIC: sử dụng host only có IP là `enp0s8 - 192.168.56.105/24` (Dải mạng sử dụng cho API của Openstack và MNGT Network)        
   - 1 NIC: sử dụng NAT có IP là  ` enp0s3 - 10.0.2.15/24` (Địa chỉ giao tiếp với Openstack, dải này VM ra vào Internet)                  
 
 <a name='các_bước_thực_hiện'></a>  
@@ -219,27 +218,10 @@ $ kolla-ansible -i all-in-one post-deploy
  
 ![image](image/post-deploy.png)   
 
-<a name='cài_đặt_openstack_client'></a>  
-
-## 4. Cài đặt Openstack Client    
-
-- Cài đặt các package cần thiết:   
-```   
-$ pip install python-openstackclient python-glanceclient python-neutronclient       
-```    
-- Chạy script sau để lấy cấu hình:       
-```   
-$ source /etc/kolla/admin-openrc.sh   
-```       
-- Kiểm tra dịch vụ:    
-```  
-openstack token issue    
-```    
-
-- Kết quả hiện về như sau là thành công !   
+  
 <a name='đăng_nhập_vào_Horizon'></a>   
 
-### 5. Đăng nhập vào Horizon 
+### 4. Đăng nhập vào Horizon 
 - Lấy mật khẩu để đăng nhập tài khoản admin:  
 ```    
 cat /etc/kolla/passwords.yml | grep keystone_admin    
