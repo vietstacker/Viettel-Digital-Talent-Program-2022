@@ -243,8 +243,7 @@ keystone_admin_password: ...
 ## Author: PhuPham  
 ### Date Issue: May 12th 2022       
 
-- Mình sẽ cập nhật tiếp trong quá trình mình cài lại.   
-Hello world 
+- Mình sẽ cập nhật tiếp trong quá trình mình cài lại.    
 <a name='Tài_liệu_tham_khảo'></a>    
 
 ## V. Tài liệu tham khảo   
