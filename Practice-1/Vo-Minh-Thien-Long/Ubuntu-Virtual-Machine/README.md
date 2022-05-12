@@ -1,10 +1,10 @@
-# CREATE UBUNTU VIRTUAL MACHINE
+# Create Ubuntu virtual machine
 
 ## Using VirtualBox (For Intel-based and AMD chip devices)
 
 ### Overview
 
-**Oracle VM VirtualBox** is a _free_ and _open-source_ software.
+**Oracle VM VirtualBox** is a `free` and `open-source` software.
 It is a general-purpose full virtualizer, **type-2 hypervisor** for `x86` virtualization, 
 targeted at _server_, _desktop_ and _embedded use_. VirtualBox
 developed by **Oracle Corporation** (original author is **Innotek**).
@@ -12,7 +12,7 @@ developed by **Oracle Corporation** (original author is **Innotek**).
 VirtualBox is being actively developed with frequent releases and 
 has an ever-growing list of features, supported guest operating systems 
 and platforms it runs on. VirtualBox is a community effort backed by 
-a dedicated company: everyone is encouraged to contribute while Oracle 
+a dedicated company: **everyone is encouraged to contribute** while Oracle 
 ensures the product always meets professional quality criteria.
 
 <div align="center">
@@ -389,17 +389,14 @@ Congratulation, you have successfully installed Ubuntu VM by VirtualBox.
 ### Overview
 
 **Parallels Desktop for Mac** is software  providing hardware virtualization 
-for Macintosh computers . It is developed by 
-**Parallels**, since 2018 a subsidiary of Corel.
+for `Macintosh` computers . It is developed by 
+**Parallels**, since 2018 a subsidiary of **Corel**.
 
-It use hypervisor technology that works by mapping the 
-host computer's hardware resources directly to the virtual 
+It use hypervisor technology that works by **mapping** the 
+host computer's hardware resources **directly** to the virtual 
 machine's resources. Each virtual machine thus operates identically 
 to a standalone computer, with virtually all the resources of a 
-physical computer. Because all guest virtual machines use 
-the same hardware drivers irrespective of the actual hardware 
-on the host computer, virtual machine instances are highly 
-portable between computers.
+physical computer. 
 
 
 <div align="center">
@@ -409,12 +406,12 @@ portable between computers.
 
 ### Versions
 
-Before version `16.5`, Parallels Desktop providing hardware virtualization 
-for Macintosh computers with _Intel processors_. And since version `16.5`
-also for _Apple silicon-based_ Macintosh computers.
+Before version `16.5`, **Parallels Desktop** providing _hardware virtualization_ 
+for Macintosh computers with `Intel processors`. And since version `16.5`
+also for `Apple silicon-based` Macintosh computers.
 
 
-The latest version is `Parallels Desktop 17`.  Parallels Desktop 17 
+The latest version is `Parallels Desktop 17`. It 
 supports macOS Monterey, macOS Big Sur 11, 
 macOS Catalina 10.15, macOS Mojave 10.14 and macOS High Sierra 10.13.
 It is a fast, easy and powerful application for running Windows 
@@ -432,8 +429,8 @@ on your Intel or Apple M1 Mac—all without rebooting
 
 **1/ Choose free trial version**
 
-Because Parallels Desktop **isn't** _free_ or _open-source_, so for this practice,
-I will install a free trial (_30 days_).
+Because Parallels Desktop **isn't** `free` or `open-source`, so for this practice,
+I will install a free trial (_7 days_).
 
 <div align="center">
   <img width="1000" src="assets/install-parallels-desktop-1.png" alt="Parallels Desktop installing step 1">
@@ -505,6 +502,7 @@ Wait until the download is finished and go to the next step.
   <i>Click <strong>Continue</strong>.</i>
 </div>
 
+Here is information about system `Ubuntu 20.04.02 ARM64`, includes description and size.
 
 <div align="center">
   <img width="1000" src="assets/install-parallels-desktop-7.png" alt="Parallels Desktop installing step 7">
@@ -517,8 +515,9 @@ Wait until the download is finished and go to the next step.
 
 **5/ Start your Ubuntu virtual machine**
 
-After installing Ubuntu OS, your Ubuntu virtual machine is ready to use.
-Click `Play icon` button to start our virtual machine.
+After installing Ubuntu OS, we now have Ubuntu virtual machine.
+Open the `Control center`, click the `On/Off icon` to turn on our device. 
+
 
 <div align="center">
   <img width="1000" src="assets/install-parallels-desktop-8.png" alt="Parallels Desktop installing step 8">
@@ -528,8 +527,21 @@ Click `Play icon` button to start our virtual machine.
   <i>Click <strong>Play icon</strong> to start your VM.</i>
 </div>
 
+
+Click `Play icon` button to start our virtual machine.
+
 <div align="center">
   <img width="1000" src="assets/install-parallels-desktop-9.png" alt="Parallels Desktop installing step 9">
+</div>
+
+<div align="center">
+  <i>Click <strong>Play icon</strong> to start your VM.</i>
+</div>
+
+Now our Ubuntu virtual machine is ready to use.
+
+<div align="center">
+  <img width="1000" src="assets/install-parallels-desktop-10.png" alt="Parallels Desktop installing step 10">
 </div>
 
 <div align="center">

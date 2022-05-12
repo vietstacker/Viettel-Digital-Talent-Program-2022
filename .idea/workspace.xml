@@ -5,9 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cd1b70e3-c7bb-475b-86e1-3815be36071c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Practice-1/Vo-Minh-Thien-Long/OpenStack-AIO/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Practice-1/Vo-Minh-Thien-Long/Ubuntu-Virtual-Machine/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/Practice-1/Vo-Minh-Thien-Long/Ubuntu-Virtual-Machine/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Practice-1/Vo-Minh-Thien-Long/Ubuntu-Virtual-Machine/assets/setting-UbuntuVM-1.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/Practice-1/Vo-Minh-Thien-Long/Ubuntu-Virtual-Machine/assets/setting-UbuntuVM-1.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practice-1/Vo-Minh-Thien-Long/Ubuntu-Virtual-Machine/assets/install-parallels-desktop-8.png" beforeDir="false" afterPath="$PROJECT_DIR$/Practice-1/Vo-Minh-Thien-Long/Ubuntu-Virtual-Machine/assets/install-parallels-desktop-8.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practice-1/Vo-Minh-Thien-Long/Ubuntu-Virtual-Machine/assets/install-parallels-desktop-9.png" beforeDir="false" afterPath="$PROJECT_DIR$/Practice-1/Vo-Minh-Thien-Long/Ubuntu-Virtual-Machine/assets/install-parallels-desktop-9.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,7 +87,7 @@
       <updated>1652223537881</updated>
       <workItem from="1652223539635" duration="7306000" />
       <workItem from="1652311896336" duration="7615000" />
-      <workItem from="1652323781861" duration="13576000" />
+      <workItem from="1652323781861" duration="30536000" />
     </task>
     <servers />
   </component>
