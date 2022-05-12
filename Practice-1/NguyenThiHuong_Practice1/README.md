@@ -136,7 +136,7 @@ sudo vgcreate cinder-volumes /dev/sdb
 ```
 kolla-genpwd
 ```
-- globals.yml is the main configuration file for Kolla Ansible.
+- globals.yml is the main configuration file for Kolla Ansible. Add some few options that are required to deploy Kolla Ansible to this file.
 
 ```
 vi /etc/kolla/globals.yml
