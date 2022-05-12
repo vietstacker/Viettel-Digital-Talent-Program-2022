@@ -2,11 +2,14 @@
 
 ## **Task 2**: *Install OpenStack*
 
-For this exercise, I will use a Google Cloud VM instance instead since my laptop can not create a VM that meet the system requirements of OpenStack.
+For this exercise, I will use 4 Digital Ocean VM instances instead since my laptop can not create a VM that meet the system requirements of OpenStack.
+<img src="imgs/17-Multinode-setup.png">
+<br>
+I chose 1 host to clone and run kolla-ansible (vtonly). All the commands will be performed on this host.
 <br>
 After accessing the VM via SSH, we have a familiar terminal:
 
-<img src="imgs/11-Google Cloud console.png">
+<img src="imgs/11-Console.png">
 
 ### **Step 1**: Update package index
 
@@ -89,9 +92,9 @@ For example:
 <img src="imgs/14-Network info.png">
 ```
 kolla_base_distro: "ubuntu"
-network_interface: "ens4"
-neutron_external_interface: "nic0" #this comes from GCP network interface
-kolla_internal_vip_address: "10.148.0.5"
+network_interface: "eth1"
+neutron_external_interface: "eth0"
+kolla_internal_vip_address: "10.104.0.3" - Control node's IP
 enable_cinder: "yes"
 enable_neutron: "yes"
 enable_glance: "yes"
@@ -100,34 +103,37 @@ enable_keystone: "yes"
 enable_nova: "yes"
 ```
 
-#### **Substep 7.1**: Creating an all-in-one file (similar to Ansible's hosts file) in current directory with the content below
+#### **Substep 7.1**: Creating an Multinode file (similar to Ansible's hosts file) in current directory with the content below
 
-```
-[deployment]
-localhost ansible_connection=local become=true
-```
+<img src="imgs/18-Multinode file.png">
 
 Test Ansible with the following command:
 ```
 ansible -i all-in-one all -m ping
+ansible -i multinode all -m ping
 ```
 <img src="imgs/12-Ansible test all-in-one.png">
 
 
 #### **Substep 7.2**: Install docker
 
-For people who are familiar with Ansible, you can run the "all-install-docker-playbook.yml" in playbooks folder to install docker, otherwise you may perform those commands sequentially in terminal (replace root with your username)
+For people who are familiar with Ansible, you can run the "all-install-docker-playbook.yml" in playbooks folder to install docker to all 4 virtual machines, otherwise you may perform those commands sequentially in terminal (replace root with your username)
 
 ### **Step 8**: Deploy OpenStack all-in-one
 all-in-one is the inventory file in Step 5 above
 ```
-kolla-ansible -i <path-to-all-in-one-file> deploy
+kolla-ansible -i <path-to-multinode-file> deploy
 ```
 The console will look like this while running the above command
 <img src="imgs/16-Ansible file running.png">
 
+<img src="imgs/19-Final Result.png">
+
+<img src="imgs/20-OpenStack dashboard _ no GUI.png">
 After finishing to run the command above, check to see whether those processes have been able to run
+
 ```
 docker ps -a
 ```
 <img src="imgs/15-Docker containers.png">
+
