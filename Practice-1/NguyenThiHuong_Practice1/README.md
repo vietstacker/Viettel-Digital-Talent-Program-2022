@@ -115,7 +115,7 @@ cp /home/fil1/openstack/share/kolla-ansible/ansible/inventory/* .
 - Test the beginning configuration whether the configuration of inventory is correct or not, run:
 
 ```
-Ansible -i all-in-one all -m ping
+ansible -i all-in-one all -m ping
 ```
 <img src="imgs/anh5.png">
 
