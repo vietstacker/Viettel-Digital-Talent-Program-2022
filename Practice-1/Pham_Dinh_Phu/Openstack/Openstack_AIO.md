@@ -162,7 +162,7 @@ kolla_base_distro: "ubuntu"
 kolla_install_type: "source"    
 
 network_interface: "enp0s8"   
-neutron_external_interface: enp0s3    
+neutron_external_interface: "enp0s3"    
 kolla_internal_vip_address: 192.168.56.105         
 
 nova_compute_virt_type: "qemu" 
