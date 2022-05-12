@@ -66,7 +66,7 @@ In this exercise, I will use `VirtualBox 6.1.34`, as mentioned before.
   <img width="1000" src="assets/install-virtual-box-1.jpeg" alt="VirtualBox installing step 1">
 </div>
 
-<div align="center" style="font-style: italic">
+<div align="center">
   <i>In this case, I used Ubuntu, which is a Linux distribution.</i>
 </div>
 
@@ -82,7 +82,7 @@ lsb_release -a
   <img width="1000" src="assets/install-virtual-box-2.jpeg" alt="VirtualBox installing step 2">
 </div>
 
-<div align="center" style="font-style: italic">
+<div align="center">
   <i>My Linux distro and version.</i>
 </div>
 
@@ -373,17 +373,168 @@ Click `Try or Install Ubuntu` and then choose `Try Ubuntu` to start our Ubuntu D
 
 **5/ Finish our VM**
 
-Congratulation, you have successfully installed Ubuntu VM by VirtualBox
+Congratulation, you have successfully installed Ubuntu VM by VirtualBox.
 
 <div align="center">
   <img width="1000" src="assets/running-UbuntuVM-5.jpeg" alt="Running Ubuntu virtual machine step 5">
 </div>
 
-## Using KVM
+<div align="center">
+  <i>Our running Ubuntu VM.</i>
+</div>
+
+
+## Using Parallels Desktop for Mac (Can use for Mac devices with ARM chip)
 
 ### Overview
 
+**Parallels Desktop for Mac** is software  providing hardware virtualization 
+for Macintosh computers . It is developed by 
+**Parallels**, since 2018 a subsidiary of Corel.
 
+It use hypervisor technology that works by mapping the 
+host computer's hardware resources directly to the virtual 
+machine's resources. Each virtual machine thus operates identically 
+to a standalone computer, with virtually all the resources of a 
+physical computer. Because all guest virtual machines use 
+the same hardware drivers irrespective of the actual hardware 
+on the host computer, virtual machine instances are highly 
+portable between computers.
+
+
+<div align="center">
+  <img width="300" height="300" src="assets/parallels-desktop-logo.png" alt="Parallels Desktop logo">
+</div>
+
+
+### Versions
+
+Before version `16.5`, Parallels Desktop providing hardware virtualization 
+for Macintosh computers with _Intel processors_. And since version `16.5`
+also for _Apple silicon-based_ Macintosh computers.
+
+
+The latest version is `Parallels Desktop 17`.  Parallels Desktop 17 
+supports macOS Monterey, macOS Big Sur 11, 
+macOS Catalina 10.15, macOS Mojave 10.14 and macOS High Sierra 10.13.
+It is a fast, easy and powerful application for running Windows 
+on your Intel or Apple M1 Mac—all without rebooting
+
+### System Requirements
+
+| Operating System | Processor | Memory | Storage | Graphics |
+|------------------|-----------|--------|---------|----------|
+|macOS Monterey 12, macOS Big Sur 11, macOS Catalina 10.15, macOS Mojave 10.14, or macOS High Sierra 10.13| Apple M1, M1 Pro, and M1 Max chips, Intel Core i3, Core i5, Core i7, Core i9, Intel Core M or Xeon processor | 4GB of RAM | 600 MB for Parallels Desktop application installation | Apple M1, M1 Pro, and M1 Max chips, Intel, AMD Radeon, or NVIDIA|
+
+
+
+### Download 
+
+**1/ Choose free trial version**
+
+Because Parallels Desktop **isn't** _free_ or _open-source_, so for this practice,
+I will install a free trial (_30 days_).
+
+<div align="center">
+  <img width="1000" src="assets/install-parallels-desktop-1.png" alt="Parallels Desktop installing step 1">
+</div>
+
+<div align="center">
+  <i>Click <strong>DOWNLOAD FREE TRIAL</strong>.</i>
+</div>
+
+**2/ Download DMG file**
+
+Download disk image for install Parallels Desktop. `dmg` is Apple Disk Image, 
+which is a disk image format commonly used by the macOS operating system.
+
+<div align="center">
+  <img width="1000" src="assets/install-parallels-desktop-2.png" alt="Parallels Desktop installing step 1">
+</div>
+
+<div align="center">
+  <i>Click <strong>DOWNLOAD NOW</strong>.</i>
+</div>
+
+**3/ Install Parallels® Desktop for Mac**
+
+Open the downloaded image and double-click the Install box. Look in the Downloads folder to find the image.
+
+<div align="center">
+  <img width="1000" src="assets/install-parallels-desktop-3.png" alt="Parallels Desktop installing step 3">
+</div>
+
+<div align="center">
+  <i>Double-click the Install box.</i>
+</div>
+
+<div align="center">
+  <img width="1000" src="assets/install-parallels-desktop-4.png" alt="Parallels Desktop installing step 4">
+</div>
+
+<div align="center">
+  <i>Click <strong>Open</strong>.</i>
+</div>
+
+
+**3/ Open Installation Assistant**
+
+Installation Assistant is the tool for you to quickly install a
+OS virtual machine
+
+<div align="center">
+  <img width="1000" src="assets/install-parallels-desktop-5.png" alt="Parallels Desktop installing step 5">
+</div>
+
+<div align="center">
+  <i>Click <strong>Continue</strong>.</i>
+</div>
+
+**4/ Install Ubuntu OS**
+
+Choose `Download Ubuntu Linux` under **Free Systems** sections. And
+then `Download` the Ubuntu version for `ARM64` chip.
+
+Wait until the download is finished and go to the next step.
+
+<div align="center">
+  <img width="1000" src="assets/install-parallels-desktop-6.png" alt="Parallels Desktop installing step 6">
+</div>
+
+<div align="center">
+  <i>Click <strong>Continue</strong>.</i>
+</div>
+
+
+<div align="center">
+  <img width="1000" src="assets/install-parallels-desktop-7.png" alt="Parallels Desktop installing step 7">
+</div>
+
+<div align="center">
+  <i>Click <strong>Download</strong> to download Ubuntu.</i>
+</div>
+
+
+**5/ Start your Ubuntu virtual machine**
+
+After installing Ubuntu OS, your Ubuntu virtual machine is ready to use.
+Click `Play icon` button to start our virtual machine.
+
+<div align="center">
+  <img width="1000" src="assets/install-parallels-desktop-8.png" alt="Parallels Desktop installing step 8">
+</div>
+
+<div align="center">
+  <i>Click <strong>Play icon</strong> to start your VM.</i>
+</div>
+
+<div align="center">
+  <img width="1000" src="assets/install-parallels-desktop-9.png" alt="Parallels Desktop installing step 9">
+</div>
+
+<div align="center">
+  <i>Our virtual machine is ready to use.</i>
+</div>
 
 ## References
 
@@ -399,4 +550,6 @@ Congratulation, you have successfully installed Ubuntu VM by VirtualBox
 
 [6] [VDI Vs VHD Vs VMDK: Learn the Different Virtual Disk Formats](https://www.parallels.com/blogs/ras/vdi-vs-vhd-vs-vmdk/)
 
+[7] [Parallels Desktop for Mac in Wikipedia](https://en.wikipedia.org/wiki/Parallels_Desktop_for_Mac)
 
+[8] [Parallels Desktop for Mac website](https://www.parallels.com/products/desktop/)
