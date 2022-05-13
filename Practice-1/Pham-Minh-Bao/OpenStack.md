@@ -163,14 +163,20 @@ $ kolla-ansible -i all-in-one bootstrap-servers
 
 
 
+
+
 - Do pre-deployment checks for hosts:
 ```
 $ kolla-ansible -i all-in-one prechecks
 ```
 
-> Prechecking Success
+
 
 <img src="./imags/precheck.png">
+
+
+
+
 
 - Pull OpenStack images
 ```
@@ -201,8 +207,6 @@ $ kolla-ansible -i all-in-one deploy
 
 ## **E. POST-DEPLOYMENT**:
 
-**Note**
-> At this point, user may be unable to access Internet due to the activation of `OpenvSwitch`.
  
 
 - Install Openstack CLI:
@@ -224,7 +228,13 @@ $ openstack token issue
 
 > Token generated
 
+
+
+
 <img src="./images/token.png">
+
+
+
 
 
 ## F. **ACESSING `HORIZON` DASHBOARD**:
