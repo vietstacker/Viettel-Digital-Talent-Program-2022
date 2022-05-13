@@ -42,5 +42,5 @@ The virtual machine must satisfy these requirement:
 - **8GB main memory**
 - **40GB disk space (2 disk with 20GB each)** 
 <img src="./images/config.PNG">
-
+1
 # **III. OpenStack AIO Setup Process**:
