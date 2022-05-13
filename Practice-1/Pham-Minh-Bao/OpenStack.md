@@ -171,8 +171,10 @@ $ kolla-genpwd
 ### 7. Configure `globals.yml`:
 
 ```
-$ vi /etc/kolla/globals.yml
+$ cd /etc/kolla
 ```
+- Edit file by file editor
+
 
 <img src="./images/global.png">
 
