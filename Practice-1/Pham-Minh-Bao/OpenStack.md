@@ -29,13 +29,9 @@ An OpenStack deployment contains a number of components providing APIs to access
 
 ### **B. KOLLA-ANSIBLE**: 
 Kolla Ansible deploys OpenStack services and infrastructure components in Docker containers
-
-<img src="./images/Docker.PNG">
-
-
 Kolla's mission statement is:
  > To provide production-ready containers and deployment tools for operating OpenStack clouds.
-
+<img src="./images/kolla.jpg">
 
 
 ### **B. System Requirements:**
