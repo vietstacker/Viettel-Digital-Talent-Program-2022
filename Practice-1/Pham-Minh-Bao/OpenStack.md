@@ -49,28 +49,30 @@ The virtual machine must satisfy these requirement:
 
 ## **III. OpenStack AIO Setup Process**:
 
-## **Install dependencies**:
-
-### 1. Update `apt` & install essentails dependencies:
+## Install dependencies
+### 1. Update package & install essentials dependencies:
 
 ```
 $ sudo apt update
 
 $ sudo apt install python3-dev libffi-dev gcc libssl-dev
 ```
-### 3. Using `virtualenv`:
-- Install `virtualenv`:
+### 2. Install dependencies using a virtual environment
+We should use a virtual environment to install Kolla Ansible and its dependencies, to avoid conflicts with the system site packages
+- Install the virtual environment dependencies
 ```
 $ sudo apt install python3-venv
 ```
-- Create `virutalenv` & activate that environment:
+- Create a virtual environment and activate it:
 ```
 $ python3 -m venv /openstack
-
 $ source /openstack/bin/activate
 ```
-
-### 4. Install `Ansible` & `Kolla-Ansible` (within `virtualenv`):
+- Ensure the latest version of pip is installed:
+```
+$ pip install -U pip
+```
+### 3. Install `Ansible` & `Kolla-Ansible`:
 
 - Install `Ansible`:
 ```
@@ -82,54 +84,37 @@ $ sudo pip install 'ansible==4.0.0'
 ```
 $ sudo pip install kolla-ansible
 ```
-
-### 5. Install `Openstack CLI`:
-> *Optional at this point*
-
-```
-$ pip install python-openstackclient python-glanceclient python-neutronclient
-```
-
-## **B. CONFIGURE `Kolla-Ansible` & `Ansible`**:
-### 1. Create `/etc/kolla`  directory:
+## Configure
+### 1. Config `Kolla-Ansible` & `Ansible`:
+- Create `/etc/kolla`  directory:
 
 ```
 $ sudo mkdir -p /etc/kolla
 $ sudo chown $USER:$USER /etc/kolla
 ```
 
-### 2. Copy `passwords.yml` to `/etc/kolla`:
+### 2. Copy the configuration files (globals.yml and password.yml) to `/etc/kolla directory`:
  
 ```
-$ cp -r <path-to-virtualenv>/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
+$ cp -r usr/local/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
 ```
 
 ### 3. Configure `Ansible`:
-
-```
-$ mkdir -p /etc/ansible
-Create config file in text editor
-```
-
-
-
+- Create config file in text editor
 
 <img src="./images/config.png">
 
 
-
-
+- Create `/etc/kolla`  directory to store config file
 ```
-$ config="[defaults]\nhost_key_checking=False\npipelining=True\nforks=100"
+$ mkdir -p /etc/ansible
 
 $ sudo cp -r /home/os/ansible.cfg /etc/ansible
-
 ```
 
-## **C. PRE-DEPLOY CONFIGURATIONS**:
 
-
-### 2. Run `ad-hoc` command `ping` to check configurations:
+### 4. Check configurations:
+Ping to check whether the configuration of inventory is correct or not:
 ```
 $ ansible -i all-in-one all -m ping
 ```
@@ -139,7 +124,7 @@ $ ansible -i all-in-one all -m ping
 <img src="./images/ping.png">
 
 
-### 3. Create diskspace partition for `Cinder` (*Block Storage*):
+### 5. Create diskspace partition for `Cinder`:
 
 ```
 $ sudo pvcreate /dev/sdb
@@ -147,32 +132,26 @@ $ sudo pvcreate /dev/sdb
 $ sudo vgcreate cinder-volumes /dev/sdb
 ```
 
-### 4. Generate Passwords for `Kolla`:
-- Stored in `/etc/kolla/passwords.yml` , run commands:
+### 6. Kolla passwords:
+Passwords are stored in /etc/kolla/passwords.yml file
+- Generate passwords:
 
 ```
 $ cd /etc/kolla/
 $ kolla-genpwd
 ```
 
-### 5. Configure `globals.yml`:
+### 7. Configure `globals.yml`:
 
 ```
 $ vi /etc/kolla/globals.yml
 ```
 
-**Note**: *without specifying `openstack_release`, default value would be `victoria`*
-
-**Example**: Sample `globals.yml` file
-
-```
 <img src="./images/global.png">
-```
 
-## **D. DEPLOY `OPENSTACK`**
-- Bootstrap Server:
 
-> **Debug**: [*Ansible Module Missing*](#'2.-`Cannot-import-name-'AnsibleCollectionLoader'-from-'ansible.utils.collection_loader'-during-Boostrapping`')
+## **OPENSTACK DEPLOYMENT**
+- Bootstrap servers with kolla deploy dependencies
 
 ```
 $ kolla-ansible -i all-in-one bootstrap-servers
@@ -183,19 +162,16 @@ $ kolla-ansible -i all-in-one bootstrap-servers
 <img src="./images/bootstrap.png">
 
 
-
-
-- Precheck Server:
+- Do pre-deployment checks for hosts:
 ```
 $ kolla-ansible -i all-in-one prechecks
 ```
 
 > Prechecking Success
 
-
 <img src="./imags/precheck.png">
 
-- Pull Images to VM:
+- Pull OpenStack images
 ```
 $ kolla-ansible -i all-in-one pull
 ```
@@ -204,14 +180,12 @@ $ kolla-ansible -i all-in-one pull
 
 <img src="./images/pull.png">
 
-- Deploy:
+- OpenStack deployment:
 ```
 $ kolla-ansible -i all-in-one deploy
 ```
 
 >  Deploy Success
-
-
 
 <img src="./images/deploy.png">
 
@@ -228,11 +202,11 @@ $ pip install python-openstackclient python-glanceclient python-neutronclient
 ```
 
 - Run `admin-openrc.sh` to add `ENVIRONMENT VARIABLES`: 
-> **Debug**: [*`admin-rc.sh` Not found*](#'3.-`admin-openrc.sh`-missing')
 ```
 $ source /etc/kolla/admin-openrc.sh
 ```
-<img src="./images/admin.png">
+
+<img src="./images/deploy.png">
 
 - Generate token:
 ```
@@ -240,9 +214,6 @@ $ openstack token issue
 ```
 
 > Token generated
-
-
-
 
 <img src="./images/token.png">
 
@@ -259,8 +230,6 @@ $ openstack token issue
 > Openstack Login page
 
 <img src="./images/OpenStackLogin.png">
-
-
 
 > Openstack Dashboard
 
