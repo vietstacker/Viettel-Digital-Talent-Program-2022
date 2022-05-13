@@ -7,12 +7,12 @@
 OpenStack is a set of software components that provide common services for cloud infrastructure
 - The best cloud-computing open-source project aimed at providing an IaaS (Infrastructure As a Service).  
 - Openstack controls large pools of compute, storage, and networking resources, all managed through APIs or a dashboard
-- OpenStack began in 2010 as a joint project of Rackspace Hosting and NASA. As of 2012, it was managed by the OpenStack Foundation, which was renamed as the [Open Infrastructure Foundation](https://openinfra.dev/) in 2021.
+- OpenStack began in 2010 as a joint project of Rackspace Hosting and NASA. As of 2012, it was managed by the OpenStack Foundation, which was renamed as the [Open Infrastructure Foundation](https://openinfra.dev) in 2021.
 
 ### **2. Core Components:**
 
 An OpenStack deployment contains a number of components providing APIs to access infrastructure resources
-<img src="./images/OSCC.png">
+<img src="./images/OSCC.PNG">
  - **Horizon**: The implementation of OpenStack’s Dashboard, which provides a web based user interface to OpenStack services including Nova, Swift, Keystone, etc.
  - **Nova**: The OpenStack project that provides a way to provision compute instances (aka virtual servers). Nova supports creating virtual machines.
  - **Cinder**: The OpenStack Block Storage service for providing volumes to Nova virtual machines, Ironic bare metal hosts, containers and more.
@@ -23,8 +23,9 @@ An OpenStack deployment contains a number of components providing APIs to access
 
 ## **B. KOLLA-ANSIBLE**: 
 
-Kolla Ansible deploys OpenStack services and infrastructure components in Docker containers
 <img src="./images/Docker.PNG">
+Kolla Ansible deploys OpenStack services and infrastructure components in Docker containers
+
 
 Kolla's mission statement is:
  > To provide production-ready containers and deployment tools for operating OpenStack clouds.
