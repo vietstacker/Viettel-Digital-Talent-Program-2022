@@ -278,7 +278,7 @@ $ openstack token issue
 
 
 
-**Access 10.0.2.15 /auth/login/?next=/**:
+- Access 10.0.2.15 /auth/login/?next=/:
 
 
 
@@ -296,7 +296,7 @@ $ openstack token issue
 
 
 
-> Openstack Dashboard
+- Openstack Dashboard
 
 
 
