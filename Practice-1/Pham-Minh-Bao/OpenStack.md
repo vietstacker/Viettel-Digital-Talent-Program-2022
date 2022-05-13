@@ -1,8 +1,11 @@
 # Practice 1: Setup OpenStack AIO inside VM with Kolla
 ---
 ## **I. OVERVIEW**:
+
 ### **A. OPENSTACK**: 
+
 #### **1. Overview:**
+
 <img src="./images/OpenstackLogo.png">
 OpenStack is a set of software components that provide common services for cloud infrastructure.
 - The best cloud-computing open-source project aimed at providing an IaaS (Infrastructure As a Service).  
