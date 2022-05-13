@@ -22,9 +22,8 @@ An OpenStack deployment contains a number of components providing APIs to access
  - **Keystone**: An OpenStack service that provides API client authentication, service discovery, and distributed multi-tenant authorization by implementing OpenStack’s Identity API
 
 ## **B. KOLLA-ANSIBLE**: 
-
-<img src="./images/Docker.PNG">
 Kolla Ansible deploys OpenStack services and infrastructure components in Docker containers
+<img src="./images/Docker.PNG">
 
 
 Kolla's mission statement is:
