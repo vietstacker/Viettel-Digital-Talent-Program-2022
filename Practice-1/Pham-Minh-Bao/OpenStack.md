@@ -260,11 +260,6 @@ $ vi /etc/kolla/admin-openrc.sh
 $ source /etc/kolla/admin-openrc.sh
 ```
 
-
-<img src="./images/deploy.png">
-
-
-
 - Generate token:
 ```
 $ openstack token issue
