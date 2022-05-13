@@ -70,7 +70,7 @@ forks=100
 ```
 ansible -i all-in-one all -m ping
 ```
-![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/Practice-1/Dinh-Thi-Huong/img/ping.png)
+![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/tree/main/Practice-1/Dinh-Thi-Huong/img/ping.png)
 - Fill all passwords in ```/etc/kolla/passwords.yml``` by running random password generator:
 ```
 kolla-genpwd
@@ -89,17 +89,17 @@ enable_haproxy: "no"
 ```
 kolla-ansible -i ./all-in-one bootstrap-servers
 ```
-![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/Practice-1/Dinh-Thi-Huong/img/bootstrap.png)
+![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/tree/main/Practice-1/Dinh-Thi-Huong/img/bootstrap.png)
 - Do pre-deployment checks for hosts
 ```
 kolla-ansible -i ./all-in-one prechecks
 ```
-![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/Practice-1/Dinh-Thi-Huong/img/precheck.png)
+![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/tree/main/Practice-1/Dinh-Thi-Huong/img/precheck.png)
 - Finally proceed to actual OpenStack deployment
 ```
 kolla-ansible -i ./all-in-one deploy
 ```
-![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/Practice-1/Dinh-Thi-Huong/img/deploy.png)
+![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/tree/main/Practice-1/Dinh-Thi-Huong/img/deploy.png)
 8. Using OpenStack
 - Install the OpenStack CLI client
 ```
@@ -110,13 +110,20 @@ pip install python-openstackclient -c https://releases.openstack.org/constraints
 kolla-ansible post-deploy 
 . /etc/kolla/admin-openrc.sh
 ```
-![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/Practice-1/Dinh-Thi-Huong/img/postdeploy.png)
+![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/tree/main/Practice-1/Dinh-Thi-Huong/img/postdeploy.png)
 - Access Horizon Dashboard
 > URL: http://192.168.122.19
 > Username: admin
 > Password: run command ```cat /etc/kolla/passwords.yml | grep -i keystone_admin_password```
-![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/Practice-1/Dinh-Thi-Huong/img/password.png)
-![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/Practice-1/Dinh-Thi-Huong/img/login.png)
-![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/Practice-1/Dinh-Thi-Huong/img/dashboard.png)
+
+![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/tree/main/Practice-1/Dinh-Thi-Huong/img/password.png)
+
+
+![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/tree/main/Practice-1/Dinh-Thi-Huong/img/login.png)
+
+
+![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/tree/main/Practice-1/Dinh-Thi-Huong/img/dashboard.png)
+
+
 ## III. References
 - [Official Document of Kolla Ansible](https://docs.openstack.org/kolla-ansible/latest/user/quickstart.html)
