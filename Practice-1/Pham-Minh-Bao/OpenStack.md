@@ -157,9 +157,10 @@ $ vi /etc/kolla/globals.yml
 $ kolla-ansible -i all-in-one bootstrap-servers
 ```
 
-> Boostrapping Success
+
 
 <img src="./images/bootstrap.png">
+
 
 
 - Do pre-deployment checks for hosts:
@@ -176,18 +177,26 @@ $ kolla-ansible -i all-in-one prechecks
 $ kolla-ansible -i all-in-one pull
 ```
 
->  Pulling Images Success
+
+
 
 <img src="./images/pull.png">
+
+
+
 
 - OpenStack deployment:
 ```
 $ kolla-ansible -i all-in-one deploy
 ```
 
->  Deploy Success
+
+
 
 <img src="./images/deploy.png">
+
+
+
 
 
 ## **E. POST-DEPLOYMENT**:
