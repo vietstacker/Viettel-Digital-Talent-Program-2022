@@ -12,6 +12,8 @@ VM Specifications:
 - RAM: 4GB
 - Network: 2 NICs:
 > enp1s0: 192.168.122.19/24
+
+
 > enp6s0: 192.168.122.189/24
 
 ## II. Step-by-step
