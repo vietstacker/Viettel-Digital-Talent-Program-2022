@@ -305,7 +305,7 @@ $ openstack token issue
 
 # **III. REFERENCES**:
 
-- [User Guide of `Kolla Ansible` - Openstack.org](https://docs.openstack.org/kolla-ansible/latest/user/index.html)
+- [User Guide of Kolla Ansible - Openstack.org](https://docs.openstack.org/kolla-ansible/latest/user/index.html)
 
 
 - [Openstack wikipedia](https://en.wikipedia.org/wiki/OpenStack)
