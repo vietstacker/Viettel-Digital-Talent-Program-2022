@@ -1,5 +1,14 @@
-[[_TOC_]]
-
+- [**Set up OpenStack AIO inside VM with Kolla**](#--set-up-openstack-aio-inside-vm-with-kolla--)
+  - [**1. Create Ubuntu VM**](#--1-create-ubuntu-vm--)
+    - [*1.1 Chuẩn bị*](#-11-chu-n-b--)
+    - [*1.2 Cài đặt máy ảo Ubuntu*](#-12-c-i---t-m-y--o-ubuntu-)
+  - [**2. OpenStack AIO with Kolla-Ansible**](#--2-openstack-aio-with-kolla-ansible--)
+    - [*2.1 Set up enviroment*](#-21-set-up-enviroment-)
+    - [*2.2 Configure **Kolla-ansible** and **Ansible***](#-22-configure---kolla-ansible---and---ansible---)
+    - [*2.3 Pre-deploy configurations*](#-23-pre-deploy-configurations-)
+    - [*2.4 Deploy Openstack*](#-24-deploy-openstack-)
+    - [*2.5 Using Openstack*](#-25-using-openstack-)
+    
 # **Set up OpenStack AIO inside VM with Kolla**
 
 ## **1. Create Ubuntu VM**
