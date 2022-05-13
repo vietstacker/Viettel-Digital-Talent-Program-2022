@@ -183,12 +183,15 @@ $ kolla-ansible -i all-in-one bootstrap-servers
 <img src="./images/bootstrap.png">
 
 
+
+
 - Precheck Server:
 ```
 $ kolla-ansible -i all-in-one prechecks
 ```
 
 > Prechecking Success
+
 
 <img src="./imags/precheck.png">
 
@@ -207,6 +210,8 @@ $ kolla-ansible -i all-in-one deploy
 ```
 
 >  Deploy Success
+
+
 
 <img src="./images/deploy.png">
 
@@ -227,7 +232,7 @@ $ pip install python-openstackclient python-glanceclient python-neutronclient
 ```
 $ source /etc/kolla/admin-openrc.sh
 ```
-<img src="./images/deploy.png">
+<img src="./images/admin.png">
 
 - Generate token:
 ```
@@ -235,6 +240,9 @@ $ openstack token issue
 ```
 
 > Token generated
+
+
+
 
 <img src="./images/token.png">
 
