@@ -1,4 +1,4 @@
-# WEEK-3 PRACTICE DOCUMENTATION
+# Practice 1: Setup OpenStack AIO inside VM with Kolla
 ---
 # **I. OVERVIEW**:
 ## **A. OPENSTACK**: 
@@ -42,4 +42,5 @@ The virtual machine must satisfy these requirement:
 - **8GB main memory**
 - **40GB disk space (2 disk with 20GB each)** 
 <img src="./images/config.PNG">
+
 # **III. OpenStack AIO Setup Process**:
