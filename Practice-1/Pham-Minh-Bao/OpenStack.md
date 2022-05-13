@@ -159,7 +159,7 @@ $ kolla-ansible -i all-in-one bootstrap-servers
 
 
 
-<img src="./images/bootstrap.png">
+<img src="./images/boostrap.png">
 
 
 
@@ -172,7 +172,7 @@ $ kolla-ansible -i all-in-one prechecks
 
 
 
-<img src="./imags/precheck.png">
+<img src="./images/precheck.png">
 
 
 
