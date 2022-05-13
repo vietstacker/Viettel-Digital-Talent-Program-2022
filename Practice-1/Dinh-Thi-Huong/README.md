@@ -1,9 +1,9 @@
 # Set up OpenStack AIO inside VM with Kolla
 
 ## Table of contents
-[I. Requirements](#i.requirements)
-[II. Step-by-step](#ii.step-by-step)
-[III. References](#iii.references)
+[I. Requirements](#i-requirements)
+[II. Step-by-step](#ii-step-by-step)
+[III. References](#iii-references)
 
 ## I. Requirements
 OS: Ubuntu Desktop 20.04
@@ -11,8 +11,8 @@ Hypervisor: KVM
 VM Specifications:
 - RAM: 4GB
 - Network: 2 NICs:
--- enp1s0: 192.168.122.118/24
--- enp6s0: 192.168.122.241/24
+-- enp1s0: 192.168.122.19/24
+-- enp6s0: 192.168.122.189/24
 
 ## II. Step-by-step
 1. Install dependencies
@@ -68,8 +68,9 @@ forks=100
 5. Prepare initial configuration
 - Check whether the configuration of inventory is correct or not, run:
 ```
-ansible -i multinode all -m ping
+ansible -i all-in-one all -m ping
 ```
+![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/Practice-1/Dinh-Thi-Huong/img/ping.png)
 - Fill all passwords in ```/etc/kolla/passwords.yml``` by running random password generator:
 ```
 kolla-genpwd
@@ -80,29 +81,25 @@ kolla_base_distro: "ubuntu"
 kolla_install_type: "source"
 network_interface: enp1s0
 neutron_external_interface: enp6s0
-kolla_internal_vip_address: 192.168.122.118
+kolla_internal_vip_address: 192.168.122.19
 enable_haproxy: "no"
-enable_cinder: "yes"
 ```
 6. Deployment
 - Bootstrap servers with kolla deploy dependencies
 ```
 kolla-ansible -i ./all-in-one bootstrap-servers
 ```
-> Result
-![image](/home/dinhuong/Pictures/Screenshot from 2022-05-12 20-32-33.png)
+![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/Practice-1/Dinh-Thi-Huong/img/bootstrap.png)
 - Do pre-deployment checks for hosts
 ```
 kolla-ansible -i ./all-in-one prechecks
 ```
-> Result:
-![image](/home/dinhuong/Pictures/Screenshot from 2022-05-12 20-49-07)
+![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/Practice-1/Dinh-Thi-Huong/img/precheck.png)
 - Finally proceed to actual OpenStack deployment
 ```
 kolla-ansible -i ./all-in-one deploy
 ```
-> Result:
-![image](/home/dinhuong/Pictures/Screenshot from 2022-05-12 20-49-07)
+![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/Practice-1/Dinh-Thi-Huong/img/deploy.png)
 8. Using OpenStack
 - Install the OpenStack CLI client
 ```
@@ -110,8 +107,16 @@ pip install python-openstackclient -c https://releases.openstack.org/constraints
 ```
 - Generate an openrc file where credentials for admin user are set
 ```
-kolla-ansible post-deploy . /etc/kolla/admin-openrc.sh
+kolla-ansible post-deploy 
+. /etc/kolla/admin-openrc.sh
 ```
-
+![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/Practice-1/Dinh-Thi-Huong/img/postdeploy.png)
+- Access Horizon Dashboard
+> URL: http://192.168.122.19
+> Username: admin
+> Password: run command ```cat /etc/kolla/passwords.yml | grep -i keystone_admin_password```
+![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/Practice-1/Dinh-Thi-Huong/img/password.png)
+![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/Practice-1/Dinh-Thi-Huong/img/login.png)
+![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/Practice-1/Dinh-Thi-Huong/img/dashboard.png)
 ## III. References
 - [Official Document of Kolla Ansible](https://docs.openstack.org/kolla-ansible/latest/user/quickstart.html)
