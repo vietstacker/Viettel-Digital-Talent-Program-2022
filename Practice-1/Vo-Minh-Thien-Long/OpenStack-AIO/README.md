@@ -78,13 +78,13 @@ a service can be deployed _in many node_, or difference services are deployed
 _in difference nodes_.
 
 In this practice, we will use the **AIO architecture** to deploy OpenStack.
-And the deployment will only use 3 main services of OpenStack: 
+And the deployment must include 3 main services of OpenStack: 
 
-**1/ Compute (Nova)**
+**1/ Compute**
 
-**2/ Networking (Neutron)**
+**2/ Networking** 
 
-**3/ Storage ()**
+**3/ Storage** 
 
 <div align="center">
   <img width="1000" src="assets/openstack-3-services.png" alt="3 main services">
@@ -189,7 +189,7 @@ After finish setting, **restart** our VM to apply these new changes.
 
 In order to verify you `CPU`, use the command:
 
-```bash
+```shell
 lscpu
 ```
 
@@ -212,7 +212,7 @@ display amount of free and used memory in the system.
 
 I use `-h` (`--human`) option here to format the output easy to read.
 
-```bash
+```shell
 free -h
 ```
 
@@ -235,12 +235,12 @@ on it.
 We need administrator rights in order to have the full output of the command, 
 so add `sudo` before.
 
-```bash
+```shell
 sudo lsblk
 ```
 
-You can see there are 2 disks: `sda` and `sdb`. The first disk - `sda`
-partition into `sda1` and `sda2`.
+You can see there are 2 disks: `sda` and `sdb`. The first disk - `sda` is used
+to store Ubuntu OS. And the second disk - `sdb` is our mounted disk.
 
 <div align="center">
   <img width="1000" src="assets/requirements-disk.png" alt="lsblk command">
@@ -252,26 +252,23 @@ partition into `sda1` and `sda2`.
 
 #### Network
 
-The `lshw` command can extract detailed information on the hardware configuration 
-of the machine including **network cards**. 
-
-We need administrator rights in order to have the full output of the command, 
-so add `sudo` before.
-
-```bash
-sudo lshw -class network
-```
-
-You can see there are 2 NICs: `virtio1` and `virtio2`. 
+You can use `ip` command list all network interfaces in our machine. However, for the
+easy human-readable display format, I installed `net-tools` and use `ifconfig` to list the network
+interfaces.
 
 <div align="center">
-  <img width="1000" src="assets/requirements-network.png" alt="lshw command">
+  <img width="1000" src="assets/requirements-network.png" alt="ifconfig command">
 </div>
 
 <div align="center">
-  <i>List of NICs in my VM.</i>
+  <i>List of network interfaces in my VM.</i>
 </div>
 
+I will use 2 network interfaces:
+
+- eth0: `NAT` - **10.211.55.6/24** (for Internal network)
+
+- eth1: `Host` - **10.211.55.8/24** (for External/Provider network)
 
 #### Summary
 
@@ -284,6 +281,343 @@ You can see there are 2 NICs: `virtio1` and `virtio2`.
 
 Now, we have met the requirements of to run `all-in-one` **OpenStack**.
 
+## Instruction
+
+To make it is easy, all the commands use administrator rights - add `sudo` before
+them all.
+
+```shell
+sudo <command>
+```
+
+Or use can set up `root` password, type OS password and then type your
+password for **root user**. Then switch user to root to have the **root user right**.
+
+```shell
+sudo passwd root
+```
+
+<div align="center">
+  <img width="1000" src="assets/setup-1.png" alt="passwd command">
+</div>
+
+<div align="center">
+  <i>Set up password for <strong>user</strong>.</i>
+</div>
+
+Then use `su` to switch to **root user**.
+
+```shell
+su
+```
+
+<div align="center">
+  <img width="1000" src="assets/setup-2.png" alt="su command">
+</div>
+
+<div align="center">
+  <i>Switch user to <strong>root user</strong>.</i>
+</div>
+
+### Install dependencies
+
+1/ Update `apt`
+
+Update the package index by using `apt update`.
+
+```shell
+apt update
+```
+
+2/ Install required dependencies
+
+We will install required dependencies by `apt install`.
+
+```shell
+apt install python3-dev python3-pip libffi-dev gcc libssl-dev
+```
+
+3/ Install `virtualenv` for **virtual environment**
+
+We will install the dependencies using virtual environment, so use `venv` 
+to create a virtual environment.
+
+Install `virtualenv`:
+
+```shell
+apt install python3-venv
+```
+
+4/ Create **virtual environment**
+
+In this practice, my `virtualenv` will be located at **./openstackenv**
+
+```shell
+python3 -m venv ./openstackenv
+```
+
+5/ Activate virtual environment
+
+The virtual environment should be activated before running any commands that depend on 
+packages installed in it.
+
+In order to activate virtual environment, we use `source`.
+
+```shell
+source ./openstackenv/bin/activate
+```
+
+If you successfully activate environment, before user and path will have `(openstackenv)`.
+
+<div align="center">
+  <img width="1000" src="assets/setup-3.png" alt="Check (openstackenv)">
+</div>
+
+<div align="center">
+  <i>Check is there <strong>(openstackenv)</strong>.</i>
+</div>
+
+6/ Upgrade `pip`
+
+Upgrade `pip` to the latest version by `-U` (`--upgrade`) option.
+
+```shell
+pip install -U pip
+```
+
+### Install `ansible`
+
+Install  `ansible`. Kolla Ansible requires at least Ansible **4** and supports up to **5**.
+
+```shell
+pip install 'ansible==2.10.7'
+```
+
+### Install and set up `kolla-ansible`
+
+Install `kolla-ansible` and its dependencies  by using `pip` in virtual environment.
+
+```shell
+pip install kolla-ansible
+```
+
+### Install `OpenStack CLI`
+
+```shell
+pip install python-openstackclient python-glanceclient python-neutronclient
+```
+
+## Configuration 
+
+### Configure `kolla-ansible`
+
+1/ Create `/etc/kolla` directory
+
+Create `/etc/kolla` directory by using `mkdir` with `-p` (`--path`) option
+to create directory in path.
+
+```shell
+mkdir -p /etc/kolla
+chown $USER:$USER /etc/kolla
+```
+
+2/ Copy `passwords.yml` and `global.yml` to `/etc/kolla`
+
+```shell
+cp -r ./openstackenv/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
+```
+
+3/ Copy `all-in-one` inventory files to the current directory.
+
+```shell
+cp ./openstackenv/share/kolla-ansible/ansible/inventory/all-in-one .
+```
+
+### Configure `ansible`
+
+1/ Create `/etc/ansible` directory
+
+```shell
+mkdir -p /etc/ansible
+```
+
+2/ Add the following options to the Ansible configuration file **/etc/ansible/ansible.cfg**
+
+```shell
+config="[defaults]\nhost_key_checking=False\npipelining=True\nforks=100"
+echo -e $config > /etc/ansible/ansible.cfg
+```
+
+## Pre-deploy
+
+1/ Custom inventory file
+
+In this practice, I just use the default sample `all-in-one` as inventory file.
+However, you could change it as your demand, or use `multinode` in case you want to deploy
+OpenStack in `multinode` mode.
+
+You can read it by using this command (Please make sure that `all-in-one`
+is now in your working directory.)
+
+```shell
+more all-in-one
+``` 
+
+
+2/ Check configurations
+
+```shell
+ansible -i all-in-one all -m ping
+```
+
+<div align="center">
+  <img width="1000" src="assets/setup-4.png" alt="ping to check">
+</div>
+
+<div align="center">
+  <i>Ping successful.</i>
+</div>
+
+Don't worry about the `[WARNING]`, there is `-` character in group name in `all-in-one`,
+but it doesn't have any affect to us.
+
+
+3/ Create diskspace partition for `Cinder`
+
+Use `pvcreate` to create a physical volume for **Cinder** in `/dev/sdb`.
+
+```shell
+pvcreate /dev/sdb
+```
+
+Then `vgcreate` to create a volume group `cinder-volume` in disk `/dev/sdb`.
+
+```shell
+vgcreate cinder-volumes /dev/sdb
+```
+
+<div align="center">
+  <img width="1000" src="assets/setup-5.png" alt="pvcreate and vgcreate">
+</div>
+
+<div align="center">
+  <i>Create diskspace partition.</i>
+</div>
+
+4/ Configurate `global.yml`
+
+Open and edit `globals.yml` in **/etc/kolla** by using `gedit` (in my opion, it is easier to edit the
+file than `vi` or `nano`).
+
+```shell
+gedit /etc/kolla/globals.yml
+```
+
+The content of `global.yml`:
+
+```shell
+kolla_base_distro: "ubuntu"
+kolla_install_type: "source"
+
+network_interface: eth0
+neutron_external_interface: eth1
+kolla_internal_vip_address: 10.211.55.6
+
+nova_compute_virt_type: "qemu"
+
+enable_haproxy: "no"
+
+enable_cinder: "yes"
+enable_cinder_backup: "no"
+enable_cinder_backend_lvm: "yes"
+```
+
+- **kolla_base_distro**: Our Linux distribution - `ubuntu`.
+- **kolla_install_type**: Kolla container image type:
+  - `source` - build images from source codes (we use it here).
+  - `binary` - using remote binary component file.
+
+
+- **network_interface**: internal network interface communicate with **OpenStack**.
+- **neutron_external_interface**: provider network interface for VMs.
+- **kolla_internal_vip_address**: IP address of `network_interface`, prevent errors when **MariaDB**
+connect with HAproxy.
+
+
+- **nova_compute_virt_type**: we use VM, so here we set it is `qemu`.
+
+
+- **enable_haproxy**: `no` for **all-in-one**.
+
+
+- **enable_cinder**: we use **Cinder LVM** use share storage for **OpenStack**, so we set `yes` here.
+- **enable_cinder_backup**: We don't use **Backup Cinder**, so we set `no` hrer.
+- **enable_cinder_backend_lvm**: we use Backend LVM for **Cinder** , so we set `yes` here.
+
+## Deployment
+
+1/ Setup Openstack Kolla by Boostrap servers
+
+`-i` option to indicate the inventory file, here is `all-in-one`. Please make sure that `all-in-one`
+is now in your working directory.
+
+```shell
+kolla-ansible -i all-in-one bootstrap-servers
+```
+
+<div align="center">
+  <img width="1000" src="assets/setup-6.png" alt="kolla-ansible bootstrap-servers">
+</div>
+
+<div align="center">
+  <i>Bootstrapping success.</i>
+</div>
+
+2/ Check our `kolla-ansible` server
+
+```shell
+kolla-ansible -i all-in-one prechecks
+```
+
+<div align="center">
+  <img width="1000" src="assets/setup-7.png" alt="kolla-ansible precheck">
+</div>
+
+<div align="center">
+  <i>Prechecking success.</i>
+</div>
+
+3/ Pull all images to our VM
+
+```shell
+kolla-ansible -i all-in-one pull
+```
+
+<div align="center">
+  <img width="1000" src="assets/setup-8.png" alt="kolla-ansible pull">
+</div>
+
+<div align="center">
+  <i>Pulling images success.</i>
+</div>
+
+4/ Deploy OpenStack
+
+```shell
+kolla-ansible -i all-in-one pull
+```
+
+<div align="center">
+  <img width="1000" src="assets/setup-9.png" alt="kolla-ansible pull">
+</div>
+
+<div align="center">
+  <i>Deploy OpenStack success.</i>
+</div>
+
+## Using OpenStack
+
+
 ## References
 
 [1] [OpenStack in Wikipedia](https://en.wikipedia.org/wiki/VirtualBox)
@@ -295,3 +629,7 @@ Now, we have met the requirements of to run `all-in-one` **OpenStack**.
 [4] [kolla-ansible repository](https://github.com/openstack/kolla-ansible)
 
 [5] [Linux commands](https://man7.org/linux/man-pages/)
+
+[6] [Config globals.yml](https://github.com/openstack/kolla-ansible/blob/master/etc/kolla/globals.yml)
+
+[6] [Viettel Digital Talent program 2021 - OpenStack](https://github.com/vietstacker/Viettel-Digital-Talent-Program-2021/tree/main/Phase-1-Practices/Week-3)
