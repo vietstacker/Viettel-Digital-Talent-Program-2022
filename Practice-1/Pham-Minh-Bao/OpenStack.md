@@ -205,7 +205,7 @@ $ kolla-ansible -i all-in-one deploy
 
 
 
-## **E. POST-DEPLOYMENT**:
+## **Using Openstack**:
 
  
 
@@ -219,14 +219,15 @@ $ pip install python-openstackclient python-glanceclient python-neutronclient
 $ source /etc/kolla/admin-openrc.sh
 ```
 
+
 <img src="./images/deploy.png">
+
+
 
 - Generate token:
 ```
 $ openstack token issue
 ```
-
-> Token generated
 
 
 
@@ -237,22 +238,32 @@ $ openstack token issue
 
 
 
-## F. **ACESSING `HORIZON` DASHBOARD**:
+
+### **Access 10.0.2.15 /auth/login/?next=/**:
+
+
+
+<img src="./images/OpenStackLogin.png">
+
+
 
 - Use following login account:
 	- **username**: `admin`
-	- **password**: *Run below command to retrieve*
+	- **password**: Run this command to get password
 	```
 	$ cat /etc/kolla/passwords.yml | grep -i keystone_admin_password
 	```
 
-> Openstack Login page
 
-<img src="./images/OpenStackLogin.png">
+
 
 > Openstack Dashboard
 
-<img src="./imgs/osi.png">
+
+
+
+
+<img src="./images/osi.png">
 
 
 
