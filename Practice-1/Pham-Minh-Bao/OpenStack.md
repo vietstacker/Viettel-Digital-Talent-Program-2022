@@ -43,6 +43,14 @@ Kolla's mission statement is:
 #### **2. Resources:**
 The virtual machine must satisfy these requirement:
 - **2 network interfaces**
+    - enp0s3: 10.0.2.15/24
+    - enp0s8: 10.0.3.15/24
+
+
+<img src="./images/ni.png">
+
+
+
 - **8GB main memory**
 - **40GB disk space (2 disk with 20GB each)** 
 <img src="./images/config.PNG">
@@ -213,6 +221,18 @@ $ kolla-ansible -i all-in-one deploy
 ```
 $ pip install python-openstackclient python-glanceclient python-neutronclient
 ```
+
+OpenStack requires an openrc file where credentials for admin user are set.
+- Create `/etc/kolla/admin-openrc.sh`
+
+```
+$ vi /etc/kolla/admin-openrc.sh
+```
+
+
+<img src="./images/admin.png">
+
+
 
 - Run `admin-openrc.sh` to add `ENVIRONMENT VARIABLES`: 
 ```
