@@ -125,8 +125,13 @@ kolla-ansible post-deploy
 
 - Access Horizon Dashboard
 > URL: http://192.168.122.19
+
+
 > Username: admin
+
+
 > Password: run command ```cat /etc/kolla/passwords.yml | grep -i keystone_admin_password```
+
 
 ![image](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/Dinh-Thi-Huong/img/password.png)
 
