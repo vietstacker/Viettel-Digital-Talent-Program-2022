@@ -110,7 +110,14 @@ $ cp -r <path-to-virtualenv>/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
 $ mkdir -p /etc/ansible
 Create config file in text editor
 
+
+
+
 <img src="./images/config.png">
+
+
+
+
 
 $ config="[defaults]\nhost_key_checking=False\npipelining=True\nforks=100"
 
