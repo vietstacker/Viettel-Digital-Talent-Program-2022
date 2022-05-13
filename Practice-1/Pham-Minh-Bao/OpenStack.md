@@ -2,21 +2,21 @@
 ---
 ## **Table of Contents:**
 
-### [I. Overview]
+### I. Overview
 
-- #### [A. Openstack]
+- #### A. Openstack
 
-- #### [B. Kolla-Ansible]
+- #### B. Kolla-Ansible
 
-### [II. OpenStack AIO Setup Process]
-- #### [Install dependencies]
-- #### [Configure]
-- #### [Openstack Deployment]
-- #### [Using Openstack]
+### II. OpenStack AIO Setup Process
+- #### Install dependencies
+- #### Configure
+- #### Openstack Deployment
+- #### Using Openstack
 
-### [III. REFERENCES]
+### III. REFERENCES
 
-
+---
 
 
 ## **I. OVERVIEW**:
