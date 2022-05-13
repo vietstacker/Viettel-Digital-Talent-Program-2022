@@ -30,7 +30,6 @@ Kolla Ansible deploys OpenStack services and infrastructure components in Docker
 Kolla's mission statement is:
  > To provide production-ready containers and deployment tools for operating OpenStack clouds.
 
-<img src="./images/kolla.jpg">
 
 
 ## **B. System Requirements:**
