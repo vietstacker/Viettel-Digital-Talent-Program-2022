@@ -109,6 +109,7 @@ $ cp -r <path-to-virtualenv>/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
 ```
 $ mkdir -p /etc/ansible
 Create config file in text editor
+```
 
 
 
@@ -118,7 +119,7 @@ Create config file in text editor
 
 
 
-
+```
 $ config="[defaults]\nhost_key_checking=False\npipelining=True\nforks=100"
 
 $ sudo cp -r /home/os/ansible.cfg /etc/ansible
