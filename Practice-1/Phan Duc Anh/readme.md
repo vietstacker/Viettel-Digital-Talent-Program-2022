@@ -136,7 +136,7 @@ Sau khi build sau, ta có thể kiểm tra các images bằng lệnh:
 
         docker images ls
 
-        ![built_images](images/built_images.png)
+![built_images](images/built_images.png)
 
 ## 3.5. Prepare initial configuration
 
