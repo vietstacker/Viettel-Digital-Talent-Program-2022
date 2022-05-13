@@ -24,7 +24,7 @@ An OpenStack deployment contains a number of components providing APIs to access
 ## **B. KOLLA-ANSIBLE**: 
 
 Kolla Ansible deploys OpenStack services and infrastructure components in Docker containers
-<img src="./images/Docker.png">
+<img src="./images/Docker.PNG">
 
 Kolla's mission statement is:
  > To provide production-ready containers and deployment tools for operating OpenStack clouds.
@@ -42,5 +42,5 @@ The virtual machine must satisfy these requirement:
 - **2 network interfaces**
 - **8GB main memory**
 - **40GB disk space (2 disk with 20GB each)** 
-<img src="./images/config.png">
+<img src="./images/config.PNG">
 # **III. OpenStack AIO Setup Process**:
