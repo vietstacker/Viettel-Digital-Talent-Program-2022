@@ -1,20 +1,20 @@
 # Practice 1: Setup OpenStack AIO inside VM with Kolla
 ---
-# **Table of Contents:**
+## **Table of Contents:**
 
-## [I. Overview](#**I.-OVERVIEW**)
+### [I. Overview]
 
-- ### [A. Openstack](#**A.-`OPENSTACK`**)
+- #### [A. Openstack]
 
-- ### [B. Kolla-Ansible](#**B.-`KOLLA-ANSIBLE`**)
+- #### [B. Kolla-Ansible]
 
-## [II. OpenStack AIO Setup Process](#**II.-OpenStack AIO Setup ProcessE**)
-- ### [Install dependencies](#**-Install dependencies**)
-- ### [Configure](#**-Configure**)
-- ### [Openstack Deployment](#**-Openstack Deployment**)
-- ### [Using Openstack](#**-Using Openstack**)
+### [II. OpenStack AIO Setup Process]
+- #### [Install dependencies]
+- #### [Configure]
+- #### [Openstack Deployment]
+- #### [Using Openstack]
 
-## [III. REFERENCES](#III.-REFERENCES)
+### [III. REFERENCES]
 
 
 
