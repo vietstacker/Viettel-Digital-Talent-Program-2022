@@ -1,5 +1,24 @@
 # Practice 1: Setup OpenStack AIO inside VM with Kolla
 ---
+# **Table of Contents:**
+
+## [I. Overview](#**I.-OVERVIEW**)
+
+- ### [A. Openstack](#**A.-`OPENSTACK`**)
+
+- ### [B. Kolla-Ansible](#**B.-`KOLLA-ANSIBLE`**)
+
+## [II. OpenStack AIO Setup Process](#**II.-OpenStack AIO Setup ProcessE**)
+- ### [Install dependencies](#**-Install dependencies**)
+- ### [Configure](#**-Configure**)
+- ### [Openstack Deployment](#**-Openstack Deployment**)
+- ### [Using Openstack](#**-Using Openstack**)
+
+## [III. REFERENCES](#III.-REFERENCES)
+
+
+
+
 ## **I. OVERVIEW**:
 
 ### **A. OPENSTACK**: 
@@ -55,7 +74,7 @@ The virtual machine must satisfy these requirement:
 - **40GB disk space (2 disk with 20GB each)** 
 <img src="./images/config.PNG">
 
-## **III. OpenStack AIO Setup Process**:
+## **II. OpenStack AIO Setup Process**:
 
 ## Install dependencies
 ### 1. Update package & install essentials dependencies:
@@ -287,11 +306,11 @@ $ openstack token issue
 
 
 
-# **V. REFERENCES**:
+# **III. REFERENCES**:
 
-- [Official Document of `Kolla Ansible` - Deploy All-in-one Openstack](https://docs.openstack.org/kolla-ansible/latest/user/quickstart.html)
+- [User Guide of `Kolla Ansible` - Openstack.org](https://docs.openstack.org/kolla-ansible/latest/user/index.html)
 
 
-- [Deploy All-in-one Openstack - NhanHoa](https://news.cloud365.vn/openstack-kolla-phan-1-huong-dan-cai-dat-openstack-train-all-in-one-bang-kolla-ansible/)
+- [Openstack wikipedia](https://en.wikipedia.org/wiki/OpenStack)
 
-- [Deploy Openstack w/ `Kolla-Ansible` - HocChuDong](https://github.com/hocchudong/openstack-tools/tree/master/docs/kolla)
+- [Kolla-ansible Github](https://github.com/openstack/kolla-ansible)
