@@ -18,15 +18,23 @@
 
 ## [II. Prerequisite](#**II.-PREREQUISITE**)
 
-## [III. Implementation](#III.-IMPLEMENTATION)
+## [III. Implementation](#**III.-IMPLEMENTATION**)
 
-- ### [A.Set up Environment](#**Install dependencies**)
+- ### [A. Install dependencies](#**INSTALL-DEPENDENCIES**)
+
+- ### [B. Install Ansible and Kolla-ansible](#**INSTALL-ANSIBLE-AND-KOLLA-ANSIBLE**)
+
+- ### [C. Deploy Openstack](#**DEPLOY-OPENSTACK**)
+
+- ### [D. Post Deployment](#**POST-DEPLOYMENT**)
+
+- ### [E. Access Horizon Dashboard](#**ACCESS-HORIZON-DASHBOARD**)
 
 ## [IV. Debug](#III.-DEBUG)
 
 ---
 
-# **I. Overview**
+# **I. OVERVIEW**
 
 ## **A. Openstack**
 
@@ -250,8 +258,6 @@ Password to login:
         keystone_admin_password: DA52UsQx8S0M0VjyMgBoovfUIHh1uhK2uOgSNWrP
   
 - Openstack Login page
-
-<!-- <img src = "./imgs/login_page.png" alt = "Login Page" >  -->
 
 ![Login page](./imgs/login_page.png)
 
