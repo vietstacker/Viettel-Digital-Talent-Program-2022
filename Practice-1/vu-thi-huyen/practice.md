@@ -60,6 +60,8 @@
     $ source openstack-pj/bin/activate  
     ```
 
+    >Lưu ý: Không tạo venv dưới quyền root :( 
+
 * Cài đặt `Kolla-ansible` và `Ansible` trong `virtualenv`
 
     Cài đặt `ansible`:
@@ -74,16 +76,173 @@
     $ pip install git+https://opendev.org/openstack/kolla-ansible@stable/xena        
     ```
 
-* Cấu hình `Kolla-ansible` và `Ansible`
+### *2.2 Configure **Kolla-ansible** and **Ansible***
 
-    Tạo thư mục `/etc/kolla`:
+* Cấu hình `Kolla-ansible`
+
+    * Tạo thư mục `/etc/kolla`:
+
+        ```
+        $ sudo mkdir -p /etc/kolla
+        $ sudo chown $huyenvu:$huyenvu /etc/kolla    
+        ```  
+
+    * Copy `globals.yml` và `passwords.yml` tới thư mục `/etc/kolla`:
+
+        ```
+        cp -r openstack-pj/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
+        ```
+
+    * Copy file `all-in-one` và `multinode` tới đường dẫn thư mục hiện tại:
+    
+        ```
+        cp openstack-pj/share/kolla-ansible/ansible/inventory/* .
+        ```
+    
+* Config `ansible`
+
+    Tạo file cấu hình cho `ansible`
 
     ```
-    $ sudo mkdir -p /etc/kolla
-    $ sudo chown $USER:$USER /etc/kolla    
-    ```  
+    $ sudo mkdir -p /etc/ansible    
+    $ sudo vi /etc/ansible/ansible.cfg     
+    ```
+
+    Thêm vào file trên nội dung như sau:
+
+    ```
+    [defaults]
+    host_key_checking=False
+    pipelining=True
+    forks=100 
+    ```
 
 
-### *2.2 Configure **Kolla-ansible** and **Ansible***
 ### *2.3 Pre-deploy configurations*
-### *2.4 Openstack deploy*
+
+* Kiểm tra xem cấu hình của file inventory đã ok chưa:
+
+    ```
+    ansible -i all-in-one all -m ping
+    ```
+
+    ![Ansible ping](./img/ansible-ping.png)
+
+* Kolla passwords
+
+    Passwords sử dụng cho deployment được lưu trong file `/etc/kolla/passwords.yml`,sử dụng câu lệnh sau để sinh passwords:
+
+    ```
+    kolla-genpwd
+    ```
+
+* Tạo phân vùng cho `Cinder`
+
+    ```
+    $ sudo pvcreate /dev/sdb  
+    $ sudo vgcreate cinder-volumes /dev/sdb   
+    ```
+
+* Thêm các cấu hình vào file `/etc/kolla/globals.yml`
+
+    Mở file và cấu hình như sau:
+    
+    ![globals.yml](./img/globals-yml.png)
+
+### *2.4 Deploy Openstack*
+
+* Bootstrap servers
+
+    ```
+    $ kolla-ansible -i all-in-one bootstrap-servers   
+    ```
+    ![B](./img/setup-kolla-env.png)
+
+* Kiểm tra thiết lập Kolla Ansible
+
+    ```
+    $ kolla-ansible -i all-in-one prechecks   
+    ```
+
+    ![Prechecks](./img/kolla-precheck.png)
+
+* Cài đặt các Image Openstack:
+
+    ```
+    $ kolla-ansible -i all-in-one pull       
+    ```
+
+    > Ban đầu em chỉ để CPU 1 core nên khi chạy đoạn này thì nó mất hơn tiếng chưa xong :( mặc dù em đã thêm RAM. Sau khi tắt đi và cho CPU 2 cores thì trộm vía nó chạy 5p là xong :smile_cat: 
+
+    Và tèn ten:
+
+    ![Pull](./img/kolla-pull.png)
+
+* Deploy 
+
+    ```
+    kolla-ansible -i all-in-one deploy
+    ```
+
+    ![Deploy](./img/deploy.png)
+
+* Post-deploy
+
+    ```
+    kolla-ansible -i all-in-one post-deploy
+    ```
+
+    ![post deploy](./img/post-deploy.png)
+
+### *2.5 Using Openstack*
+
+* Cài đặt Openstack CLI Client
+
+    ```
+    pip install python-openstackclient -c https://releases.openstack.org/constraints/upper/xena
+    ```
+
+* Thêm Environment variables
+
+    ```
+    source /etc/kolla/admin-openrc.sh
+    ```  
+    > Tới đoạn này thì `enp0s8` bị lỗi `connection fail`, em thử xóa ip cũ & request ip mới nhưng không được nên đành config như này:
+
+    ```
+    sudo nano /etc/netplan/01-network-manager-all.yaml
+    ```
+
+    Thêm nội dung sau vào file trên:
+
+    ```
+    ethernets:
+      enp0s3:
+        dhcp4: true
+      enp0s8:
+        addresses:
+          - 10.10.10.2/24
+        gateway4: 10.10.10.1
+
+    ```
+
+* Truy cập Horizon Dashboard
+
+    Lấy mật khẩu và tài khoản admin:
+
+    ```
+    cat /etc/kolla/passwords.yml | grep keystone_admin
+    ```
+
+    Kết quả:
+
+    ![Keystone-admin](./img/keystone-admin.png)
+
+    Truy cập địa chỉ [http://192.168.56.101/auth/login/?next=/.](http://192.168.56.101/auth/login/?next=/.) với tài khoản:
+    * Username: admin
+    * Password: U0v49P0E410dNHrJDCú0FVc7wyC2HiO4LM35yzp
+
+    Đăng nhập thành công:
+
+    ![Login OK](./img/login-ok.png)
+    
