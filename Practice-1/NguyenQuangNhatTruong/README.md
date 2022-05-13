@@ -8,35 +8,35 @@
 
 ---
 
-# **Table of Contents:**
+## **Table of Contents:**
 
-## [I. Overview](#**I.-OVERVIEW**)
+### [I. Overview](#**I.-OVERVIEW**)
 
-- ### [A. Openstack](#**A.-`OPENSTACK`**)
+- #### [A. Openstack](#**A.-`OPENSTACK`**)
 
-- ### [B. Kolla-Ansible](#**B.-`KOLLA-ANSIBLE`**)
+- #### [B. Kolla-Ansible](#**B.-`KOLLA-ANSIBLE`**)
 
-## [II. Prerequisite](#**II.-PREREQUISITE**)
+### [II. Prerequisite](#**II.-PREREQUISITE**)
 
-## [III. Implementation](#**III.-IMPLEMENTATION**)
+### [III. Implementation](#**III.-IMPLEMENTATION**)
 
-- ### [A. Install dependencies](#**INSTALL-DEPENDENCIES**)
+- #### [A. Install dependencies](#**INSTALL-DEPENDENCIES**)
 
-- ### [B. Install Ansible and Kolla-ansible](#**INSTALL-ANSIBLE-AND-KOLLA-ANSIBLE**)
+- #### [B. Install Ansible and Kolla-ansible](#**INSTALL-ANSIBLE-AND-KOLLA-ANSIBLE**)
 
-- ### [C. Deploy Openstack](#**DEPLOY-OPENSTACK**)
+- #### [C. Deploy Openstack](#**DEPLOY-OPENSTACK**)
 
-- ### [D. Post Deployment](#**POST-DEPLOYMENT**)
+- #### [D. Post Deployment](#**POST-DEPLOYMENT**)
 
-- ### [E. Access Horizon Dashboard](#**ACCESS-HORIZON-DASHBOARD**)
+- #### [E. Access Horizon Dashboard](#**ACCESS-HORIZON-DASHBOARD**)
 
-## [IV. Debug](#III.-DEBUG)
+### [IV. Debug](#III.-DEBUG)
 
 ---
 
-# **I. OVERVIEW**
+## **I. Overview**
 
-## **A. Openstack**
+### **A. Openstack**
 
 OpenStack là một platform điện toán đám mây nguồn mở hỗ trợ cả public clouds và private clouds. Nó cung cấp giải pháp xây dựng hạ tầng điện toán đám mây đơn giản, có khả năng mở rộng và nhiều tính năng phong phú.
 
@@ -58,13 +58,13 @@ Các thành phần của OpenStack:
 
 - OpenStack dashboard: cung cấp cho người quản trị cũng như người dùng giao diện đồ họa để truy cập, cung cấp và tự động tài nguyên cloud. Việc thiết kế có thể mở rộng giúp dễ dàng thêm vào các sản phẩm cũng như dịch vụ ngoài như billing, monitoring và các công cụ giám sát khác.
 
-## **B. Kolla-Ansible**
+### **B. Kolla-Ansible**
 
 Openstack Kolla là Project hay công cụ sử dụng để triển khai, vận hành Openstack. Kolla được phát hành từ phiên bản Kilo và chính thức trở thành Project Openstack tại phiên bản Liberty.
 
 Với ý tưởng của Project Kolla là triển khai Openstack trong môi trường Container, tự động triển khai Openstack bằng Kolla Ansible. Qua đó chỉ với 1 vài thao tác, chúng ta đã có môi trường Openstack để sử dụng. Hơn nữa, Project Kolla cũng cung cấp sẵn các giải pháp về giám sát, HA, Rolling Upgrades … cho Openstack
 
-# **II. Prerequisite**
+## **II. Prerequisite**
 
 Network: 3
 
@@ -87,9 +87,9 @@ Host VM Specifications:
     Disks: 2 (Minimum capacity: 20GB)
     Network: 2NICs
 
-# **III. Implementation**
+## **III. Implementation**
 
-## **A. Install dependencies**
+### **A. Install dependencies**
 
 1. Update and upgrade your system packages:
 
@@ -109,13 +109,14 @@ Host VM Specifications:
 
         pip install -U pip
 
-## **B. Install Ansible and Kolla-ansible**
+### **B. Install Ansible and Kolla-ansible**
 
 1. Install Ansible:
 
         pip install 'ansible<5.0'
 
     Success:
+
     ![Ansible](imgs/ansible_install.png)
 
 2. Config Ansible:
@@ -186,9 +187,7 @@ Host VM Specifications:
 
     ![Ping success](imgs/ping_success.png)
 
-- ### [C. Pre-deploy-configurations](#**Deploy Openstack**)
-
-## **C. Deploy Openstack**
+### **C. Deploy Openstack**
 
 1. Bootstrap Server:
 
@@ -222,7 +221,7 @@ Host VM Specifications:
 
     ![Deploy](imgs/deploy.png)
 
-## **D. Post Deployment**
+### **D. Post Deployment**
 
 1. Install Openstack CLI:
 
@@ -244,7 +243,7 @@ Host VM Specifications:
 
     ![Token](imgs/ops_token.png)
 
-## **E. Access Horizon Dashboard**
+### **E. Access Horizon Dashboard**
 
 - Use following login account:
 
@@ -265,7 +264,7 @@ Password to login:
 
 ![Dashboard](./imgs/ops_dashboard.png)
 
-# **IV. Debug**
+## **IV. Debug**
 
 ![pull_failed](imgs/pull_img_fail.jpg)
 
@@ -276,4 +275,3 @@ You might have a problem of your kolla ansible version. It not compatible with y
 It's because of your internet connection. You should add one more interface, or use command to reset your connection until you have internet connection.
 
     sudo service network-manager restart
-
