@@ -5,14 +5,15 @@
    - [1. Openstack](#openstack)           
    - [2. Kolla-Ansible](#kolla-ansible)                  
 - [II. Yêu cầu](#yêu_cầu)   
-   - [1. Kiến thức](#kiến_thức)      
+   - [1. Kiến thức cơ sở](#kiến_thức)      
    - [2. Cấu hình](#cấu_hình)       
          
-- [III. Các bước thực hiện](#các_bước_thực_hiện)        
-   - [1. Thiết lập môi trường ](#thiết_lập_môi_trường)    
-   - [2. Cấu hình Openstack All In One](#cấu_hình_openstack_all_in_one)       
-   - [3. Cài đặt Openstack All In One](#cài_đặt_openstack_all_in_one)                 
-   - [4. Đăng nhập vào Horizon ](#đăng_nhập_vào_Horizon)          
+- [III. Các bước thực hiện cài đặt Openstack All-in-one bằng Kolla Ansible](#)        
+   - [1. Cài đặt các dependencies](#)    
+   - [2. Cài đặt Kolla-ansible](#cấu_hình_openstack_all_in_one)       
+   - [3. Cấu hình Kolla-ansible](#)                 
+   - [4. Cấu hình Openstack All-in-one](#)       
+   - [5. Đăng nhập Horizon](#)   
 - [Tài liệu tham khảo](#Tài_liệu_tham_khảo)             
 ----  
 
@@ -21,13 +22,20 @@
 ### 1. Openstack
 
 #### a) Tổng quan về Openstack
+Openstack là một nền tảng mã nguồn mở 
 
 #### b) Các thành phần trong Openstack
+
+![image](img/openstack-overview.png)   
+
+- ##### Identity (Keystone)
+
+
 
 ### 2. Kolla Ansible
 
 
-## II. Cài đặt Ubuntu trên VirtualMachine
+## II. Cài đặt Ubuntu trên VỉtualBox
 
 
 ## III. Yêu cầu
@@ -40,7 +48,7 @@
 
 - Kiến thức cơ bản về Linux và Mạng máy tính.
 
-### 2. Đề xuất cấu hình
+### 2. Cấu hình
 
 ||Đề xuất|Cấu hình trong demo|     
 |----|----|----|    
@@ -48,6 +56,22 @@
 |RAM| 8GB| 8GB|    
 |HDD| 2 Disks| 2 Disks|   
 |Network| 2 NICs| 2 NICs|   
+
+- Cấu hình VirtualBox:
+
+![image](img/configuration.png)   
+
+- Phân vùng ổ đĩa ảo: 
+    - `sda`: 30.67GB cho OS 
+    - `sdb`: 20GB cho Cinder
+
+![image](img/partition.png)   
+
+- Network interface controller:
+    - NIC1: `enp0s3 - 192.168.1.102/24 `
+    - NIC2: `enp0s8 - 192.168.56.101/24`
+
+![image](img/configuration.png)   
 
 ## IV. Các bước thực hiện cài đặt Openstack All-in-one bằng Kolla Ansible
 
@@ -155,6 +179,7 @@ $ ansible -i all-in-one all -m ping
 ```
 
 Kết quả: 
+
 ![image](img/all-in-one-ping.png)   
 
 - Tiếp theo là generate mật khẩu sử dụng cho quá trình triển khai. Các mật khẩu này được lưu ở file `/etc/kolla/passwords.yml`. Ban đầu các mật khẩu này đều trống. Để tự động sinh ra mật khẩu ngẫu nhiên và tự động điền cho các trường trong file này, chạy lệnh:
@@ -199,6 +224,7 @@ $ kolla-ansible -i all-in-one bootstrap-servers
 ```
 
 Kết quả:
+
 ![image](img/bootstrap.png)   
 
 - Tiếp theo kiểm tra thiết lập Kolla Ansible:
@@ -208,6 +234,7 @@ $ kolla-ansible -i all-in-one prechecks
 ```
 
 Kết quả:
+
 ![image](img/prechecks.png)   
 
 - Triển khai OpenStack:
@@ -217,6 +244,7 @@ $ kolla-ansible -i all-in-one deploy
 ```
 
 Kết quả:
+
 ![image](img/deploy.png)   
 
 - Thiết lập file Environment Openstack:
@@ -225,9 +253,10 @@ Kết quả:
 $ kolla-ansible -i all-in-one post-deploy   
 ```
 Kết quả:
+
 ![image](img/post-deploy.png)    
 
-### 5. Sử dụng Openstack
+### 6. Đăng nhập Horizon
 
 - Lấy mật khẩu để đăng nhập tài khoản admin:  
 ```    
@@ -235,6 +264,7 @@ $ cat /etc/kolla/passwords.yml | grep keystone_admin
 ```
 
 Kết quả: 
+
 ![image](img/keystone_password.png)   
 
 - Truy cập vào địa chỉ `http://192.168.1.102/auth/login/?next=/project/` để đăng nhập. Trong đó: 
