@@ -1,8 +1,48 @@
 # Setup OpenStack AIO inside VM with Kolla
 
-## OpenStack 
+----        
+## Table of contents     
+[I. OpenStack](#openstack)
+- [1. Overview](#openstack-overview)
+- [2. Versions](#openstack-versions)
+- [3. Architecture](#openstack-architecture)           
+- [4. Services](#openstack-services)   
+- [5. All-In-One (single-node) Single VM](#openstack-all-in-one)
 
-### Overview
+[II. Kolla](#kolla)   
+- [1. Overview](#kolla-overview)  
+- [2. Versions](#openstack-versions)  
+- [3. Kolla Ansible](#kolla-ansible)  
+
+[III. Requires](#requires)
+- [1. Infrastructure requirements](#requires-infa)
+- [2. Setting up our VM](#requires-setting)
+- [3. Verify infrastructure](#requires-verify)
+
+[IV. Instructions](#instructions)
+- [1. Install dependencies](#instruction-install)
+- [2. Install Ansible](#instructions-ansible)
+- [3. Install and set up Kolla-Ansible](#instruction-kolla-ansible)
+- [4. Install OpenStack CLI](#instruction-openstack-cli)
+
+[V. Configuration](#configuration)
+- [1. Configure Kolla Ansible](#configure-kolla-ansible)
+- [2. Configure Ansible](#configure-ansible)
+
+[VI. Pre-deploy](#predeploy)
+
+[VII. Deployment](#deployment)
+
+[VIII. Using OpenStack](#using-openstack)
+
+[VIII. References]
+---- 
+
+<a name='openstack'></a> 
+## I. OpenStack 
+
+<a name='openstack-overview'></a> 
+### 1. Overview
 
 **OpenStack** is a **_free_, _open standard_** cloud computing platform. 
 It is mostly deployed as **infrastructure-as-a-service** (_Iaas_) in both 
@@ -21,7 +61,23 @@ In 2021 the foundation renamed to **the Open Infrastructure Foundation**.
   <i>OpenStack logo.</i>
 </div>
 
-### Architecture
+<a name='openstack-versions'></a> 
+### 2. Versions
+
+**OpenStack** is developed and released around 6-month cycles. After the initial release, 
+additional stable point releases will be released in each release series.
+
+| Series | Status | Initial Release Date |
+|--------|--------|----------------------|
+| Zed | Development | 2022-10-05 estimated (schedule) |
+| Yoga | Maintained | 2022-03-30 | 
+| Xena | Maintained | 2021-10-06 |
+| Wallaby | Maintained | 2021-04-14 |
+
+The latest version now is `Yoga`. But in this practice, I use `Xena` for learning purpose.
+
+<a name='openstack-architecture'></a> 
+### 3. Architecture
 
 **Openstack** is designed with a **modular** architecture - facilitates the scaling & integration of components.
 
@@ -38,7 +94,8 @@ In 2021 the foundation renamed to **the Open Infrastructure Foundation**.
   <i>OpenStack's logical architecture.</i>
 </div>
 
-### Services
+<a name='openstack-services'></a> 
+### 4. Services
 
 An OpenStack deployment contains a number of components **providing APIs** to access infrastructure resources. 
 These are the various services that can be deployed to provide such resources to cloud end users.
@@ -61,7 +118,8 @@ These are the various services that can be deployed to provide such resources to
 |**Cinder**| Block Storage | **Cinder** virtualizes the management of block storage devices and provides end users with a self service API to request and consume those resources without requiring any knowledge of where their storage is actually deployed or on what type of device. |
 |**Nova**| Compute Service | **Nova** implements services and associated libraries to provide massively scalable, on demand, self service access to compute resources, including bare metal, virtual machines, and containers.                                                               |
 
-### All-In-One (single-node) Single VM 
+<a name='openstack-all-in-one'></a> 
+### 5. All-In-One (single-node) Single VM 
 
 <div align="center">
   <img width="1000" src="assets/openstack-multinodes-singlenode.jpeg" alt="Single-node vs Multiple-nodes">
@@ -95,9 +153,11 @@ And the deployment must include 3 main services of OpenStack:
 </div>
 
 
-## Kolla
+<a name='kolla'></a> 
+## II. Kolla
 
-### Overview
+<a name='kolla-overview'></a> 
+### 1. Overview
 **Kolla** provides _production-ready_ containers and deployment tools 
 for operating **OpenStack** clouds. 
 
@@ -110,11 +170,32 @@ for operating **OpenStack** clouds.
   <i>Kolla logo.</i>
 </div>
 
-## Requires
+### 2. Versions
+
+**Kolla** has stable version, which is developed based on **OpenStack**. 
+So we you need to choose the **kolla** version match with your **OpenStack** version.
+
+- OpenStack `latest` - Kolla `14.1.x`
+- OpenStack `Yoga` - Kolla  `14.x.x`
+- OpenStack `Xena` - Kolla `13.0.x`
+- OpenStack `Victoria` - Kolla `11.4.x`
+- ...
+
+I use OpenStack `Xena` here, so I will use Kolla `13.0.x`.
+
+### 3. Kolla Ansible
+
+**Kolla Ansible** provides **Ansible** playbooks to deploy the **Kolla** images.
+Its version is similar to **Kolla**.
+
+<a name='requires'></a> 
+## III. Requires
 
 In this practice, I will use my **Ubuntu VM** (_Ubuntu 20.04.2 ARM 64_) by **Parallels Desktop**.
 
-### Infrastructure requirements
+
+<a name='requires-infa'></a> 
+### 1. Infrastructure requirements
 | Specification(s) | Require | Personal VM (by default) |                                                                                                  
 |------------------|---------|-------------------------|
 | CPU | 4 cores | 2 cores                 |
@@ -123,7 +204,8 @@ In this practice, I will use my **Ubuntu VM** (_Ubuntu 20.04.2 ARM 64_) by **Par
 | Network | 2 NICs  | 1 NIC                   |
 
 
-### Setting up our VM
+<a name='requires-setting'></a> 
+### 2. Setting up our VM
 
 First, power off our VM, because some configurations can not perform when the VM is still running.
 Then open VM instance's `Configuration` by click to the `Setting icon` button and choose `Hardware` tab.
@@ -181,7 +263,8 @@ So click to the `+` and choose `Network` to add a new **Network Interface Contro
   <i>Choose <strong>Network</strong> to add a new network.</i>
 </div>
 
-### Verify infrastructure 
+<a name='requires-verify'></a> 
+### 3. Verify infrastructure 
 
 After finish setting, **restart** our VM to apply these new changes.
 
@@ -281,7 +364,8 @@ I will use 2 network interfaces:
 
 Now, we have met the requirements of to run `all-in-one` **OpenStack**.
 
-## Instruction
+<a name='instructions'></a> 
+## IV. Instructions
 
 To make it is easy, all the commands use administrator rights - add `sudo` before
 them all.
@@ -319,7 +403,9 @@ su
   <i>Switch user to <strong>root user</strong>.</i>
 </div>
 
-### Install dependencies
+
+<a name='instructions-install'></a> 
+### 1. Install dependencies
 
 1/ Update `apt`
 
@@ -338,6 +424,10 @@ apt install python3-dev python3-pip libffi-dev gcc libssl-dev
 ```
 
 3/ Install `virtualenv` for **virtual environment**
+
+
+**Virtual environment** is a folder structure that gives you everything you need to run a 
+lightweight yet isolated environment.
 
 We will install the dependencies using virtual environment, so use `venv` 
 to create a virtual environment.
@@ -385,31 +475,36 @@ Upgrade `pip` to the latest version by `-U` (`--upgrade`) option.
 pip install -U pip
 ```
 
-### Install `ansible`
+<a name='instructions-ansible'></a> 
+### 2. Install `ansible`
 
-Install  `ansible`. Kolla Ansible requires at least Ansible **4** and supports up to **5**.
+Install  `ansible`. **Kolla Ansible** requires at least **Ansible** `2.10` and supports up to `4`.
 
 ```shell
-pip install 'ansible==2.10.7'
+pip install 'ansible<5.0'
 ```
 
-### Install and set up `kolla-ansible`
+<a name='instructions-kolla-ansible'></a> 
+### 3. Install and set up `kolla-ansible`
 
 Install `kolla-ansible` and its dependencies  by using `pip` in virtual environment.
 
 ```shell
-pip install kolla-ansible
+pip install git+https://opendev.org/openstack/kolla-ansible@stable/xena  
 ```
 
-### Install `OpenStack CLI`
+<a name='instructions-openstack-cli'></a> 
+### 4. Install `OpenStack CLI`
 
 ```shell
 pip install python-openstackclient python-glanceclient python-neutronclient
 ```
 
-## Configuration 
+<a name='configuration'></a> 
+## V. Configuration 
 
-### Configure `kolla-ansible`
+<a name='configuration-kolla-ansible'></a> 
+### 1. Configure `kolla-ansible`
 
 1/ Create `/etc/kolla` directory
 
@@ -433,7 +528,8 @@ cp -r ./openstackenv/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
 cp ./openstackenv/share/kolla-ansible/ansible/inventory/all-in-one .
 ```
 
-### Configure `ansible`
+<a name='configuration-ansible'></a> 
+### 2. Configure `ansible`
 
 1/ Create `/etc/ansible` directory
 
@@ -448,7 +544,8 @@ config="[defaults]\nhost_key_checking=False\npipelining=True\nforks=100"
 echo -e $config > /etc/ansible/ansible.cfg
 ```
 
-## Pre-deploy
+<a name='predeploy'></a> 
+## VI. Pre-deploy
 
 1/ Custom inventory file
 
@@ -554,7 +651,8 @@ connect with HAproxy.
 - **enable_cinder_backup**: We don't use **Backup Cinder**, so we set `no` hrer.
 - **enable_cinder_backend_lvm**: we use Backend LVM for **Cinder** , so we set `yes` here.
 
-## Deployment
+<a name='deployment'></a> 
+## VII. Deployment
 
 1/ Setup Openstack Kolla by Boostrap servers
 
@@ -615,16 +713,19 @@ kolla-ansible -i all-in-one pull
   <i>Deploy OpenStack success.</i>
 </div>
 
-## Using OpenStack
+<a name='using-openstack'></a> 
+## VIII. Using OpenStack
 
 
-## References
+## XI. References
 
-[1] [OpenStack in Wikipedia](https://en.wikipedia.org/wiki/VirtualBox)
+[1] [OpenStack website](https://www.openstack.org/)
 
-[2] [OpenStack components](https://www.virtualbox.org)
+[2] [OpenStack components](https://www.openstack.org/software/project-navigator/openstack-components)
 
 [3] [Kolla repository](https://github.com/openstack/kolla)
+
+[4] [Kolla in OpenStack wiki](https://wiki.openstack.org/wiki/Kolla)
 
 [4] [kolla-ansible repository](https://github.com/openstack/kolla-ansible)
 
@@ -633,3 +734,13 @@ kolla-ansible -i all-in-one pull
 [6] [Config globals.yml](https://github.com/openstack/kolla-ansible/blob/master/etc/kolla/globals.yml)
 
 [6] [Viettel Digital Talent program 2021 - OpenStack](https://github.com/vietstacker/Viettel-Digital-Talent-Program-2021/tree/main/Phase-1-Practices/Week-3)
+
+
+sudo pip3 install -U 'ansible>=4,<6'
+sudo pip3 install git+https://opendev.org/openstack/kolla-ansible@stable/yoga
+
+
+sudo mkdir -p /etc/kolla
+sudo chown $USER:$USER /etc/kolla
+cp -r ./openstackenv/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
+cp ./openstackenv/share/kolla-ansible/ansible/inventory/* .
