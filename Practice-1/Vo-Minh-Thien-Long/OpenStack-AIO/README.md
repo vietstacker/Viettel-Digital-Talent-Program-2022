@@ -11,7 +11,7 @@
 
 [II. Kolla](#kolla)   
 - [1. Overview](#kolla-overview)  
-- [2. Versions](#openstack-versions)  
+- [2. Versions](#kolla-versions)  
 - [3. Kolla Ansible](#kolla-ansible)  
 
 [III. Requires](#requires)
@@ -20,10 +20,10 @@
 - [3. Verify infrastructure](#requires-verify)
 
 [IV. Instructions](#instructions)
-- [1. Install dependencies](#instruction-install)
+- [1. Install dependencies](#instructions-install)
 - [2. Install Ansible](#instructions-ansible)
-- [3. Install and set up Kolla-Ansible](#instruction-kolla-ansible)
-- [4. Install OpenStack CLI](#instruction-openstack-cli)
+- [3. Install and set up Kolla-Ansible](#instructions-kolla-ansible)
+- [4. Install OpenStack CLI](#instructions-openstack-cli)
 
 [V. Configuration](#configuration)
 - [1. Configure Kolla Ansible](#configure-kolla-ansible)
@@ -35,7 +35,8 @@
 
 [VIII. Using OpenStack](#using-openstack)
 
-[VIII. References]
+[VIII. References](#references)
+
 ---- 
 
 <a name='openstack'></a> 
@@ -170,6 +171,7 @@ for operating **OpenStack** clouds.
   <i>Kolla logo.</i>
 </div>
 
+<a name='kolla-versions'></a> 
 ### 2. Versions
 
 **Kolla** has stable version, which is developed based on **OpenStack**. 
@@ -183,6 +185,7 @@ So we you need to choose the **kolla** version match with your **OpenStack** ver
 
 I use OpenStack `Xena` here, so I will use Kolla `13.0.x`.
 
+<a name='kolla-ansible'></a> 
 ### 3. Kolla Ansible
 
 **Kolla Ansible** provides **Ansible** playbooks to deploy the **Kolla** images.
@@ -503,7 +506,7 @@ pip install python-openstackclient python-glanceclient python-neutronclient
 <a name='configuration'></a> 
 ## V. Configuration 
 
-<a name='configuration-kolla-ansible'></a> 
+<a name='configure-kolla-ansible'></a> 
 ### 1. Configure `kolla-ansible`
 
 1/ Create `/etc/kolla` directory
@@ -528,7 +531,7 @@ cp -r ./openstackenv/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
 cp ./openstackenv/share/kolla-ansible/ansible/inventory/all-in-one .
 ```
 
-<a name='configuration-ansible'></a> 
+<a name='configure-ansible'></a> 
 ### 2. Configure `ansible`
 
 1/ Create `/etc/ansible` directory
@@ -717,6 +720,7 @@ kolla-ansible -i all-in-one pull
 ## VIII. Using OpenStack
 
 
+<a name='references'></a> 
 ## XI. References
 
 [1] [OpenStack website](https://www.openstack.org/)
