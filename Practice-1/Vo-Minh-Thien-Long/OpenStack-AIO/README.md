@@ -19,16 +19,19 @@
 - [2. Setting up our VM](#requires-setting)
 - [3. Verify infrastructure](#requires-verify)
 
-[IV. Instructions](#instructions)
+[IV. Install instructions](#instructions)
 - [1. Install dependencies](#instructions-install)
 - [2. Install Ansible](#instructions-ansible)
-- [3. Install and set up Kolla-Ansible](#instructions-kolla-ansible)
+- [3. Install and set up Kolla Ansible](#instructions-kolla-ansible)
 - [4. Install OpenStack CLI](#instructions-openstack-cli)
+- [5. Install Kolla](#instructions-kolla)
+
 
 [V. Configuration](#configuration)
 - [1. Configure Kolla Ansible](#configure-kolla-ansible)
 - [2. Configure Ansible](#configure-ansible)
-
+- [3. Build container images for ARM](#configure-arm)
+- 
 [VI. Pre-deploy](#predeploy)
 
 [VII. Deployment](#deployment)
@@ -352,18 +355,18 @@ interfaces.
 
 I will use 2 network interfaces:
 
-- eth0: `NAT` - **10.211.55.6/24** (for Internal network)
+- eth0: **10.211.55.6/24** (for Internal network)
 
-- eth1: `Host` - **10.211.55.8/24** (for External/Provider network)
+- eth1: **10.211.55.8/24** (for External/Provider network)
 
 #### Summary
 
-| Specification(s) | Require | Personal VM (by default) |  Personal VM (after config) |                                                                                                                
-|------------------|---------|-------------------------|-----|
-| CPU | 4 cores | 2 cores                 | 4 cors |
-| RAM | 8 GB    | 2 GB                    | 8 GB |
-| Disks | 2       | 1                       | 2 |
-| Network | 2 NICs  | 1 NIC                   | 2 NICs |
+| Specification(s) | Require | Personal VM (by default) | Personal VM (after config) |                                                                                                                
+|------------------|---------|-------------------------|----------------------------|
+| CPU | 4 cores | 2 cores                 | 4 cores                    |
+| RAM | 8 GB    | 2 GB                    | 8 GB                       |
+| Disks | 2       | 1                       | 2                          |
+| Network | 2 NICs  | 1 NIC                   | 2 NICs                     |
 
 Now, we have met the requirements of to run `all-in-one` **OpenStack**.
 
@@ -410,67 +413,41 @@ su
 <a name='instructions-install'></a> 
 ### 1. Install dependencies
 
-1/ Update `apt`
+1/ Update the package sources list
 
-Update the package index by using `apt update`.
+Update the package sources list to get the latest list of available packages 
+in the repositories by using `apt update`.
 
 ```shell
 apt update
 ```
 
-2/ Install required dependencies
+2/ Updates all the packages
 
-We will install required dependencies by `apt install`.
+Update all the packages presently installed in our Linux system to their 
+latest versions by using `apt upgrade`.
+
+```shell
+apt upgrade
+```
+
+3/ Install required dependencies
+
+First, in case you didn't install `git` or `docker`, 
+install it by `apt install`.
+
+```shell
+apt git docker docker-compose
+```
+
+
+Then, we will install other required dependencies.
 
 ```shell
 apt install python3-dev python3-pip libffi-dev gcc libssl-dev
 ```
 
-3/ Install `virtualenv` for **virtual environment**
-
-
-**Virtual environment** is a folder structure that gives you everything you need to run a 
-lightweight yet isolated environment.
-
-We will install the dependencies using virtual environment, so use `venv` 
-to create a virtual environment.
-
-Install `virtualenv`:
-
-```shell
-apt install python3-venv
-```
-
-4/ Create **virtual environment**
-
-In this practice, my `virtualenv` will be located at **./openstackenv**
-
-```shell
-python3 -m venv ./openstackenv
-```
-
-5/ Activate virtual environment
-
-The virtual environment should be activated before running any commands that depend on 
-packages installed in it.
-
-In order to activate virtual environment, we use `source`.
-
-```shell
-source ./openstackenv/bin/activate
-```
-
-If you successfully activate environment, before user and path will have `(openstackenv)`.
-
-<div align="center">
-  <img width="1000" src="assets/setup-3.png" alt="Check (openstackenv)">
-</div>
-
-<div align="center">
-  <i>Check is there <strong>(openstackenv)</strong>.</i>
-</div>
-
-6/ Upgrade `pip`
+4/ Upgrade `pip`
 
 Upgrade `pip` to the latest version by `-U` (`--upgrade`) option.
 
@@ -493,7 +470,7 @@ pip install 'ansible<5.0'
 Install `kolla-ansible` and its dependencies  by using `pip` in virtual environment.
 
 ```shell
-pip install git+https://opendev.org/openstack/kolla-ansible@stable/xena  
+pip install git+https://opendev.org/openstack/kolla-ansible@stable/xena
 ```
 
 <a name='instructions-openstack-cli'></a> 
@@ -502,6 +479,13 @@ pip install git+https://opendev.org/openstack/kolla-ansible@stable/xena
 ```shell
 pip install python-openstackclient python-glanceclient python-neutronclient
 ```
+
+<a name='instructions-kolla-build'></a> 
+### 3. Build container images for ARM by Kolla Build
+
+Sự khác biệt giữa Kolla và kolla-ansible là Kolla cung cấp công cụ để build images cho các dịch vụ OpenStack trên nhiều nền tảng linux với kiến trúc chip khác nhau. Kolla-ansible cung cấp công cụ để triển khai các images được xây dựng bằng Kolla. Do đó, images có thể được tạo và xây dựng lại bất kỳ lúc nào thông qua việc sử dụng lệnh kolla-build.
+
+
 
 <a name='configuration'></a> 
 ## V. Configuration 
@@ -525,6 +509,16 @@ chown $USER:$USER /etc/kolla
 cp -r ./openstackenv/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
 ```
 
+3/ Generate password
+
+Passwords used in our deployment are stored in **/etc/kolla/passwords.yml** file. 
+All passwords are blank in this file and have to be filled either manually or by
+running random password generator
+
+```shell
+kolla-genpwd
+```
+
 3/ Copy `all-in-one` inventory files to the current directory.
 
 ```shell
@@ -542,15 +536,40 @@ mkdir -p /etc/ansible
 
 2/ Add the following options to the Ansible configuration file **/etc/ansible/ansible.cfg**
 
+Open and edit `ansible.cfg` in **/etc/ansible/ansible.cfg** by using `gedit` (in my opion, it is easier to edit the
+file than `vi` or `nano`).
+
 ```shell
-config="[defaults]\nhost_key_checking=False\npipelining=True\nforks=100"
-echo -e $config > /etc/ansible/ansible.cfg
+gedit /etc/ansible/ansible.cfg
 ```
+
+The content of `global.yml`:
+
+```text
+[defaults]
+host_key_checking=False
+pipelining=True
+forks=100
+```
+
+<a name='configure-arm'></a> 
+### 3. Build container images for ARM by Kolla Build
+
+Build images of  OpenStack's services in Ubuntu by `kolla-build`
+
+```shell
+kolla-build -b ubuntu
+```
+
+**Note**: In case you got `403` HTTP status error when build image, 
+please consider using **VPN**.
+Because currently I am in Russia, so some images can't directly install, 
+and I have to use **VPN** instead.
 
 <a name='predeploy'></a> 
 ## VI. Pre-deploy
 
-1/ Custom inventory file
+### 1. Custom inventory file
 
 In this practice, I just use the default sample `all-in-one` as inventory file.
 However, you could change it as your demand, or use `multinode` in case you want to deploy
@@ -563,8 +582,7 @@ is now in your working directory.)
 more all-in-one
 ``` 
 
-
-2/ Check configurations
+### 2. Check configurations
 
 ```shell
 ansible -i all-in-one all -m ping
@@ -582,13 +600,27 @@ Don't worry about the `[WARNING]`, there is `-` character in group name in `all-
 but it doesn't have any affect to us.
 
 
-3/ Create diskspace partition for `Cinder`
+### 3. Create diskspace partition for `Cinder`
+
+1/ Install **Logical Volume Manager**
+
+If you didn't install `lvm2` (for Logical Volume Manager),
+you need to install it to use `pvcreate` and `vgcreate`.
+
+
+```shell
+apt instal lvm2
+```
+
+2/ Create physical volume
 
 Use `pvcreate` to create a physical volume for **Cinder** in `/dev/sdb`.
 
 ```shell
 pvcreate /dev/sdb
 ```
+
+3/ Create volume group
 
 Then `vgcreate` to create a volume group `cinder-volume` in disk `/dev/sdb`.
 
@@ -606,8 +638,7 @@ vgcreate cinder-volumes /dev/sdb
 
 4/ Configurate `global.yml`
 
-Open and edit `globals.yml` in **/etc/kolla** by using `gedit` (in my opion, it is easier to edit the
-file than `vi` or `nano`).
+Open and edit `globals.yml` in **/etc/kolla** by using `gedit`.
 
 ```shell
 gedit /etc/kolla/globals.yml
@@ -737,14 +768,9 @@ kolla-ansible -i all-in-one pull
 
 [6] [Config globals.yml](https://github.com/openstack/kolla-ansible/blob/master/etc/kolla/globals.yml)
 
-[6] [Viettel Digital Talent program 2021 - OpenStack](https://github.com/vietstacker/Viettel-Digital-Talent-Program-2021/tree/main/Phase-1-Practices/Week-3)
+[7] [Quick start with Kolla Ansible Xena](https://docs.openstack.org/kolla-ansible/xena/user/quickstart.html)
 
+[8] [OpenStack on ARM64](https://cloudbase.it/openstack-on-arm64-part-1/)
 
-sudo pip3 install -U 'ansible>=4,<6'
-sudo pip3 install git+https://opendev.org/openstack/kolla-ansible@stable/yoga
+[9] [Viettel Digital Talent program 2021 - OpenStack](https://github.com/vietstacker/Viettel-Digital-Talent-Program-2021/tree/main/Phase-1-Practices/Week-3)
 
-
-sudo mkdir -p /etc/kolla
-sudo chown $USER:$USER /etc/kolla
-cp -r ./openstackenv/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
-cp ./openstackenv/share/kolla-ansible/ansible/inventory/* .
