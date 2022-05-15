@@ -1,123 +1,154 @@
-# Practice 1: Create Ubuntu virtual machine #
----
-#### Check if CPU supports hardware virtualization:
+# **Setup OpenStack AIO inside Ubuntu VM with Kolla**
+## **Table of Contents**
 
-```console
-$ egrep -c '(vmx|svm)' /proc/cpuinfo
-```
-#### Check if system can use KVM acceleration:
-```sh
- $ sudo kvm-ok
-```
-#### Install cpu-checker:
-```sh
- $ sudo apt install cpu-checker
- ```
- #### Update apt & install essentails dependencies:
-```sh
- $ sudo apt update
- $ sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
- ```
- #### Authorize Users:
-```sh
- $ sudo adduser ‘username’ libvirt
- $ sudo adduser ‘[username]’ kvm
- ```
- #### Activate virtualization daemon:
-```sh
- $ sudo systemctl enable --now libvirtd
- ```
- #### Install virt-manager, a tool for creating and managing VMs:
-```sh
- $ sudo apt install virt-manager
- ```
- #### Install virt-manager, a tool for creating and managing VMs:
-```sh
- $ sudo apt install virt-manager
- ```
+- [I. Create Ubuntu virtual machine ](#create_ubun_vm)   
+   - [1. Requirements](#requirements)           
+   - [2. Create VM using VirtualBox](#create_VM)
 
-# Practice: 2 Deploy Openstack AIO inside VM with Kolla
+- [II. Deploy Openstack AIO inside VM with Kolla](#Open_stack_AIO)  
+   - [A. Set up environment](#setup_env)    
+   - [B. Configure Kolla-Ansible & Ansible](#configure_ansible)       
+   - [C. Pre-deploy configuration](#pre_deploy_conf)   
+   - [D. Deploy Openstack](#deployment_openstack)     
+   - [E. Access horizon dashboard](#login) 
 
-### Prepare:
+- [III. References](#refs)         
+----  
 
-- 2 Network Interface:
+## I. Create Ubuntu virtual machine
+<a name='create_ubun_vm'></a >  
 
-ens33: `192.168.31.128` (Host only)
+### 1. Configuration
+<a name='Requirements'></a >  
 
-ens38: `192.168.1.104` (Bridged)
+- **Host Operating System**: *Windows 10*
+- **Guest Operating System:** *Ubuntu 20.04*
+- **Desktop Hypervisor:** *Virtual Box*
+- **Openstack Release:** *Xena*
+- **Application Installation** *git, lvm2, vim*
 
-### Step 1: Install dependencies
+**Personal Notes:**
+>  If **KVM** is used, virtual machine may not recognize network interface  
+>  VirtualBox bridged adapter in host Ubuntu may not connect to Internet  
 
-- Update the package index:
+### 2. Create VM using VirtualBox
+<a name='create_VM'></a >  
+
+- Setup Guest OS:  
+![image](imgs/Setup_guest_OS.png)  
+
+- Choose memory size:  
+![image](imgs/RAM.png)  
+
+- Create a virtual hard disk:  
+![image](imgs/create_vir_hard_disk.png)  
+
+- Select hard disk file type:  
+![image](imgs/hard_disk_file_type.png)  
+
+- Select fixed size for better performance in some aspects:  
+![image](imgs/fixed_size.png)  
+
+- Setup operating system and a virtual hard disk
+![image](imgs/setup_storage.png)  
+
+- Overall configuration:  
+![image](imgs/VM_config.png)  
+
+- **2 Network interface controller**:  
+    - Bridged: `enp0s3 - 192.168.0.110/24 `
+    - Host-only: `enp0s8`
+
+## II. Deploy Openstack AIO inside VM with Kolla
+<a name='Open_stack_AIO'></a >  
+
+## **A. Set up environment**:
+<a name='setup_env'></a > 
+
+### 1. Update `apt` & install essentails dependencies:
 
 ```
 $ sudo apt update
-```
 
-- Install Python build dependencies:
-
-```
 $ sudo apt install python3-dev libffi-dev gcc libssl-dev
 ```
 
-### Step 2: Install dependencies using a virtual environment
+### 2. Time Synchronization Configuration: **(Recommended)**
+> Please refer to this [Documentation](https://linuxconfig.org/ubuntu-20-04-ntp-server)
 
-- Install the virtual environment dependencies:
-
+### 3. Using `virtualenv`:
+- Install `virtualenv`:
 ```
-$ sudo apt install python3-ven
-```
-
-- Create a virtual environment and activate it:
-
-```
-$ python3 -m venv path/to/venv
-
-$ source path/to/venv/bin/activate
-```
-- Ensure the latest version of pip is installed:
-
-```
-$ pip install -U pip
+$ sudo apt install python3-venv
 ```
 
-- Install Ansible. Kolla Ansible requires at least Ansible 2.9 and supports up to 2.10:
-
+- Create `virutalenv` & activate that environment:
 ```
-$ pip install 'ansible==2.9.9'
-```
+$ python3 -m venv v
 
-### Step 3: Install Kolla-ansible
-
-- Install kolla-ansible and its dependencies using pip:
-
-```
-$ pip install kolla-ansible
+$ source v
 ```
 
-- Create the /etc/kolla directory:
+### 4. Install `Ansible` & `Kolla-Ansible` (within `virtualenv`):
+
+- Install `Ansible`:
+```
+$ pip install 'ansible<5.0'
+```
+
+- Install kolla-ansible and its dependencies using pip
+
+```
+$ pip install git+https://opendev.org/openstack/kolla-ansible@stable/xena
+```
+
+- Create the /etc/kolla directory
 
 ```
 $ sudo mkdir -p /etc/kolla
-
 $ sudo chown $USER:$USER /etc/kolla
 ```
 
-- Copy globals.yml and passwords.yml to /etc/kolla directory:
+- Copy globals.yml and passwords.yml to /etc/kolla directory
 
 ```
-$ cp -r path/to/venv/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
+$ cp -r /path/to/venv/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
 ```
 
-- Copy all-in-one and multinode inventory files to the current directory:
+- Copy all-in-one and multinode inventory files to the current directory
 
 ```
-cp path/to/venv/share/kolla-ansible/ansible/inventory/* .
+$ cp /path/to/venv/share/kolla-ansible/ansible/inventory/* .
 ```
 
-### Step 4: Configure Ansible
+### 5. Install `Openstack CLI`:
+> *Optional at this point*
 
-- Create file `/etc/ansible/ansible.cfg`:
+**Notes:**
+
+> Due to the fact that `open vSwitch` might capture `MAC Address` of network interace, which blocks connection to the Internet. Can install Openstack CLI from this step.
+
+```
+$ pip install python-openstackclient python-glanceclient python-neutronclient
+```
+
+## **B. Configure Kolla-Ansible & Ansible**
+<a name='configure_ansible'></a > 
+
+### 1. Create `/etc/kolla`  directory:
+
+```
+$ sudo mkdir -p /etc/kolla
+$ sudo chown $USER:$USER /etc/kolla
+```
+
+### 2. Copy `passwords.yml` to `/etc/kolla`:
+```
+$ cp -r <path-to-virtualenv>/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
+```
+
+### 3. Configure `Ansible`:
+- For best results, Ansible configuration should be tuned for your environment. For example, add the following options to the Ansible configuration file /etc/ansible/ansible.cfg:  
 
 ```
 [defaults]
@@ -126,81 +157,143 @@ pipelining=True
 forks=100
 ```
 
-### Step 5: Prepare initial configuration
+```
+$ sudo mkdir -p /etc/ansible
 
-- Check whether the configuration of inventory is correct or not, run:
+$ config="[defaults]\nhost_key_checking=False\npipelining=True\nforks=100"
 
+$ echo -e $config >> sudo /etc/ansible/ansible.cfg
+```
+
+## **C. Pre-deploy configuration**:
+<a name='pre_deploy_conf'></a > 
+
+### 1. Configure `all-in-one` (`inventory` file)
+**Note**
+> Optional. Should use defaults for `all-in-one`
+
+### 2. Run `ad-hoc` command `ping` to check configurations:
 ```
 $ ansible -i all-in-one all -m ping
 ```
 
-![Screenshot_1.png](https://github.com/dobuithanhnam/Viettel-Digital-Talent-2021/blob/main/Week3/pic1/Screenshot_1.png)
+> Ping Success:
 
-- Kolla passwords:
+<img src="./imgs/test_ping.png">
+
+
+### 3. Create diskspace partition for `Cinder` (*Block Storage*):
+
+```
+$ sudo pvcreate /dev/sdb
+
+$ sudo vgcreate cinder-volumes /dev/sdb
+```
+
+### 4. Generate Passwords for `Kolla`:
+- Stored in `/etc/kolla/passwords.yml` , run commands:
 
 ```
 $ kolla-genpwd
 ```
 
-![Screenshot_4.png](https://github.com/dobuithanhnam/Viettel-Digital-Talent-2021/blob/main/Week3/pic1/Screenshot_4.png)
+Or
 
-- Kolla globals.yml:
+```
+$ cd kolla-ansible/tools
+$ ./generate_passwords.py
+```
+
+### 5. Configure `globals.yml`:
+
+```
+$ vi /etc/kolla/globals.yml
+```
+
+**Note**: *without specifying `openstack_release`, default value would be `victoria`*
+
+**Example**: Sample `globals.yml` file
 
 ```
 kolla_base_distro: "ubuntu"
 kolla_install_type: "source"
-kolla_internal_vip_address: "192.168.1.104"
-network_interface: "ens38"
-neutron_external_interface: "ens33"
-api_interface: "{{ network_interface }}"
+
+network_interface: enp0s3
+neutron_external_interface: enp0s8
+kolla_internal_vip_address: 192.168.0.110
+
+nova_compute_virt_type: "qemu"
+
 enable_haproxy: "no"
+
+enable_cinder: "yes"
+enable_cinder_backup: "no"
+enable_cinder_backend_lvm: "yes"
 ```
 
-### Step 6: Deployment
+## **D. Deploy Openstack**
+<a name='deployment_openstack'></a > 
+- Bootstrap Server:
 
-- Bootstrap servers with kolla deploy dependencies:
-
-```
-$ kolla-ansible -i ./all-in-one bootstrap-servers
-```
-
-- Do pre-deployment checks for hosts:
+> **Debug**: [*Ansible Module Missing*](#'2.-`Cannot-import-name-'AnsibleCollectionLoader'-from-'ansible.utils.collection_loader'-during-Boostrapping`')
 
 ```
-$ kolla-ansible -i ./all-in-one prechecks
+$ kolla-ansible -i all-in-one bootstrap-servers
 ```
 
-- Finally proceed to actual OpenStack deployment:
+> Boostrapping Success
 
+<img src="./imgs/bootstrap.png">
+
+
+- Precheck Server:
 ```
-$ kolla-ansible -i ./all-in-one deploy
-```
-
-![Screenshot_3.png](https://github.com/dobuithanhnam/Viettel-Digital-Talent-2021/blob/main/Week3/pic1/Screenshot_3.png)
-
-### Step 7: Using OpenStack
-
-- Install the OpenStack CLI client:
-
-```
-$ pip install python-openstackclient
+$ kolla-ansible -i all-in-one prechecks
 ```
 
-- OpenStack requires an openrc file where credentials for admin user are set. To generate this file:
+> Prechecking Success
 
+<img src="./imgs/prechecks.png">
+
+- Deploy:
 ```
-$ kolla-ansible post-deploy
-
-$ . /etc/kolla/admin-openrc.sh
+$ kolla-ansible -i all-in-one deploy
 ```
 
-### Result
+>  Deploy Success
 
-![Screenshot_7.png](https://github.com/dobuithanhnam/Viettel-Digital-Talent-2021/blob/main/Week3/pic1/Screenshot_7.png)
+<img src="./imgs/deploy.png">
 
-![Screenshot_6.png](https://github.com/dobuithanhnam/Viettel-Digital-Talent-2021/blob/main/Week3/pic1/Screenshot_6.png)
+- Post-deploy:
+```
+$ kolla-ansible -i all-in-one post-deploy
+```
 
-## Reference
+<img src="./imgs/post_deploy.png">
 
-[OpenStack Docs: Kolla Ansible quickstart](https://docs.openstack.org/kolla-ansible/latest/user/quickstart.html)
+## **E. Access horizon dashboard**:
+<a name='login'></a > 
 
+- Use following login account:
+	- **username**: `admin`
+	- **password**: *Run below command to retrieve*
+	```
+	$ cat /etc/kolla/passwords.yml | grep -i keystone_admin_password
+	```
+
+> Openstack Login page
+
+<img src="./imgs/Login.png">
+
+> Openstack Dashboard
+
+<img src="./imgs/success.png">
+
+## III. References
+<a name='refs'></a >  
+
+[1] https://docs.openstack.org/kolla-ansible/xena/user/quickstart.html
+ 
+[2] https://github.com/vietstacker/Viettel-Digital-Talent-Program-2021/blob/main/Phase-1-Practices/Week-3/Julian-P-Nguyen/Openstack/README.md
+
+[3] https://github.com/vietstacker/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DucDuongNguyen/README.md
