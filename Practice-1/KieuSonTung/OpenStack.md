@@ -120,7 +120,7 @@ ansible -i all-in-one all -m ping
 
 > Expected output
 
-<img src="Practice-1/KieuSonTung/imgs/check_configuration.png"/>
+<img src="./imgs/check_configuration.png"/>
 
 ### 2. Create diskspace partition for `Cinder`
 > In order for these codes run, you have to create another storage in your VM. You can run the first line to check whether you have `dev/sdb` or not
@@ -173,7 +173,7 @@ kolla-ansible -i all-in-one bootstrap-servers
 ```
 > It should look something like this
 
-<img src="Practice-1/KieuSonTung/imgs/bootstrap-servers.png"/>
+<img src="./imgs/bootstrap-servers.png"/>
 
 - Precheck Server:
 ``` 
@@ -181,7 +181,7 @@ kolla-ansible -i all-in-one prechecks
 ```
 > It should look something like this
 
-<img src="Practice-1/KieuSonTung/imgs/prechecks.png"/>
+<img src="./imgs/prechecks.png"/>
 
 - Pull images:
 ```
@@ -190,7 +190,7 @@ kolla-ansible -i all-in-one pull
 
 > It should look something like this
 
-<img src="Practice-1/KieuSonTung/imgs/pull.png"/>
+<img src="./imgs/pull.png"/>
 
 - Deploy
 ```
@@ -199,7 +199,7 @@ kolla-ansible -i all-in-one deploy
 
 > It should look something like this
 
-<img src="Practice-1/KieuSonTung/imgs/deploy.png"/>
+<img src="./imgs/deploy.png"/>
 
 
 - Post-deploy:
@@ -209,7 +209,7 @@ kolla-ansible -i all-in-one post-deploy
 
 > It should look something like this
 
-<img src="Practice-1/KieuSonTung/imgs/post-deploy.png"/>
+<img src="./imgs/post-deploy.png"/>
 
 Running this phase has tons of errors, some links down below might be helpful. Good luck! And remember to pray. Seriously! 
 Pray!
@@ -231,7 +231,7 @@ source /etc/kolla/admin-openrc.sh
 openstack token issue
 ```
 
-<img src="Practice-1/KieuSonTung/imgs/openstack token value.png"/>
+<img src="./imgs/openstack token value.png"/>
 
 IV. REFERENCES:
 - [Getting Past Ansible Password Required Issues](https://fuzzyblog.io/blog/ansible/2020/06/03/getting-past-ansible-password-required-issues.html)
