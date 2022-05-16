@@ -31,14 +31,21 @@
 - [1. Configure Kolla Ansible](#configure-kolla-ansible)
 - [2. Configure Ansible](#configure-ansible)
 - [3. Build container images for ARM](#configure-arm)
-- 
+
 [VI. Pre-deploy](#predeploy)
 
 [VII. Deployment](#deployment)
 
 [VIII. Using OpenStack](#using-openstack)
 
-[VIII. References](#references)
+
+[XI. Encountered errors](#encountered-errors)
+- [1. Failed to start docker.service: Unit is masked](#masked-docker)
+- [2. Encounter `403` when running Kolla Build](#403)
+- [3. Forget to generate or config required file](#forget)
+- [4. Permission denied](#permission-denied)
+
+[X. References](#references)
 
 ---- 
 
@@ -555,6 +562,18 @@ forks=100
 <a name='configure-arm'></a> 
 ### 3. Build container images for ARM by Kolla Build
 
+First, check if the **Docker engine** is running.
+
+```shell
+service docker status
+```
+
+If your Docker isn't `active (running)`, then start it.
+
+```shell
+service docker start
+```
+
 Build images of  OpenStack's services in Ubuntu by `kolla-build`
 
 ```shell
@@ -636,7 +655,7 @@ vgcreate cinder-volumes /dev/sdb
   <i>Create diskspace partition.</i>
 </div>
 
-4/ Configurate `global.yml`
+4/ Configurate `globals.yml`
 
 Open and edit `globals.yml` in **/etc/kolla** by using `gedit`.
 
@@ -751,8 +770,57 @@ kolla-ansible -i all-in-one pull
 ## VIII. Using OpenStack
 
 
+<a name='encountered-errors'></a> 
+## XI. Encountered errors
+
+
+<a name='masked-docker'></a> 
+### 1. Failed to start docker.service: Unit is masked
+
+When you start your **Docker Engine**, but you encountered this error,
+you can fix by using this command (with **root** right):
+
+```shell
+systemctl unmask docker
+```
+
+Then try to start **Docker Engine** again.
+
+```shell
+service docker start
+```
+
+<a name='403'></a> 
+### 2. Encounter `403` when running Kolla Build
+
+Actually, I don't think it is a common error. However, because currently I am in Russia, I didn't have a permission to
+access some website. So I have to use `VPN` to pass it.
+
+
+<a name='forget'></a> 
+### 3. Forget to generate or config required file
+
+**1. Forget to generate `passwords.yml`**
+
+  If you use command `kolla-ansible` with `bootstrap-servers` or `prechecks` but get the errors 
+, please use `kolla-genpwd` to generate`passwords.yml` and then run the command again.
+
+**2. Forget to configurate `ansible.cfg`**
+
+**3. Forget to configurate `globals.yml`**
+
+<a name='permission-denied'></a> 
+### 4. Permission denied
+
+You need to use `root` user right by using `sudo` following by the command,
+or use `su` from the beginning like me.
+
+However, `su` password isn't your device password. So you can generate it by using `passwd root` 
+and then use `su` again.
+
+
 <a name='references'></a> 
-## XI. References
+## X. References
 
 [1] [OpenStack website](https://www.openstack.org/)
 
