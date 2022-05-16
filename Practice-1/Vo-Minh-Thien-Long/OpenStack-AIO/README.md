@@ -378,9 +378,9 @@ interfaces.
 
 We will use 2 network interfaces:
 
-- **enp0s3**: `10.0.2.15/24` (for _Internal_ network)
+- **enp0s3**: `NAT` - **10.0.2.15/24** (for _Internal_ network)
 
-- **enp0s8**: `08:00:27:96:04:d0` (for _External/Provider_ network)
+- **enp0s8**: `Bridge network` - **08:00:27:96:04:d0** (for _External/Provider_ network)
 
 #### Summary
 
@@ -525,7 +525,7 @@ to **current user** and changes the _file group owner_ to **group users**.
 chown $USER:$USER /etc/kolla
 ```
 
-#### 2/ Copy `passwords.yml` and `global.yml` to `/etc/kolla`
+#### 2/ Copy `passwords.yml` and `globals.yml` to `/etc/kolla`
 
 ```shell
 cp -r ./openstackenv/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
