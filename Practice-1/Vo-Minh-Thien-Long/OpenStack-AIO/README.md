@@ -35,9 +35,15 @@
 [VI. Pre-deploy](#predeploy)
 
 [VII. Deployment](#deployment)
+- [1. Setup Openstack Kolla by Boostrap servers](#deployment-bootstrap)
+- [2. Check all requirements of each services](#deployment-prechecks)
+- [3. Pull images on target hosts](#deployment-pull)
+- [4. Deploy and start all](#deployment-deploy)
+- [5. Post-deploy OpenStack](#deployment-post-deploy)
 
 [VIII. Using OpenStack](#using-openstack)
-
+- [1. Activate OpenStack CLI environment](#using-openstack-activate)
+- [2. Login and use Horizon Dashboard](#using-openstack-login)
 
 [XI. Encountered errors](#encountered-errors)
 - [1. Failed to start docker.service: Unit is masked](#masked-docker)
@@ -132,6 +138,14 @@ These are the various services that can be deployed to provide such resources to
 <a name='openstack-all-in-one'></a> 
 ### 5. All-In-One (single-node) Single VM 
 
+
+In **AIO** or **single-node** mode, all the service will be deployed in one node, in our case,
+it is _in a single virtual machine_. In the other hand, in **multiple-nodes** mode
+(2 or more nodes),
+a service can be deployed _in many node_, or difference services are deployed
+_in difference nodes_.
+
+
 <div align="center">
   <img width="1000" src="assets/openstack-multinodes-singlenode.jpeg" alt="Single-node vs Multiple-nodes">
 </div>
@@ -140,28 +154,24 @@ These are the various services that can be deployed to provide such resources to
   <i>Single-node and Multiple-nodes.</i>
 </div>
 
-In **AIO** or **single-node** mode, all the service will be deployed in one node, in our case,
-it is _in a single virtual machine_. In the other hand, in **multiple-nodes** mode
-(2 or more nodes),
-a service can be deployed _in many node_, or difference services are deployed
-_in difference nodes_.
+And the deployment must include 3 main services of OpenStack:
 
-In this practice, we will use the **AIO architecture** to deploy OpenStack.
-And the deployment must include 3 main services of OpenStack: 
-
-**1/ Compute**
-
-**2/ Networking** 
-
-**3/ Storage** 
+  **1/ Compute**
+  
+  **2/ Networking** 
+  
+  **3/ Storage** 
 
 <div align="center">
   <img width="1000" src="assets/openstack-3-services.png" alt="3 main services">
 </div>
 
 <div align="center">
-  <i>3 main services are used in this project.</i>
+  <i>3 main services must be in all project.</i>
 </div>
+
+
+In this practice, we will use the **AIO architecture** to deploy OpenStack.
 
 
 <a name='kolla'></a> 
@@ -170,8 +180,13 @@ And the deployment must include 3 main services of OpenStack:
 <a name='kolla-overview'></a> 
 ### 1. Overview
 **Kolla** provides _production-ready_ containers and deployment tools 
-for operating **OpenStack** clouds. 
+for operating **OpenStack** clouds.  **Kolla** was released from the **Kilo** 
+and officially became **OpenStack Project**.
 
+With the idea **Kolla** is to deploy **OpenStack** in a `container` environment, 
+automatically deploy **OpenStack** using **Kolla Ansible**. 
+Thereby with just a few operations, we will have an **OpenStack** environment to use,
+with also monitoring, HA, rolling upgrades, etc.
 
 <div align="center">
   <img width="300" src="assets/kolla-logo.png" alt="Kolla logo">
@@ -360,11 +375,11 @@ interfaces.
   <i>List of network interfaces in my VM.</i>
 </div>
 
-I will use 2 network interfaces:
+We will use 2 network interfaces:
 
-- eth0: **10.211.55.6/24** (for Internal network)
+- **enp0s3**: `10.0.2.15/24` (for _Internal_ network)
 
-- eth1: **10.211.55.8/24** (for External/Provider network)
+- **enp0s8**: `08:00:27:96:04:d0` (for _External/Provider_ network)
 
 #### Summary
 
@@ -387,7 +402,7 @@ them all.
 sudo <command>
 ```
 
-Or use can set up `root` password, type OS password and then type your
+Or use can set up `root` password, type **current user** password (`ubuntu` in my case) and then type new your
 password for **root user**. Then switch user to root to have the **root user right**.
 
 ```shell
@@ -420,7 +435,7 @@ su
 <a name='instructions-install'></a> 
 ### 1. Install dependencies
 
-1/ Update the package sources list
+#### 1/ Update the package sources list
 
 Update the package sources list to get the latest list of available packages 
 in the repositories by using `apt update`.
@@ -429,7 +444,7 @@ in the repositories by using `apt update`.
 apt update
 ```
 
-2/ Updates all the packages
+#### 2/ Updates all the packages
 
 Update all the packages presently installed in our Linux system to their 
 latest versions by using `apt upgrade`.
@@ -438,7 +453,7 @@ latest versions by using `apt upgrade`.
 apt upgrade
 ```
 
-3/ Install required dependencies
+#### 3/ Install required dependencies
 
 First, in case you didn't install `git` or `docker`, 
 install it by `apt install`.
@@ -454,7 +469,7 @@ Then, we will install other required dependencies.
 apt install python3-dev python3-pip libffi-dev gcc libssl-dev
 ```
 
-4/ Upgrade `pip`
+#### 4/ Upgrade `pip`
 
 Upgrade `pip` to the latest version by `-U` (`--upgrade`) option.
 
@@ -490,8 +505,9 @@ pip install python-openstackclient python-glanceclient python-neutronclient
 <a name='instructions-kolla-build'></a> 
 ### 3. Build container images for ARM by Kolla Build
 
-Sự khác biệt giữa Kolla và kolla-ansible là Kolla cung cấp công cụ để build images cho các dịch vụ OpenStack trên nhiều nền tảng linux với kiến trúc chip khác nhau. Kolla-ansible cung cấp công cụ để triển khai các images được xây dựng bằng Kolla. Do đó, images có thể được tạo và xây dựng lại bất kỳ lúc nào thông qua việc sử dụng lệnh kolla-build.
-
+Sự khác biệt giữa Kolla và kolla-ansible là Kolla cung cấp công cụ để build images cho các dịch vụ OpenStack trên nhiều nền 
+tảng linux với kiến trúc chip khác nhau. Kolla-ansible cung cấp công cụ để triển khai các images được xây dựng bằng Kolla. 
+Do đó, images có thể được tạo và xây dựng lại bất kỳ lúc nào thông qua việc sử dụng lệnh kolla-build.
 
 
 <a name='configuration'></a> 
@@ -535,7 +551,7 @@ cp ./openstackenv/share/kolla-ansible/ansible/inventory/all-in-one .
 <a name='configure-ansible'></a> 
 ### 2. Configure `ansible`
 
-1/ Create `/etc/ansible` directory
+#### 1/ Create `/etc/ansible` directory
 
 ```shell
 mkdir -p /etc/ansible
@@ -621,7 +637,7 @@ but it doesn't have any affect to us.
 
 ### 3. Create diskspace partition for `Cinder`
 
-1/ Install **Logical Volume Manager**
+#### 1/ Install **Logical Volume Manager** - `lvm2`
 
 If you didn't install `lvm2` (for Logical Volume Manager),
 you need to install it to use `pvcreate` and `vgcreate`.
@@ -631,7 +647,7 @@ you need to install it to use `pvcreate` and `vgcreate`.
 apt instal lvm2
 ```
 
-2/ Create physical volume
+#### 2/ Create physical volume 
 
 Use `pvcreate` to create a physical volume for **Cinder** in `/dev/sdb`.
 
@@ -639,7 +655,7 @@ Use `pvcreate` to create a physical volume for **Cinder** in `/dev/sdb`.
 pvcreate /dev/sdb
 ```
 
-3/ Create volume group
+#### 3/ Create volume group
 
 Then `vgcreate` to create a volume group `cinder-volume` in disk `/dev/sdb`.
 
@@ -655,7 +671,7 @@ vgcreate cinder-volumes /dev/sdb
   <i>Create diskspace partition.</i>
 </div>
 
-4/ Configurate `globals.yml`
+#### 4/ Configurate `globals.yml`
 
 Open and edit `globals.yml` in **/etc/kolla** by using `gedit`.
 
@@ -669,9 +685,9 @@ The content of `global.yml`:
 kolla_base_distro: "ubuntu"
 kolla_install_type: "source"
 
-network_interface: eth0
-neutron_external_interface: eth1
-kolla_internal_vip_address: 10.211.55.6
+network_interface: enp0s3
+neutron_external_interface: enp0s8
+kolla_internal_vip_address: 10.0.2.15
 
 nova_compute_virt_type: "qemu"
 
@@ -707,7 +723,8 @@ connect with HAproxy.
 <a name='deployment'></a> 
 ## VII. Deployment
 
-1/ Setup Openstack Kolla by Boostrap servers
+<a name='deployment-bootstrap'></a> 
+### 1. Setup Openstack Kolla by Boostrap servers
 
 `-i` option to indicate the inventory file, here is `all-in-one`. Please make sure that `all-in-one`
 is now in your working directory.
@@ -724,7 +741,11 @@ kolla-ansible -i all-in-one bootstrap-servers
   <i>Bootstrapping success.</i>
 </div>
 
-2/ Check our `kolla-ansible` server
+<a name='deployment-prechecks'></a> 
+### 2. Check all requirements of each services
+
+`prechecks` is used to check if all requirements are meet before deploy for 
+each of the OpenStack services.
 
 ```shell
 kolla-ansible -i all-in-one prechecks
@@ -738,7 +759,8 @@ kolla-ansible -i all-in-one prechecks
   <i>Prechecking success.</i>
 </div>
 
-3/ Pull all images to our VM
+<a name='deployment-pull'></a> 
+### 3. Pull images on target hosts
 
 ```shell
 kolla-ansible -i all-in-one pull
@@ -752,14 +774,37 @@ kolla-ansible -i all-in-one pull
   <i>Pulling images success.</i>
 </div>
 
-4/ Deploy OpenStack
+<a name='deployment-deploy'></a> 
+### 4. Deploy and start all
+
+`deploy` is used to deploy and start all Kolla containers.
 
 ```shell
-kolla-ansible -i all-in-one pull
+kolla-ansible -i all-in-one deploy
 ```
 
 <div align="center">
-  <img width="1000" src="assets/setup-9.png" alt="kolla-ansible pull">
+  <img width="1000" src="assets/setup-9.png" alt="kolla-ansible deploy">
+</div>
+
+<div align="center">
+  <i>Deploy OpenStack success.</i>
+</div>
+
+
+<a name='deployment-post-deploy'></a> 
+### 5. Post-deploy OpenStack
+
+Configurate File Environment of OpenStack, `post-deploy` is used to do 
+post deploy on deploy node to get the **admin-openrc** file.
+
+
+```shell
+kolla-ansible -i all-in-one post-deploy
+```
+
+<div align="center">
+  <img width="1000" src="assets/setup-9.png" alt="kolla-ansible post-deploy">
 </div>
 
 <div align="center">
@@ -770,9 +815,63 @@ kolla-ansible -i all-in-one pull
 ## VIII. Using OpenStack
 
 
+<a name='using-openstack-activate'></a> 
+### 1. Activate OpenStack CLI environment
+
+Execute `admin-openrc.sh` by `source` command.
+
+```shell
+source /etc/kolla/admin-openrc.sh
+```
+
+Issue new **OpenStack** token.
+
+```shell
+openstack token issue
+```
+
+<a name='using-openstack-login'></a> 
+### 2. Login and use Horizon Dashboard
+  
+Get generate `admin` password from **/etc/kolla/passwords.yml**
+
+```shell
+cat /etc/kolla/passwords.yml | grep keystone_admin
+```
+
+Go to url: [http://10.0.2.15](http://10.0.2.15) to the **Log in** interface of **Horizon**.
+
+Then fill to the form **User Name** with **admin**,
+and **Password** with the password we get from the previous step.
+
+```text
+Username: admin
+Password: <PASSWORD_FROM_PREVIOUS_STEP>
+```
+
+<div align="center">
+  <img width="1000" src="assets/horizon-1.png" alt="Horizon login">
+</div>
+
+<div align="center">
+  <i>Login to Horizon.</i>
+</div>
+
+Get list APIs for each service in tab **API Access**.
+
+<div align="center">
+  <img width="1000" src="assets/horizon-2.png" alt="Horizon API Access">
+</div>
+
+<div align="center">
+  <i>Tab <strong>API Access</strong> in <strong>Horizon Dashboard</strong>.</i>
+</div>
+
+
+
+
 <a name='encountered-errors'></a> 
 ## XI. Encountered errors
-
 
 <a name='masked-docker'></a> 
 ### 1. Failed to start docker.service: Unit is masked
@@ -802,12 +901,24 @@ access some website. So I have to use `VPN` to pass it.
 
 **1. Forget to generate `passwords.yml`**
 
-  If you use command `kolla-ansible` with `bootstrap-servers` or `prechecks` but get the errors 
-, please use `kolla-genpwd` to generate`passwords.yml` and then run the command again.
+  If you use command `kolla-ansible` with `prechecks` but get the errors:
+
+```text
+"cmd": ["grep", "^[^#].*:\\s*$", "/etc/kolla/passwords.yml"]
+```
+
+It maybe because you forget to use `kolla-genpwd` to generate`passwords.yml`.
+Use `kolla-genpwd` and then run the command again.
 
 **2. Forget to configurate `ansible.cfg`**
+  
+  If you forget to configurate `ansible.cfg`, you will get the error when use
+`ansible -i all-in-one all -m ping`.
 
 **3. Forget to configurate `globals.yml`**
+  
+  If you use command `kolla-ansible` with `bootstrap-servers` but get the errors, it maybe because you forget to 
+configurate `globals.yml`.
 
 <a name='permission-denied'></a> 
 ### 4. Permission denied
@@ -817,6 +928,14 @@ or use `su` from the beginning like me.
 
 However, `su` password isn't your device password. So you can generate it by using `passwd root` 
 and then use `su` again.
+
+### 5. Some solution for other errors
+
+- Please remember to update `apt` and `pip`.
+
+- If you use device with **ARM processors**, you have to build images by `kolla-build`.
+
+- Use **ansible** with version `ansible<5.0` and **kolla-ansible** with `xena` version.
 
 
 <a name='references'></a> 
