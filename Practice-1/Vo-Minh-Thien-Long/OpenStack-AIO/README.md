@@ -23,8 +23,6 @@
 - [2. Install Ansible](#instructions-ansible)
 - [3. Install Kolla Ansible](#instructions-kolla-ansible)
 - [4. Install OpenStack CLI](#instructions-openstack-cli)
-- [5. Build container images for ARM by Kolla Build](#instructions-kolla)
-
 
 [V. Configuration](#configuration)
 - [1. Configure Kolla Ansible](#configure-kolla-ansible)
@@ -32,6 +30,9 @@
 - [3. Build container images for ARM](#configure-arm)
 
 [VI. Pre-deploy](#predeploy)
+- [1. Custom inventory file](#predeploy-inventory)
+- [2. Check configurations](#predeploy-config)
+- [3. Create diskspace partition for Cinder](#predeploy-partition)
 
 [VII. Deployment](#deployment)
 - [1. Setup Openstack Kolla by Boostrap servers](#deployment-bootstrap)
@@ -545,144 +546,8 @@ kolla-genpwd
 cp ./openstackenv/share/kolla-ansible/ansible/inventory/all-in-one .
 ```
 
-<a name='configure-ansible'></a> 
-### 2. Configure `ansible`
 
-#### 1/ Create `/etc/ansible` directory
-
-```shell
-mkdir -p /etc/ansible
-```
-
-2/ Add the following options to the Ansible configuration file **/etc/ansible/ansible.cfg**
-
-Open and edit `ansible.cfg` in **/etc/ansible/ansible.cfg** by using `gedit` (in my opion, it is easier to edit the
-file than `vi` or `nano`).
-
-```shell
-gedit /etc/ansible/ansible.cfg
-```
-
-The content of `global.yml`:
-
-```text
-[defaults]
-host_key_checking=False
-pipelining=True
-forks=100
-```
-
-<a name='configure-arm'></a> 
-### 3. Build container images for ARM by Kolla Build
-
-The difference between **Kolla** and **Kolla Ansible** is that Kolla provides tools to build images for OpenStack services on multiple platforms.
-Linux platforms with _different chip architectures_ (which is included **ARM**). 
-
-**Kolla Ansible** provides tools to deploy images built with **Kolla**.
-Therefore, images can be created and rebuilt at any time using the `kolla-build` command.
-
-First, check if the **Docker engine** is running.
-
-```shell
-service docker status
-```
-
-If your Docker isn't `active (running)`, then start it.
-
-```shell
-service docker start
-```
-
-Build images of  OpenStack's services in Ubuntu by `kolla-build`
-
-```shell
-kolla-build -b ubuntu
-```
-
-**Note**: 
-
-- This step is take very, very long time, so consider using 
-**snapshot** to keep your work safe.
-
-- In case you got `403` HTTP status error when build image, 
-please consider using **VPN**.
-Because currently I am in Russia, so some images can't directly install, 
-and I have to use **VPN** instead.
-
-
-
-
-<a name='predeploy'></a> 
-## VI. Pre-deploy
-
-### 1. Custom inventory file
-
-In this practice, I just use the default sample `all-in-one` as inventory file.
-However, you could change it as your demand, or use `multinode` in case you want to deploy
-OpenStack in `multinode` mode.
-
-You can read it by using this command (Please make sure that `all-in-one`
-is now in your working directory.)
-
-```shell
-more all-in-one
-``` 
-
-### 2. Check configurations
-
-```shell
-ansible -i all-in-one all -m ping
-```
-
-<div align="center">
-  <img width="1000" src="assets/setup-4.png" alt="ping to check">
-</div>
-
-<div align="center">
-  <i>Ping successful.</i>
-</div>
-
-Don't worry about the `[WARNING]`, there is `-` character in group name in `all-in-one`,
-but it doesn't have any affect to us.
-
-
-### 3. Create diskspace partition for `Cinder`
-
-#### 1/ Install **Logical Volume Manager** - `lvm2`
-
-If you didn't install `lvm2` (for Logical Volume Manager),
-you need to install it to use `pvcreate` and `vgcreate`.
-
-
-```shell
-apt instal lvm2
-```
-
-#### 2/ Create physical volume 
-
-Use `pvcreate` to create a physical volume for **Cinder** in `/dev/sdb`.
-
-```shell
-pvcreate /dev/sdb
-```
-
-#### 3/ Create volume group
-
-Then `vgcreate` to create a volume group `cinder-volume` in disk `/dev/sdb`.
-
-```shell
-vgcreate cinder-volumes /dev/sdb
-```
-
-<div align="center">
-  <img width="1000" src="assets/setup-5.png" alt="pvcreate and vgcreate">
-</div>
-
-<div align="center">
-  <i>Create diskspace partition.</i>
-</div>
-
-#### 4/ Configurate `globals.yml`
+#### 5/ Configurate `globals.yml`
 
 Open and edit `globals.yml` in **/etc/kolla** by using `gedit`.
 
@@ -730,6 +595,144 @@ connect with HAproxy.
 - **enable_cinder**: we use **Cinder LVM** use share storage for **OpenStack**, so we set `yes` here.
 - **enable_cinder_backup**: We don't use **Backup Cinder**, so we set `no` hrer.
 - **enable_cinder_backend_lvm**: we use Backend LVM for **Cinder** , so we set `yes` here.
+
+
+<a name='configure-ansible'></a> 
+### 2. Configure `ansible`
+
+#### 1/ Create `/etc/ansible` directory
+
+```shell
+mkdir -p /etc/ansible
+```
+
+2/ Add the following options to the Ansible configuration file **/etc/ansible/ansible.cfg**
+
+Open and edit `ansible.cfg` in **/etc/ansible/ansible.cfg** by using `gedit` (in my opion, it is easier to edit the
+file than `vi` or `nano`).
+
+```shell
+gedit /etc/ansible/ansible.cfg
+```
+
+The content of `ansible.config`:
+
+```text
+[defaults]
+host_key_checking=False
+pipelining=True
+forks=100
+```
+
+<a name='configure-arm'></a> 
+### 3. Build container images for ARM by Kolla Build
+
+The difference between **Kolla** and **Kolla Ansible** is that Kolla provides tools to build images for OpenStack services on multiple platforms.
+Linux platforms with _different chip architectures_ (which is included **ARM**). 
+
+**Kolla Ansible** provides tools to deploy images built with **Kolla**.
+Therefore, images can be created and rebuilt at any time using the `kolla-build` command.
+
+First, check if the **Docker engine** is running.
+
+```shell
+service docker status
+```
+
+If your Docker isn't `active (running)`, then start it.
+
+```shell
+service docker start
+```
+
+Build images of  OpenStack's services in Ubuntu by `kolla-build`
+
+```shell
+kolla-build -b ubuntu
+```
+
+**Note**: 
+
+- This step is take very, very long time, so consider using 
+**snapshot** to keep your work safe.
+
+- In case you got `403` HTTP status error when build image, 
+please consider using **VPN**.
+Because currently I am in Russia, so some images can't directly install, 
+and I have to use **VPN** instead.
+
+<a name='predeploy'></a> 
+## VI. Pre-deploy
+
+<a name='predeploy-inventor'></a> 
+### 1. Custom inventory file
+
+In this practice, I just use the default sample `all-in-one` as inventory file.
+However, you could change it as your demand, or use `multinode` in case you want to deploy
+OpenStack in `multinode` mode.
+
+You can read it by using this command (Please make sure that `all-in-one`
+is now in your working directory.)
+
+```shell
+more all-in-one
+``` 
+
+<a name='predeploy-config'></a> 
+### 2. Check configurations
+
+```shell
+ansible -i all-in-one all -m ping
+```
+
+<div align="center">
+  <img width="1000" src="assets/setup-4.png" alt="ping to check">
+</div>
+
+<div align="center">
+  <i>Ping successful.</i>
+</div>
+
+Don't worry about the `[WARNING]`, there is `-` character in group name in `all-in-one`,
+but it doesn't have any affect to us.
+
+
+<a name='predeploy-partition'></a> 
+### 3. Create diskspace partition for `Cinder`
+
+#### 1/ Install **Logical Volume Manager** - `lvm2`
+
+If you didn't install `lvm2` (for Logical Volume Manager),
+you need to install it to use `pvcreate` and `vgcreate`.
+
+
+```shell
+apt instal lvm2
+```
+
+#### 2/ Create physical volume 
+
+Use `pvcreate` to create a physical volume for **Cinder** in `/dev/sdb`.
+
+```shell
+pvcreate /dev/sdb
+```
+
+#### 3/ Create volume group
+
+Then `vgcreate` to create a volume group `cinder-volume` in disk `/dev/sdb`.
+
+```shell
+vgcreate cinder-volumes /dev/sdb
+```
+
+<div align="center">
+  <img width="1000" src="assets/setup-5.png" alt="pvcreate and vgcreate">
+</div>
+
+<div align="center">
+  <i>Create diskspace partition.</i>
+</div>
 
 <a name='deployment'></a> 
 ## VII. Deployment
