@@ -1,8 +1,34 @@
 # Create Ubuntu virtual machine
 
-## Using VirtualBox (For Intel-based and AMD chip devices)
+Author: **Vo Minh Thien Long**
 
-### Overview
+----        
+## Table of contents     
+[I. Using VirtualBox (For Intel-based and AMD chip devices)](#virtual-box)
+- [1. Overview](#virtual-box-overview)
+- [2. Versions](#virtual-box-versions)
+- [3. Hardware supporting](#virtual-box-hw-supporting)           
+- [4. Operating systems supporting](#virtual-box-os-supporting)       
+- [5. Download](#virtual-box-download)    
+- [6. Setting up the Ubuntu virtual machine](#virtual-box-setting-up)   
+- [7. Run our Ubuntu VM first time](#virtual-box-run) 
+
+[II. Parallels Desktop](#parallels)   
+- [1. Overview](#parallels-overview)
+- [2. Versions](#parallels-versions)
+- [3. System requirements](#parallels-system)             
+- [5. Download](#parallels-download)    
+
+[III. References](#references)
+
+---- 
+
+
+<a name='virtual-box'></a> 
+## I. Using VirtualBox (For Intel-based and AMD chip devices)
+
+<a name='virtual-box-overview'></a> 
+### 1. Overview
 
 **Oracle VM VirtualBox** is a `free` and `open-source` software.
 It is a general-purpose full virtualizer, **type-2 hypervisor** for `x86` virtualization, 
@@ -24,7 +50,8 @@ ensures the product always meets professional quality criteria.
 </div>
 
 
-### Versions
+<a name='virtual-box-versions'></a> 
+### 2. Versions
 
 The latest version is **VirtualBox 6.1.34** (which I will use in this exercise). 
 This version released on _March 22, 2022_.
@@ -33,14 +60,17 @@ However, now you can still download `VirtualBox 6.0` and `VirtualBox 5.2`, in ca
 still need to run VMs with software virtualization and `32-bit` hosts
 as these have been discontinued in `VirtualBox 6.1.x`.
 
-### Hardware supporting
+
+<a name='virtual-box-hw-supporting'></a> 
+### 3. Hardware supporting
 
 VirtualBox supports both **Intel's VT-x** and **AMD's AMD-V** hardware-assisted virtualization. 
 However, it **doesn't** support Apple-based chip devices (M1, M1 Pro, ...), and other ARM processors.
 In order to use Virtual Machine in these devices, you have to install other software, 
 which I will introduce you later.
 
-### Operating systems supporting
+<a name='virtual-box-os-supporting'></a> 
+### 4. Operating systems supporting
 
   1/ Windows
 
@@ -53,9 +83,10 @@ which I will introduce you later.
 Presently, VirtualBox runs on Windows, Linux, Macintosh, and Solaris hosts and supports a large number of guest operating systems including but not limited to Windows (NT 4.0, 2000, XP, Server 2003, Vista, Windows 7, Windows 8, Windows 10), DOS/Windows 3.x, Linux (2.4, 2.6, 3.x and 4.x), Solaris and OpenSolaris, OS/2, and OpenBSD.
 
 
-### Download 
+<a name='virtual-box-download'></a> 
+### 5. Download 
 
-**1/ Choose VirtualBox platform**
+#### 1/ Choose VirtualBox platform
 
 Go to [this link](https://www.virtualbox.org/wiki/Downloads), in the `VirtualBox 6.1.34 platform packages` section, 
 choose the package which is suitable for your current operating system.
@@ -70,7 +101,7 @@ In this exercise, I will use `VirtualBox 6.1.34`, as mentioned before.
   <i>In this case, I used Ubuntu, which is a Linux distribution.</i>
 </div>
 
-**2/ Check your operating system information (for Linux)**
+#### 2/ Check your operating system information (for Linux)
 
 Use `lsb_release -a` to get your Linux OS information, which is required for our next step.
 
@@ -97,7 +128,7 @@ Codename: focal
 ```
 
 
-**3/ Choose appropriate package for your Linux distribution.**
+#### 3/ Choose appropriate package for your Linux distribution.
 
 Use the information got from the last step, choose the appropriate for 
 Linux distro.
@@ -110,7 +141,7 @@ Linux distro.
   <i>In this practice, I used Ubuntu 20.04.</i>
 </div>
 
-**4/ Open the downloaded file** 
+#### 4/ Open the downloaded file
 
 After choosing the appropriate package and click in it, you will download
 a `.deb` file. Click on this file to open it.
@@ -126,7 +157,7 @@ your VirtualBox application.
   <i>You can see some useful information here, for example version, installed size, etc.</i>
 </div>
 
-**5/ Finish installing VirtualBox**
+#### 5/ Finish installing VirtualBox
 
 If you see the picture below, it means that you was successfully installed VirtualBox
 
@@ -140,9 +171,10 @@ If you see the picture below, it means that you was successfully installed Virtu
 </div>
 
 
-### Setting up the Ubuntu virtual machine
+<a name='virtual-box-setting-up></a> 
+### 6. Setting up the Ubuntu virtual machine
 
-**1/ Install Ubuntu Desktop**
+#### 1/ Install Ubuntu Desktop
 
 Ubuntu Desktop is the open-source desktop OS version Ubuntu. In this 
 exercise, I will install the latest LTS version of Ubuntu - `Ubuntu 22.04 LTS`
@@ -160,7 +192,7 @@ to install the ISO images.
       to remove it from your computer.</i>
 </div>
 
-**2/ Create a new virtual machine**
+#### 2/ Create a new virtual machine
 
 Open the VirtualBox application, click `New` to create a new virtual machine instance.
 In case you already have a VM file, you use `Add` to add your VM.
@@ -175,7 +207,7 @@ In this practice, I will create a new VM.
   <i>Click <strong>New</strong> to create a new VM.</i>
 </div>
 
-**3/ Set VM's name and OS**
+#### 3/ Set VM's name and OS
 
 Type your VM's name and OS. Because we have installed the Ubuntu Desktop,
 so our OS will be **Linux** with **Ubuntu 64-bit** verison.
@@ -193,7 +225,7 @@ I will use `Guide mode`.
   <i>In this practice, I named my Ubuntu VM as <strong>Practice1</strong>.</i>
 </div>
 
-**4/ Select memory size**
+#### 4/ Select memory size
 
 This is the amount of RAM to be allocated to our VM. 
 
@@ -213,7 +245,7 @@ In my case, which has `4GB` RAM, `1GB = 1024MB` is enough.
   <i>In this practice, I will use <strong>1024MB</strong> as recommended.</i>
 </div>
 
-**5/ Select hard disk**
+#### 5/ Select hard disk
 
 There are 3 types of action you can choose:
 
@@ -239,7 +271,7 @@ you can reuse them which all the information before.
   <i>In this practice, I will choose <strong>Create a virtual hard disk now</strong>.</i>
 </div>
 
-**6/ Select virtual hard disk file type**
+#### 6/ Select virtual hard disk file type
 
 There are 3 types of virtual hard disk file you can choose:
 
@@ -280,7 +312,7 @@ the impact of data loss on our VMs.
     <i>In this practice, I will choose <strong>VDI</strong> file type.</i>
 </div>
 
-**7/ Select strategy for storage on physical hard disk**
+#### 7/ Select strategy for storage on physical hard disk
 
 There are 2 strategies:
 
@@ -315,9 +347,10 @@ Select the location, where you will store your virtual hard file, and it's size.
   <i>In this practice, I will choose <strong>10GB</strong> as the size limit.</i>
 </div>
 
-### Running our Ubuntu VM first time
+<a name='virtual-box-run></a> 
+### 7. Run our Ubuntu VM first time
 
-**1/ Start our Ubuntu VM**
+#### 1/ Start our Ubuntu VM
 
 After creating the VM, you will see it instance, and it's status in your left-hand side. 
 In my case, it is **Practice1** and **Powered Off** (because it is the first time I run it).
@@ -336,7 +369,7 @@ Click `Start` to start running our VM.
   <i>List of your VM and it's information.</i>
 </div>
 
-**2/ Select start-up disk**
+#### 2/ Select start-up disk
 
 Start-up disk is a virtual or physical disk that contain our OS. Click the the `Folder` icon 
 to choose a start-up disk for your VM.
@@ -349,7 +382,7 @@ to choose a start-up disk for your VM.
   <i>Choose your start-up disk.</i>
 </div>
 
-**3/ Add start-up disk from our install `iso`**
+#### 3/ Add start-up disk from our install `iso`
 
 <div align="center">
   <img width="1000" src="assets/running-UbuntuVM-3.jpeg" alt="Running Ubuntu virtual machine step 3">
@@ -359,7 +392,7 @@ to choose a start-up disk for your VM.
   <i>Click the <strong>Folder</strong> icon to choose your start-up disk.</i>
 </div>
 
-**4/ Try our Ubuntu Desktop**
+#### 4/ Try our Ubuntu Desktop
 
 Click `Try or Install Ubuntu` and then choose `Try Ubuntu` to start our Ubuntu Desktop.
 
@@ -371,7 +404,7 @@ Click `Try or Install Ubuntu` and then choose `Try Ubuntu` to start our Ubuntu D
   <i>Booting screen.</i>
 </div>
 
-**5/ Finish our VM**
+#### 5/ Finish our VM
 
 Congratulation, you have successfully installed Ubuntu VM by VirtualBox.
 
@@ -384,8 +417,10 @@ Congratulation, you have successfully installed Ubuntu VM by VirtualBox.
 </div>
 
 
+<a name='parallels></a> 
 ## Using Parallels Desktop for Mac (Can use for Mac devices with ARM chip)
 
+<a name='parallels-overview></a> 
 ### Overview
 
 **Parallels Desktop for Mac** is software  providing hardware virtualization 
@@ -404,6 +439,7 @@ physical computer.
 </div>
 
 
+<a name='parallels-versions></a> 
 ### Versions
 
 Before version `16.5`, **Parallels Desktop** providing _hardware virtualization_ 
@@ -417,7 +453,8 @@ macOS Catalina 10.15, macOS Mojave 10.14 and macOS High Sierra 10.13.
 It is a fast, easy and powerful application for running Windows 
 on your Intel or Apple M1 Mac—all without rebooting
 
-### System Requirements
+<a name='parallels-system></a> 
+### System requirements
 
 | Operating System | Processor | Memory | Storage | Graphics |
 |------------------|-----------|--------|---------|----------|
@@ -425,9 +462,10 @@ on your Intel or Apple M1 Mac—all without rebooting
 
 
 
+<a name='parallels-download></a> 
 ### Download 
 
-**1/ Choose free trial version**
+#### 1/ Choose free trial version
 
 Because Parallels Desktop **isn't** `free` or `open-source`, so for this practice,
 I will install a free trial (_7 days_).
@@ -440,7 +478,7 @@ I will install a free trial (_7 days_).
   <i>Click <strong>DOWNLOAD FREE TRIAL</strong>.</i>
 </div>
 
-**2/ Download DMG file**
+#### 2/ Download DMG file
 
 Download disk image for install Parallels Desktop. `dmg` is Apple Disk Image, 
 which is a disk image format commonly used by the macOS operating system.
@@ -453,7 +491,7 @@ which is a disk image format commonly used by the macOS operating system.
   <i>Click <strong>DOWNLOAD NOW</strong>.</i>
 </div>
 
-**3/ Install Parallels® Desktop for Mac**
+#### 3/ Install Parallels® Desktop for Mac
 
 Open the downloaded image and double-click the Install box. Look in the Downloads folder to find the image.
 
@@ -473,8 +511,7 @@ Open the downloaded image and double-click the Install box. Look in the Download
   <i>Click <strong>Open</strong>.</i>
 </div>
 
-
-**3/ Open Installation Assistant**
+#### 4/ Open Installation Assistant
 
 Installation Assistant is the tool for you to quickly install a
 OS virtual machine
@@ -487,7 +524,7 @@ OS virtual machine
   <i>Click <strong>Continue</strong>.</i>
 </div>
 
-**4/ Install Ubuntu OS**
+#### 5/ Install Ubuntu OS
 
 Choose `Download Ubuntu Linux` under **Free Systems** sections. And
 then `Download` the Ubuntu version for `ARM64` chip.
@@ -513,7 +550,7 @@ Here is information about system `Ubuntu 20.04.02 ARM64`, includes description a
 </div>
 
 
-**5/ Start your Ubuntu virtual machine**
+#### 6/ Start your Ubuntu virtual machine
 
 After installing Ubuntu OS, we now have Ubuntu virtual machine.
 Open the `Control center`, click the `On/Off icon` to turn on our device. 
