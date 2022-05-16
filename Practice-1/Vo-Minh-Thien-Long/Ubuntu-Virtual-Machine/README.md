@@ -13,7 +13,7 @@ Author: **Vo Minh Thien Long**
 - [6. Setting up the Ubuntu virtual machine](#virtual-box-setting-up)   
 - [7. Run our Ubuntu VM first time](#virtual-box-run) 
 
-[II. Parallels Desktop](#parallels)   
+[II. Using Parallels Desktop for Mac (Can use for Mac devices with ARM chip)](#parallels)   
 - [1. Overview](#parallels-overview)
 - [2. Versions](#parallels-versions)
 - [3. System requirements](#parallels-system)             
@@ -171,7 +171,7 @@ If you see the picture below, it means that you was successfully installed Virtu
 </div>
 
 
-<a name='virtual-box-setting-up></a> 
+<a name='virtual-box-setting-up'></a> 
 
 ### 6. Setting up the Ubuntu virtual machine
 
@@ -420,7 +420,7 @@ Congratulation, you have successfully installed Ubuntu VM by VirtualBox.
 
 
 <a name='parallels'></a> 
-## Using Parallels Desktop for Mac (Can use for Mac devices with ARM chip)
+## II. Using Parallels Desktop for Mac (Can use for Mac devices with ARM chip)
 
 <a name='parallels-overview'></a> 
 ### Overview
