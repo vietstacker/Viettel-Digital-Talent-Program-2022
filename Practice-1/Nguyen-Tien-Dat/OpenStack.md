@@ -138,9 +138,6 @@ cp TD_openstack/share/kolla-ansible/ansible/inventory/* .
 ### 4. Cài đặt cấu hình `Ansible`:
 - Tạo file cấu hình
 
-<img src="./Images/config.png">
-
-
 - Tạo thư mục `/etc/ansible` để lưu file config
 ```
 $ sudo mkdir -p /etc/ansible
