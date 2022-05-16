@@ -172,6 +172,7 @@ If you see the picture below, it means that you was successfully installed Virtu
 
 
 <a name='virtual-box-setting-up></a> 
+
 ### 6. Setting up the Ubuntu virtual machine
 
 #### 1/ Install Ubuntu Desktop
@@ -347,7 +348,8 @@ Select the location, where you will store your virtual hard file, and it's size.
   <i>In this practice, I will choose <strong>10GB</strong> as the size limit.</i>
 </div>
 
-<a name='virtual-box-run></a> 
+<a name='virtual-box-run'></a> 
+
 ### 7. Run our Ubuntu VM first time
 
 #### 1/ Start our Ubuntu VM
@@ -417,10 +419,10 @@ Congratulation, you have successfully installed Ubuntu VM by VirtualBox.
 </div>
 
 
-<a name='parallels></a> 
+<a name='parallels'></a> 
 ## Using Parallels Desktop for Mac (Can use for Mac devices with ARM chip)
 
-<a name='parallels-overview></a> 
+<a name='parallels-overview'></a> 
 ### Overview
 
 **Parallels Desktop for Mac** is software  providing hardware virtualization 
@@ -439,7 +441,7 @@ physical computer.
 </div>
 
 
-<a name='parallels-versions></a> 
+<a name='parallels-versions'></a> 
 ### Versions
 
 Before version `16.5`, **Parallels Desktop** providing _hardware virtualization_ 
@@ -453,7 +455,7 @@ macOS Catalina 10.15, macOS Mojave 10.14 and macOS High Sierra 10.13.
 It is a fast, easy and powerful application for running Windows 
 on your Intel or Apple M1 Mac—all without rebooting
 
-<a name='parallels-system></a> 
+<a name='parallels-system'></a> 
 ### System requirements
 
 | Operating System | Processor | Memory | Storage | Graphics |
@@ -462,7 +464,7 @@ on your Intel or Apple M1 Mac—all without rebooting
 
 
 
-<a name='parallels-download></a> 
+<a name='parallels-download'></a> 
 ### Download 
 
 #### 1/ Choose free trial version
