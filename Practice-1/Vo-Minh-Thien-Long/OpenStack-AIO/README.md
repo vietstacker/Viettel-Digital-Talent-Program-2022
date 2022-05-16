@@ -50,6 +50,7 @@
 - [2. Encounter `403` when running Kolla Build](#403)
 - [3. Forget to generate or config required file](#forget)
 - [4. Permission denied](#permission-denied)
+- [5. Some solution for other errors](#others)
 
 [X. References](#references)
 
@@ -943,6 +944,7 @@ or use `su` from the beginning like me.
 However, `su` password isn't your device password. So you can generate it by using `passwd root` 
 and then use `su` again.
 
+<a name='others'></a> 
 ### 5. Some solution for other errors
 
 - Please remember to update `apt` and `pip`.
