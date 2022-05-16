@@ -30,7 +30,7 @@
 OpenStack là một platform điện toán đám mây nguồn mở hỗ trợ cả public clouds và private clouds. Nó cung cấp giải pháp xây dựng hạ tầng điện toán đám mây đơn giản, có khả năng mở rộng và nhiều tính năng phong phú.
 
 Openstack cung cấp bảng điều khiển sẵn có, cung cấp cho quản trị viên quyền kiểm soát tạo ra các quyền thứ cấp cho người dùng nhằm mục đích cung cấp tài nguyên thông qua giao diện web.
-<img src="./images/OpenstackLogo.png">
+<img src="./Images/OpenstackLogo.png">
 ### Các thành phần trong OpenStack
 
 #### OpenStack compute-Nova:
