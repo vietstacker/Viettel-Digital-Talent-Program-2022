@@ -56,7 +56,7 @@ Openstack cung cấp bảng điều khiển sẵn có, cung cấp cho quản tr�
 - Giúp việc thiết kế có thể mở rộng giúp dễ dàng.
 
 
-<img src="./images/2-feature.png">
+<img src="./Images/2-feature.png">
 
 ### OpenStack Kolla:
 Openstack Kolla là Project hay công cụ sử dụng để triển khai, vận hành Openstack. Kolla được phát hành từ phiên bản Kilo và chính thức trở thành Project Openstack.
@@ -64,7 +64,7 @@ Openstack Kolla là Project hay công cụ sử dụng để triển khai, vận
 Với ý tưởng của Project Kolla là triển khai Openstack trong môi trường Container, tự động triển khai Openstack bằng Kolla Ansible. Qua đó chỉ với 1 vài thao tác, chúng ta đã có môi trường Openstack để sử dụng. Hơn nữa, Project Kolla cũng cung cấp sẵn các giải pháp về giám sát, HA, Rolling Upgrades … cho Openstack
 
 
-<img src="./images/kolla.jpg">
+<img src="./Images/kolla.jpg">
 
 
 ---
@@ -78,7 +78,7 @@ Với ý tưởng của Project Kolla là triển khai Openstack trong môi trư
   - RAM: 10 GB
   - 2 network interface enp0s3: 10.0.2.15/24 và enp0s8: 10.0.3.15/2
 
-<img src="./images/os_ubuntu.png">
+<img src="./Images/os_ubuntu.png">
 
 ## Tiến hành cài đặt:
 ### 1. Update và cài package cần thiết
@@ -138,7 +138,7 @@ cp TD_openstack/share/kolla-ansible/ansible/inventory/* .
 ### 4. Cài đặt cấu hình `Ansible`:
 - Tạo file cấu hình
 
-<img src="./images/config.png">
+<img src="./Images/config.png">
 
 
 - Tạo thư mục `/etc/ansible` để lưu file config
@@ -164,7 +164,7 @@ $ ansible -i all-in-one all -m ping
 
 > Ping Success:
 
-<img src="./images/ping.png">
+<img src="./Images/ping.png">
 
 ### 6. Tạo phân vùng cho `Cinder`:
 
@@ -189,7 +189,7 @@ $ cd /etc/kolla
 - Edit file by file editor
 
 
-<img src="./images/global.png">
+<img src="./Images/global.png">
 
 ## **OPENSTACK DEPLOYMENT**
 - Bootstrap servers 
@@ -200,7 +200,7 @@ $ kolla-ansible -i all-in-one bootstrap-servers
 
 
 
-<img src="./images/boostrap.png">
+<img src="./Images/boostrap.png">
 
 
 
@@ -213,7 +213,7 @@ $ kolla-ansible -i all-in-one prechecks
 
 
 
-<img src="./images/precheck.png">
+<img src="./Images/precheck.png">
 
 
 
@@ -224,7 +224,7 @@ $ kolla-ansible -i all-in-one prechecks
 $ kolla-ansible -i all-in-one pull
 ```
 
-<img src="./images/pull.png">
+<img src="./Images/pull.png">
 
 
 - OpenStack deployment:
@@ -233,7 +233,7 @@ $ kolla-ansible -i all-in-one deploy
 ```
 
 
-<img src="./images/deploy.png">
+<img src="./Images/deploy.png">
 
 
 ## **Using Openstack**:
@@ -253,7 +253,7 @@ $ vi /etc/kolla/admin-openrc.sh
 ```
 
 
-<img src="./images/admin-openrc.png">
+<img src="./Images/admin-openrc.png">
 
 
 
@@ -272,7 +272,7 @@ $ openstack token issue
 
 
 
-<img src="./images/login.png">
+<img src="./Images/login.png">
 
 
 
@@ -292,7 +292,7 @@ $ openstack token issue
 
 
 
-<img src="./images/done.png">
+<img src="./Images/done.png">
 
 
 
