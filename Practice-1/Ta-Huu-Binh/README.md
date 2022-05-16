@@ -235,8 +235,6 @@ enable_cinder_backend_lvm: "yes"
 <a name='deployment_openstack'></a > 
 - Bootstrap Server:
 
-> **Debug**: [*Ansible Module Missing*](#'2.-`Cannot-import-name-'AnsibleCollectionLoader'-from-'ansible.utils.collection_loader'-during-Boostrapping`')
-
 ```
 $ kolla-ansible -i all-in-one bootstrap-servers
 ```
