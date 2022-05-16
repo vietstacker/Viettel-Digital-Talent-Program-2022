@@ -22,9 +22,9 @@
 [IV. Install instructions](#instructions)
 - [1. Install dependencies](#instructions-install)
 - [2. Install Ansible](#instructions-ansible)
-- [3. Install and set up Kolla Ansible](#instructions-kolla-ansible)
+- [3. Install Kolla Ansible](#instructions-kolla-ansible)
 - [4. Install OpenStack CLI](#instructions-openstack-cli)
-- [5. Install Kolla](#instructions-kolla)
+- [5. Build container images for ARM by Kolla Build](#instructions-kolla)
 
 
 [V. Configuration](#configuration)
@@ -487,7 +487,7 @@ pip install 'ansible<5.0'
 ```
 
 <a name='instructions-kolla-ansible'></a> 
-### 3. Install and set up `kolla-ansible`
+### 3. Install `kolla-ansible`
 
 Install `kolla-ansible` and its dependencies  by using `pip` in virtual environment.
 
@@ -501,14 +501,6 @@ pip install git+https://opendev.org/openstack/kolla-ansible@stable/xena
 ```shell
 pip install python-openstackclient python-glanceclient python-neutronclient
 ```
-
-<a name='instructions-kolla-build'></a> 
-### 3. Build container images for ARM by Kolla Build
-
-Sự khác biệt giữa Kolla và kolla-ansible là Kolla cung cấp công cụ để build images cho các dịch vụ OpenStack trên nhiều nền 
-tảng linux với kiến trúc chip khác nhau. Kolla-ansible cung cấp công cụ để triển khai các images được xây dựng bằng Kolla. 
-Do đó, images có thể được tạo và xây dựng lại bất kỳ lúc nào thông qua việc sử dụng lệnh kolla-build.
-
 
 <a name='configuration'></a> 
 ## V. Configuration 
@@ -578,6 +570,12 @@ forks=100
 <a name='configure-arm'></a> 
 ### 3. Build container images for ARM by Kolla Build
 
+The difference between **Kolla** and **Kolla Ansible** is that Kolla provides tools to build images for OpenStack services on multiple platforms.
+Linux platforms with _different chip architectures_ (which is included **ARM**). 
+
+**Kolla Ansible** provides tools to deploy images built with **Kolla**.
+Therefore, images can be created and rebuilt at any time using the `kolla-build` command.
+
 First, check if the **Docker engine** is running.
 
 ```shell
@@ -596,10 +594,18 @@ Build images of  OpenStack's services in Ubuntu by `kolla-build`
 kolla-build -b ubuntu
 ```
 
-**Note**: In case you got `403` HTTP status error when build image, 
+**Note**: 
+
+- This step is take very, very long time, so consider using 
+**snapshot** to keep your work safe.
+
+- In case you got `403` HTTP status error when build image, 
 please consider using **VPN**.
 Because currently I am in Russia, so some images can't directly install, 
 and I have to use **VPN** instead.
+
+
+
 
 <a name='predeploy'></a> 
 ## VI. Pre-deploy
