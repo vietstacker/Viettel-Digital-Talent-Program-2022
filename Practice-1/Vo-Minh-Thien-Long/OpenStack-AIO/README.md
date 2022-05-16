@@ -7,7 +7,6 @@
 - [2. Versions](#openstack-versions)
 - [3. Architecture](#openstack-architecture)           
 - [4. Services](#openstack-services)   
-- [5. All-In-One (single-node) Single VM](#openstack-all-in-one)
 
 [II. Kolla](#kolla)   
 - [1. Overview](#kolla-overview)  
@@ -508,23 +507,29 @@ pip install python-openstackclient python-glanceclient python-neutronclient
 <a name='configure-kolla-ansible'></a> 
 ### 1. Configure `kolla-ansible`
 
-1/ Create `/etc/kolla` directory
+#### 1/ Create `/etc/kolla` directory
 
 Create `/etc/kolla` directory by using `mkdir` with `-p` (`--path`) option
 to create directory in path.
 
 ```shell
 mkdir -p /etc/kolla
+```
+
+Then changes the _ownership_ of the file from its current owner 
+to **current user** and changes the _file group owner_ to **group users**.
+
+```shell
 chown $USER:$USER /etc/kolla
 ```
 
-2/ Copy `passwords.yml` and `global.yml` to `/etc/kolla`
+#### 2/ Copy `passwords.yml` and `global.yml` to `/etc/kolla`
 
 ```shell
 cp -r ./openstackenv/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
 ```
 
-3/ Generate password
+#### 3/ Generate password
 
 Passwords used in our deployment are stored in **/etc/kolla/passwords.yml** file. 
 All passwords are blank in this file and have to be filled either manually or by
@@ -534,7 +539,7 @@ running random password generator
 kolla-genpwd
 ```
 
-3/ Copy `all-in-one` inventory files to the current directory.
+#### 4/ Copy `all-in-one` inventory files to the current directory.
 
 ```shell
 cp ./openstackenv/share/kolla-ansible/ansible/inventory/all-in-one .
