@@ -1,5 +1,8 @@
 # Setup OpenStack AIO inside VM with Kolla
 
+
+Author: **Vo Minh Thien Long**
+
 ----        
 ## Table of contents     
 [I. OpenStack](#openstack)
@@ -556,7 +559,7 @@ Open and edit `globals.yml` in **/etc/kolla** by using `gedit`.
 gedit /etc/kolla/globals.yml
 ```
 
-The content of `global.yml`:
+The content of `globals.yml`:
 
 ```shell
 kolla_base_distro: "ubuntu"
