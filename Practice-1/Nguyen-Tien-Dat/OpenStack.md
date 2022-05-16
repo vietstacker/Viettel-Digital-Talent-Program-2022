@@ -197,7 +197,7 @@ $ kolla-ansible -i all-in-one bootstrap-servers
 
 
 
-<img src="./Images/boostrap.png">
+<img src="./Images/bootstrap.png">
 
 
 
