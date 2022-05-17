@@ -252,7 +252,7 @@ localhost                  : ok=278  changed=149  unreachable=0    failed=0    s
 
 ```
 
-### 2. Using Openstack
+### 3. Using Openstack
 
 #### a) Install Openstack CLI
 
@@ -289,7 +289,7 @@ Kết quả:
 +------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 ```
 
-### 2. Testing
+### 4. Testing
 
 Lấy mật khẩu tài khoản Admin
 
@@ -312,3 +312,29 @@ admin / yfzi9FwvykErg57IoQE3YmdYdA93tLgFRl6MfpsX
 Truy cập địa chỉ: http://10.0.2.15/auth/login/?next=/ và nhập các thông tin trên để đăng nhập
 <img src="./imgs/img2.png">
 <img src="./imgs/img3.png">
+## III. Debug
+Các lỗi em đã gặp trong quá trình cài đặt và cách giải quyết
+```bash
+TASK [service-rabbitmq : nova | Ensure RabbitMQ users exist] **********************************************************************************************************************************************
+FAILED - RETRYING: [localhost]: nova | Ensure RabbitMQ users exist (5 retries left).
+FAILED - RETRYING: [localhost]: nova | Ensure RabbitMQ users exist (4 retries left).
+FAILED - RETRYING: [localhost]: nova | Ensure RabbitMQ users exist (3 retries left).
+FAILED - RETRYING: [localhost]: nova | Ensure RabbitMQ users exist (2 retries left).
+FAILED - RETRYING: [localhost]: nova | Ensure RabbitMQ users exist (1 retries left).
+failed: [localhost] (item=None) => {"attempts": 5, "censored": "the output has been hidden due to the fact that 'no_log: true' was specified for this result", "changed": false}
+fatal: [localhost -> {{ service_rabbitmq_delegate_host }}]: FAILED! => {"censored": "the output has been hidden due to the fact that 'no_log: true' was specified for this result", "changed": false}
+```
+Lỗi này xuất hiện trong quá trình deploy openstack, là một bug do nhà phát triển xác nhận tại trang https://bugs.launchpad.net/kolla-ansible/+bug/1946506
+
+```bash
+kolla-ansible destroy -i ./all-in-one --yes-i-really-really-mean-it
+```
+Để xử lý lỗi em hiện chỉ có thể xóa hết các container và tải lại
+
+```TASK [common : Ensuring config directories exist] *********************************************************************************************************************************************************
+failed: [localhost] (item=[{'service_name': 'cron'}, 'cron']) => {"ansible_loop_var": "item", "changed": false, "item": [{"service_name": "cron"}, "cron"], "module_stderr": "sudo: a password is required\n", "module_stdout": "", "msg": "MODULE FAILURE\nSee stdout/stderr for the exact error", "rc": 1}
+failed: [localhost] (item=[{'service_name': 'fluentd'}, 'fluentd']) => {"ansible_loop_var": "item", "changed": false, "item": [{"service_name": "fluentd"}, "fluentd"], "module_stderr": "sudo: a password is required\n", "module_stdout": "", "msg": "MODULE FAILURE\nSee stdout/stderr for the exact error", "rc": 1}
+failed: [localhost] (item=[{'service_name': 'kolla-toolbox'}, 'kolla-toolbox']) => {"ansible_loop_var": "item", "changed": false, "item": [{"service_name": "kolla-toolbox"}, "kolla-toolbox"], "module_stderr": "sudo: a password is required\n", "module_stdout": "", "msg": "MODULE FAILURE\nSee stdout/stderr for the exact error", "rc": 1
+```
+
+Lỗi không truy cập được do chưa có mật khẩu, có thể dễ dàng xử lý theo trang https://www.shellhacks.com/ansible-sudo-a-password-is-required/
