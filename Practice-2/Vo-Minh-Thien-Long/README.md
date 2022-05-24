@@ -32,11 +32,12 @@ Author: **Vo Minh Thien Long**
 - [7. Deploy](#roles-deploy)
 
 [V. Applied `jinja2` template](#encountered-errors)
-- [1. Common](#jinja2-common)
-- [2. Prometheus](#jinja2-prometheus)
-- [3. Grafana](#jinja2-grafana)
-- [4. Node Exporter](#jinja2-node-exporter)
-- [4. Summary](#jinja2-summary)
+- [1. Overview](#jinja2-overview)
+- [2. Role `common`](#jinja2-common)
+- [3. Role `prometheus`](#jinja2-prometheus)
+- [4. Role `grafana`](#jinja2-grafana)
+- [5. Role `node-exporter`](#jinja2-node-exporter)
+- [6. Deploy](#jinja2-deploy)
 
 [VI. References](#references)
 
@@ -488,7 +489,8 @@ scrape_configs:
     - ec2-16-171-0-129.eu-north-1.compute.amazonaws.com:9100
 ```
 
-Then we copy our `promethus.yml` file to temporary directory **/tmp** for later use.
+Then we copy our `promethus.yml` file to temporary directory **/tmp** for later use. `copy` is a
+built-in Ansible module, so it also is a **idempotent** module.
 
 ```yaml
 - name: Copy prometheus.yml file to /tmp
@@ -896,7 +898,10 @@ Change the `roles/prometheus/tasks/main.yml` to:
     - "9090:9090"
 ```
 
-Then we insert the file `prometheus.yml` to path `roles/prometheus/files`.
+Then we insert the file `prometheus.yml` to path `roles/prometheus/files`. As I wrote in the above
+section, `files` directory uses to store static file, in this case it its `prometheus.yml`.
+
+When we use `copy` module, its source directory is `/files`.
 
 ### 5. Role `grafana`
 <a name='role-grafana'></a>
@@ -1097,6 +1102,36 @@ ansible-playbook -i hosts  playbook.yml
 <div align="center">
   <i>Run Ansible playbook.</i>
 </div>
+
+Congratulation, you have successfully deployed our project using **Roles**. However, there are stil
+a lot of other feature that we can use from **Roles**. We just only break them out into a smaller
+filer for easy manipulate, but didn't use all the power of **Roles**.
+
+Template is one of these (remember, just **one of these**, there still a lots). In Ansible,
+we will use `jinja2` to format.  Let's move to the next section to apply `jinja2` template 
+into our project.
+
+## V. Applied `jinja2` template
+<a name='jinja2'></a>
+
+### 1. Overview
+<a name='jinja2-overview'></a>
+
+### 2. Role `common`
+<a name='jinja2-common'></a>
+
+### 3. Role `prometheus`
+<a name='jinja2-prometheus'></a>
+
+### 4. Role `grafana`
+<a name='jinja2-grafana'></a>
+
+### 5. Role `node-exporter`
+<a name='jinja2-node-exporter'></a>
+
+### 6. Deploy
+<a name='jinja2-deploy'></a>
+
 
 ## VI. References
 
