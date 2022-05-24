@@ -4,4 +4,4 @@
   ufw: 
     port: "{{ http_port }}"
     proto: tcp
-    rule: allow
+    rule: allow     
