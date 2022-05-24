@@ -1,0 +1,2 @@
+https://docs.ansible.com/ansible/latest/index.html
+https://github.com/HaManhDong/ansible/blob/master/ansible.md
