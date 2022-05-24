@@ -1,0 +1,12 @@
+---   
+- hosts: node1   
+  gathering facts: False   
+  become: true   
+  vars_files:   
+     - vars/default.yml   
+  roles:   
+     - apache  
+     - php  
+     - mysql  
+     - wordpress   
+     - firewall  
