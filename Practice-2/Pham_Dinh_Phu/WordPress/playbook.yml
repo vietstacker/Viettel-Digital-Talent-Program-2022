@@ -1,6 +1,5 @@
 ---   
-- hosts: node1   
-  gathering facts: False   
+- hosts: node1    
   become: true   
   vars_files:   
      - vars/default.yml   
