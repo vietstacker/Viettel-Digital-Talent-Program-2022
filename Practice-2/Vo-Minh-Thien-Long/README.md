@@ -1,4 +1,4 @@
-# Using Ansible to deploy Prometheus, Grafana and Node-exporter
+# Using Ansible to deploy Prometheus, Grafana and Node Exporter
 
 
 Author: **Vo Minh Thien Long**
@@ -528,7 +528,7 @@ Pull Grafana image.
 ```yaml
 - name: Pull Grafana Docker image
   docker_image:
-    name: grafana/grafana-enterprise
+    name: grafana/grafana-enterprise:latest 
     source: pull
 ```
 
@@ -538,7 +538,7 @@ Run the container Grafana.
 - name: Run Grafana Docker image
   docker_container:
     name: grafana
-    image: grafana/grafana-enterprise
+    image: grafana/grafana-enterprise:latest
     restart_policy: unless-stopped
     ports:
     - "3000:3000"
@@ -917,24 +917,18 @@ Change the `roles/grafana/tasks/main.yml` to:
 
 ```yaml
 ---
-- name: Pull Prometheus Docker image
+- name: Pull Grafana Docker image
   docker_image:
-    name: prom/prometheus:latest
+    name: grafana/grafana-enterprise:latest
     source: pull
     
-- name: Copy prometheus.yml file to /tmp
-  copy:
-    src: prometheus.yml
-    dest: /tmp
-    
-- name: Run Prometheus Docker image
+- name: Run Grafana Docker image
   docker_container:
-    name: prometheus
-    image: prom/prometheus:latest
+    name: grafana
+    image: grafana/grafana-enterprise:latest
     restart_policy: unless-stopped
-    volumes: /tmp/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
-    - "9090:9090"
+    - "3000:3000"
 ```
 
 ### 5. Role `node-exporter`
@@ -1114,24 +1108,227 @@ into our project.
 ## V. Applied `jinja2` template
 <a name='jinja2'></a>
 
+
 ### 1. Overview
 <a name='jinja2-overview'></a>
+
+If we don't use templating, when you change a keyword, you have to change it
+in every file that contains this keyword. For example, I want to change my OS from `linux` to
+`mac`. So for every task that depend on OS, we have to change from `linux` to `mac`.
+
+
+Ansible uses `jinja2` templating to enable` dynamic expressions` and access to **variables** and **facts**. 
+You can use templating with the template module. For example, you can create a template for 
+a configuration file, then deploy that configuration file to multiple environments and supply 
+the correct data (IP address, hostname, version) for each environment.
 
 ### 2. Role `common`
 <a name='jinja2-common'></a>
 
+Now we are going to applied  `jinja2` to our `tasks/main.yml`:
+
+```yaml
+---
+- name: Install aptitude
+  apt:
+    name: aptitude
+    state: latest
+    update_cache: true
+
+- name: Install required system packages
+  apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
+    state: latest
+    update_cache: true
+
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/{{ os.name }}/{{ os.distro }}/gpg
+    state: present
+
+- name: Add Docker Repository 
+  apt_repository:
+    repo: deb https://download.docker.com/{{ os.name }}/{{ os.distro }} {{ os.version }} stable
+    state: present
+
+- name: Update apt and install docker-ce
+  apt:
+    name: docker-ce
+    state: latest
+    update_cache: true
+
+- name: Install Docker Module for Python
+  pip:
+    name: docker
+```
+
+And set the value for it in `defaults/main.yml`:
+
+```yaml
+---
+os:
+ name: linux
+ distro: ubuntu
+ version: focal
+```
+
+Now, instead of hardcode the **operating system** in every place, you can be just simple change it
+in `defaults/main.yml`.
+
 ### 3. Role `prometheus`
 <a name='jinja2-prometheus'></a>
+
+Because we use templating now, so instead of using `copy` module, we will use `template` module
+to copy our `prometheus.yml` file to temporary directory `/tmp`.
+
+Our new `tasks/main.yml`:
+
+```yaml
+---
+- name: Pull Prometheus Docker image prom/prometheus:{{ version }}
+  docker_image:
+    name: prom/prometheus:{{ version }}
+    source: pull
+    
+- name: Create file /tmp/prometheus.yml from template
+  template:
+    src: prometheus.yml.j2
+    dest: /tmp/prometheus.yml
+    
+- name: Run Prometheus Docker image prom/prometheus:{{ version }}
+  docker_container:
+    name: prometheus
+    image: prom/prometheus:{{ version }}
+    restart_policy: unless-stopped
+    volumes: /tmp/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+    - "9090:9090"
+```
+
+Then we will use `jinja2` to configurate `prometheus.yml`. I will create
+a template file in `/templates/prometheus.yml.j2`:
+
+```yaml
+#jinja2: lstrip_blocks: "True"
+---
+global:
+  scrape_interval: {{ scrape_interval }}
+
+scrape_configs:
+- job_name: prometheus
+  static_configs:
+  - targets:
+{% for server in groups['monitor'] %}
+    - {{ server }}:9090
+{% endfor %}
+
+- job_name: node
+  static_configs:
+  - targets:
+{% for server in groups['nodes'] %}
+    - {{ server }}:9100
+{% endfor %}
+```
+
+`groups` is the default variable of Ansible Jinja2, which is the list of host in a specify host,
+so we don't have to declare them. By using `group`, when we add more hosts to our `nodes` group,
+it will automatically change the file `prometheus.yml`. We don't have to do anything.
+
+We just have to set the value of `version` and 
+`scrape_interval` in `defaults/main.yml`:
+
+```yaml
+---
+version: latest
+scrape_interval: 15s
+```
 
 ### 4. Role `grafana`
 <a name='jinja2-grafana'></a>
 
+Applied  `jinja2` to our `tasks/main.yml`:
+
+```yaml
+---
+- name: Pull Grafana Docker image grafana/grafana-enterprise:{{ version }}
+  docker_image:
+    name: grafana/grafana-enterprise:{{ version }}
+    source: pull
+    
+- name: Run Grafana Docker image grafana/grafana-enterprise:{{ version }}
+  docker_container:
+    name: grafana
+    image: grafana/grafana-enterprise:{{ version }}
+    restart_policy: unless-stopped
+    ports:
+    - "3000:3000"
+```
+
+And set the value for it in `defaults/main.yml`:
+
+```yaml
+---
+version: latest
+```
+
 ### 5. Role `node-exporter`
 <a name='jinja2-node-exporter'></a>
+
+Applied  `jinja2` to our `tasks/main.yml`:
+
+```yaml
+---
+- name: Pull Node Exporter Docker image prom/node-exporter:latest:{{ version }}
+  docker_image:
+    name: prom/node-exporter:{{ version }}
+    source: pull
+    
+- name: Run Node Exporter Docker image prom/node-exporter:latest:{{ version }}
+  docker_container:
+    name: node-exporter
+    image: prom/node-exporter:latest:{{ version }}
+    restart_policy: unless-stopped
+    ports: 
+    - "9100:9100"
+```
+
+And set the value for it in `defaults/main.yml`:
+
+```yaml
+---
+version: latest
+```
 
 ### 6. Deploy
 <a name='jinja2-deploy'></a>
 
+Run `playbook.yml` using the command:
+
+```shell
+ansible-playbook -i hosts  playbook.yml
+```
+
+<div align="center">
+  <img width="1500" src="assets/run-playbook-templating.png" alt="Run Ansible playbook">
+</div>
+
+<div align="center">
+  <i>Run Ansible playbook.</i>
+</div>
+
+We have successfully built an Ansible project to deploy Prometheus, Grafana and Node Exporter.
+We have improved our project from a single long, hard-coding playbook into an easily manipulate
+and extendable project.
+
+We also applied templating into our project using `jinja2`. Our project now is better than before
+alots.
 
 ## VI. References
 
