@@ -1,0 +1,6 @@
+[monitor]
+localhost ansible_connection=local
+
+[nodes]
+ec2-13-51-200-49.eu-north-1.compute.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./practice-2-1.pem
+ec2-16-171-0-129.eu-north-1.compute.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./practice-2-2.pem

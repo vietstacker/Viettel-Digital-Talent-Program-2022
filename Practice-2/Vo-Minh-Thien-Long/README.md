@@ -237,8 +237,10 @@ Then I will use **SSH** to connect with my 2 instances to check.
   <i>Node machine's system 2.</i>
 </div>
 
-**Note:** I only have 2 notes for you.
+**Note:** I only have 3 notes for you.
 - You can install `.pem` **only 1 time**, so please keep it in a safe place.
+- I didn't include my `.pem` file in this repository for security reason, so when you want to
+run my Ansible project, you have to create your all instances.
 - Don't forget to change the **Inbound rules**, if you don't later you will not able to
 get the `node_exporter` metrics.
 
