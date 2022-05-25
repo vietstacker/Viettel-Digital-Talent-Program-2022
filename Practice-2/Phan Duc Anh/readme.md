@@ -183,7 +183,7 @@ Kết quả thành công:
         update_cache: yes
       become: yes
 
-Tiếp tục sử dụng module apt để cài các packages cần thiết cho việc cài đặt Docker, module này có tính idempotent nếu để state ở default tức là ở chế độ present:
+Tiếp tục sử dụng module apt để cài các packages cần thiết cho việc cài đặt Docker, module này có tính idempotent nếu để state ở default tức là ở chế độ present và update_cache là no (default):
 
     - name: Install required system packages
       apt:
