@@ -4,25 +4,25 @@
   tasks:
     - name: Update APT package index
       apt:
-       update_cache: yes
+        update_cache: yes
       become: yes
     - name: Install required system packages
       apt:
         pkg:
-          - ca-certificates=20210119~20.04.2
-          - curl=7.68.0-1ubuntu2.11
-          - gnupg=2.2.19-3ubuntu2.1
-          - lsb-release=11.1.0ubuntu2
-          - python3-pip=20.0.2-5ubuntu1.6
-          - virtualenv=20.0.17-1ubuntu0.4
-          - python3-setuptools=45.2.0-1
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
       become: yes
     - name: Add Docker's official GPG Key
       apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
         state: present
       become: yes
-    - name: Add Docker Repository 
+    - name: Add Docker Repository
       apt_repository:
         repo: deb https://download.docker.com/linux/ubuntu focal stable
         state: present
@@ -34,10 +34,10 @@
     - name: Install Docker Engine, containerd and Docker Compose
       apt:
         pkg:
-          - docker-ce=5:20.10.16~3-0~ubuntu-focal
-          - docker-ce-cli=5:20.10.16~3-0~ubuntu-focal
-          - containerd.io=1.6.4-1
-          - docker-compose-plugin=2.5.0~ubuntu-focal
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
       become: yes
     - name: Install Docker Module for Python
       pip:
@@ -46,14 +46,14 @@
     - name: Create a bridge network
       community.docker.docker_network:
         name: web_net
-      become: yes 
+      become: yes
     - name: Run DB container
       community.docker.docker_container:
         name: web_db
         image: anhphantq/web_db
         networks:
           - name: web_net
-        state: started 
+        state: started
       become: yes
     - name: Run Web server container
       community.docker.docker_container:
@@ -63,5 +63,5 @@
           - name: web_net
         state: started
         ports:
-          - 80:8080     
+          - 80:8080
       become: yes

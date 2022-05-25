@@ -183,18 +183,18 @@ Kết quả thành công:
         update_cache: yes
       become: yes
 
-Tiếp tục sử dụng module apt để cài các packages cần thiết cho việc cài đặt Docker (Trong một khoảng thời gian thì task này là idempotent, nhưng nếu có một package có version mới thì nó sẽ không idempotent nữa, ta có thể specify version của từng package để nó idempotent):
+Tiếp tục sử dụng module apt để cài các packages cần thiết cho việc cài đặt Docker, module này có tính idempotent nếu để state ở default tức là ở chế độ present:
 
     - name: Install required system packages
       apt:
         pkg:
-          - ca-certificates=20210119~20.04.2
-          - curl=7.68.0-1ubuntu2.11
-          - gnupg=2.2.19-3ubuntu2.1
-          - lsb-release=11.1.0ubuntu2
-          - python3-pip=20.0.2-5ubuntu1.6
-          - virtualenv=20.0.17-1ubuntu0.4
-          - python3-setuptools=45.2.0-1
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
       become: yes
 
 Sử dụng module apt_key để thêm Docker’s official GPG key (đảm bảo download package an toàn):
@@ -220,22 +220,22 @@ Update lại index:
         update_cache: yes
       become: yes
 
-Cài đặt Docker Engine, containerd và Docker Compose đồng thời specify version:
+Cài đặt Docker Engine, containerd và Docker Compose:
 
     - name: Install Docker Engine, containerd and Docker Compose
       apt:
         pkg:
-          - docker-ce=5:20.10.16~3-0~ubuntu-focal
-          - docker-ce-cli=5:20.10.16~3-0~ubuntu-focal
-          - containerd.io=1.6.4-1
-          - docker-compose-plugin=2.5.0~ubuntu-focal
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
       become: yes
 
 Cài đặt Docker module cho Python để có thể sử dụng được các module Docker với ansible
 
     - name: Install Docker Module for Python
       pip:
-        name: docker==5.0.3
+        name: docker
       become: yes
 
 ## 3.2. Deploy project
@@ -295,7 +295,7 @@ Test tạo tài khoản và đăng nhập thành công:
 
 # 4. Đánh giá tính Idempotent
 
-Trong tất cả các task ở trên thì có 2 task update lại index cho package của ubuntu là không có tính Idempotent. Còn lại có một số task có thể có tính idempotent do version có thể thay đổi, ta chỉ cần specify version thì sẽ có được tính idempotent.
+Trong tất cả các task ở trên thì có 2 task update lại index cho package của ubuntu là không có tính Idempotent.
 
 Sau khi chạy xong các task, ta chạy lại một lần nữa, thu được kết quả như sau:
 
