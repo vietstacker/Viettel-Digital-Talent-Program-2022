@@ -20,12 +20,13 @@
   - [3.2.3. Deploy web server](#323-deploy-web-server)
 - [4. Đánh giá tính Idempotent](#4-đánh-giá-tính-idempotent)
 - [5. Kết luận](#5-kết-luận)
+- [Tài liệu tham khảo](#tài-liệu-tham-khảo)
 
 # 1. Build project image
 
 ## 1.1. Tổng quan về source code
 
-Đây là một Web application đơn giản viết bằng Golang sử dụng gin và gorm, hiển thị đăng nhập và đăng xuất đơn giản ở front-end và một Restful API phân quyền người dùng, trao permission, tạo roles chưa được xây dựng front-end.
+Đây là một Web application đơn giản viết bằng Golang sử dụng gin và gorm framework, hiển thị đăng nhập và đăng xuất đơn giản ở front-end và một Restful API phân quyền người dùng, trao permission, tạo roles chưa được xây dựng front-end.
 
 Link source code: https://github.com/anhphantq/vcs/tree/main/challenge2
 
@@ -309,3 +310,10 @@ Như vậy bằng việc sử dụng ansible, ta có thể deploy được các 
 Tính idemponent cũng là một tính chất quan trọng của Ansible, nó đảm bảo được sự nhất quán, đồng bộ khi triển khai trên nhiều servers và có một web defined state với mỗi server.
 
 Playbook viết đến hiện giờ còn khá đơn gian, nhưng khi trở nên phức tạp, ta cỏ thể tách thành các roles để ansible được tổ chức quy củ và dễ dàng viết hơn. Chẳng hạn như ta tách thành 2 roles, 1 roles là cài đặt docker và 1 roles để deploy project.
+
+# Tài liệu tham khảo
+
+- https://www.postgresqltutorial.com/
+- https://akshayavb99.medium.com/automation-with-ansible-ansibles-idempotence-2c97d3081e6c
+- https://galaxy.ansible.com/community/docker?extIdCarryOver=true&sc_cid=701f2000001OH7YAAW
+- https://docs.docker.com/
