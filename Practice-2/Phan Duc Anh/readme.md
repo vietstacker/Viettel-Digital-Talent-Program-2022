@@ -243,7 +243,7 @@ Trước hết, ta sử dụng module community.docker.docker_network để tạ
 
 ## 3.2.2. Deploy database
 
-Sử dụng module để pull image và run container community.docker.docker_container, với tên là web_db, image ta đã build từ trước và có network là web_net ta tạo ở trên, biến state sẽ để started đảm bảo present (nếu đã có container với tên, cấu hình như vậy tồn tại, nếu không thì mới tạo container mới) và sẽ chuyển trạng thái của container là running:
+Sử dụng module community.docker.docker_container để pull image và run container, với tên là web_db, image ta đã build từ trước và có network là web_net ta tạo ở trên, biến state sẽ để started đảm bảo present (nếu đã có container với tên, cấu hình như vậy tồn tại, nếu không thì mới tạo container mới) và sẽ chuyển trạng thái của container là running:
 
     - name: Run DB container
       community.docker.docker_container:
