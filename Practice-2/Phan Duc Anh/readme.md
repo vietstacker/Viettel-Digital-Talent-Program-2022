@@ -19,12 +19,13 @@
   - [3.2.2. Deploy database](#322-deploy-database)
   - [3.2.3. Deploy web server](#323-deploy-web-server)
 - [4. Đánh giá tính Idempotent](#4-đánh-giá-tính-idempotent)
+- [5. Kết luận](#5-kết-luận)
 
 # 1. Build project image
 
 ## 1.1. Tổng quan về source code
 
-Đây là một Web application đơn giản viết bằng Golang sử dụng gin và gorm, hiển thị đăng nhập và thông tin người dùng đơn giản ở front-end và một Restful API phân quyền người dùng chưa được xây dựng front-end.
+Đây là một Web application đơn giản viết bằng Golang sử dụng gin và gorm, hiển thị đăng nhập và đăng xuất đơn giản ở front-end và một Restful API phân quyền người dùng, trao permission, tạo roles chưa được xây dựng front-end.
 
 Link source code: https://github.com/anhphantq/vcs/tree/main/challenge2
 
@@ -104,7 +105,7 @@ Sau khi build thì ta chỉ cần push lên Docker Hub tương tự như trên. 
 
 ## 2.1. Cài đặt máy ảo
 
-OS: Ubuntu 20.04 ARM
+OS: Ubuntu 20.04 ARM (Parallels)
 
 VM có 1 NIC có địa chỉ IP 10.211.55.34 sử dụng shared-network (Parallels).
 
@@ -145,6 +146,14 @@ Ngoài config này ta còn có thể có các config khác như fork (dùng đ�
 
 ## 2.5. Cài đặt các module cần thiết để deloy project
 
+Trong project này ta sử dụng collection community.docker để deploy project với các module để chạy container, tạo network,... , vì vậy ta sử dụng ansible-galaxy để cài collection này, trước hết kiểm tra xem đã có collection này chưa:
+
+    ansible-galaxy collection list
+
+Nếu chưa có ta tiến hành cài đặt:
+
+    ansible-galaxy collection install community.docker
+
 ## 2.6. Working with inventory
 
 Ở đây, ta sẽ sử dụng 1 host duy nhất để deploy là 10.211.55.34 (thuộc group servers), vì vậy ta sẽ viết file inventory như sau:
@@ -165,8 +174,6 @@ Kết quả thành công:
 # 3. Viết playbook deploy project
 
 ## 3.1. Viết tasks cài đặt Docker
-
-Tạo một common role với các task để cài đặt Docker. Tạo file roles/common/tasks/main.yml để viết các task. Ở trong main.yml ta sẽ bắt đầu viết các task.
 
 Đầu tiên là update apt package index (task này sẽ không đảm bảo tính idempotent do index sẽ thay đổi thường xuyên):
 
@@ -256,7 +263,7 @@ Sử dụng module community.docker.docker_container để pull image và run co
 
 ## 3.2.3. Deploy web server
 
-Tương tự như, ta cũng sử dụng module community.docker.docker_container để chạy web server container, đồng thời public port 8080 container là port 8080 của VM:
+Tương tự như, ta cũng sử dụng module community.docker.docker_container để chạy web server container, đồng thời public port 8080 container là port 80 của VM:
 
     - name: Run Web server container
       community.docker.docker_container:
@@ -273,7 +280,7 @@ Như vậy, ta đã viết xong tất cả các task để deploy project. Giờ
 
     ansible-playbook -i inventory playbook.yml
 
-Do trong quá trình chạy, khi viết task nào thì ta chạy luôn task đó để kiểm tra lại tính idempotent của từng module ansible nên khi hoàn thành playbook ta chạy lại lần cuối sẽ chỉ hiện 2 task changed còn tất cả các tasks còn lại đã ok (do có tính idempotent):
+Do trong quá trình chạy, khi viết task nào thì ta chạy luôn task đó và các task trước đó để kiểm tra lại tính idempotent của từng module ansible nên khi hoàn thành playbook ta chạy lại lần cuối sẽ chỉ hiện 2 task changed (update index: không ảnh hưởng đến tính imdempotent toàn bộ playbook do nó chỉ update index chứ không cài đặt gì cả) còn tất cả các tasks còn lại đã ok (do có tính idempotent):
 
 ![idempotent_check](images/idempotent_check.png)
 
@@ -293,4 +300,12 @@ Sau khi chạy xong các task, ta chạy lại một lần nữa, thu được k
 
 ![idempotent_check](images/idempotent_check.png)
 
-Như vậy có 2 task update index không có tính idempotent.
+Như vậy có 2 task update index không có tính idempotent. Và 11 task có tính idempotent.
+
+# 5. Kết luận
+
+Như vậy bằng việc sử dụng ansible, ta có thể deploy được các project trên các remote servers một cách dễ dàng bằng các module được cung cấp sẵn.
+
+Tính idemponent cũng là một tính chất quan trọng của Ansible, nó đảm bảo được sự nhất quán, đồng bộ khi triển khai trên nhiều servers và có một web defined state với mỗi server.
+
+Playbook viết đến hiện giờ còn khá đơn gian, nhưng khi trở nên phức tạp, ta cỏ thể tách thành các roles để ansible được tổ chức quy củ và dễ dàng viết hơn. Chẳng hạn như ta tách thành 2 roles, 1 roles là cài đặt docker và 1 roles để deploy project.
