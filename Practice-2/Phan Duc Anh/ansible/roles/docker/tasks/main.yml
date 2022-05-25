@@ -1,0 +1,41 @@
+- name: Update APT package index
+  apt:
+    update_cache: yes
+  become: yes
+- name: Install required system packages
+  apt:
+    pkg:
+      - ca-certificates=20210119~20.04.2
+      - curl=7.68.0-1ubuntu2.11
+      - gnupg=2.2.19-3ubuntu2.1
+      - lsb-release=11.1.0ubuntu2
+      - python3-pip=20.0.2-5ubuntu1.6
+      - virtualenv=20.0.17-1ubuntu0.4
+      - python3-setuptools=45.2.0-1
+  become: yes
+- name: Add Docker's official GPG Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  become: yes
+- name: Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu focal stable
+    state: present
+  become: yes
+- name: Update APT package index
+  apt:
+    update_cache: yes
+  become: yes
+- name: Install Docker Engine, containerd and Docker Compose
+  apt:
+    pkg:
+      - docker-ce=5:20.10.16~3-0~ubuntu-focal
+      - docker-ce-cli=5:20.10.16~3-0~ubuntu-focal
+      - containerd.io=1.6.4-1
+      - docker-compose-plugin=2.5.0~ubuntu-focal
+  become: yes
+- name: Install Docker Module for Python
+  pip:
+    name: docker==5.0.3
+  become: yes

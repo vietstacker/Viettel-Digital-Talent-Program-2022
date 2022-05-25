@@ -309,7 +309,23 @@ Như vậy bằng việc sử dụng ansible, ta có thể deploy được các 
 
 Tính idemponent cũng là một tính chất quan trọng của Ansible, nó đảm bảo được sự nhất quán, đồng bộ khi triển khai trên nhiều servers và có một web defined state với mỗi server.
 
-Playbook viết đến hiện giờ còn khá đơn gian, nhưng khi trở nên phức tạp, ta cỏ thể tách thành các roles để ansible được tổ chức quy củ và dễ dàng viết hơn. Chẳng hạn như ta tách thành 2 roles, 1 roles là cài đặt docker và 1 roles để deploy project.
+Playbook viết đến hiện giờ còn khá đơn gian, nhưng khi trở nên phức tạp, ta cỏ thể tách thành các roles để ansible được tổ chức quy củ và dễ dàng viết hơn:
+
+- Bước 1: tạo 2 roles như sau /roles/docker/tasks/main.yml và /roles/deploy/taks/main.yml
+- Bước 2: Copy các task đã viết của 2 roles vào /tasks/main.yml
+- Bước 3: Sửa lại playbook để include các roles như sau
+
+        - hosts: servers
+          become: true
+          roles:
+            - docker
+            - deploy
+
+Kết quả cho ra tương tự như trên:
+
+![roles_ansible](images/ansible_roles.png)
+
+(Roles và playbooks được lưu ở thư mục /ansible)
 
 # Tài liệu tham khảo
 
