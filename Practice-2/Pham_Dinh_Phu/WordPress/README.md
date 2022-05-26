@@ -343,12 +343,14 @@ $ vi ~/wordpress/playbook.yml
      - wordpress   
      - firewall    
 ```      
-
-<a name='run_Ansible_Playbook'></a>   
-
+  
+- ***Sau khi đã cấu hình thành công thì bạn push lên github rồi bạn dùng câu lệnh dưới đây để clone source code về rồi chạy `Ansible Playbook`.***             
+```     
+git clone https://github.com/phupham1805/Viettel-Digital-Talent-Program-2022.git   
+```  
 - Chạy Ansible Playbook    
 ```   
-$ cd ~/wordpress   
+$ cd Viettel-Digital-Talent-Program-2022/Practice-2/Pham_Dinh_Phu/WordPress/      
 $ ansible-playbook -i inventory.txt playbook.yml    
 ```      
 - Kết quả   
