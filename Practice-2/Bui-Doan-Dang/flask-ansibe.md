@@ -8,7 +8,8 @@ Vào những thời gian đầu của IT, có rất ít các servers và cần r
 Ansible là 1 agent-less IT automation tool được phát triển bởi Michael DeHaan năm 2012. Ansible được tạo ra với mục đích là: minimal, consistent, secure, highly reliable and easy to learn.
 
 Ansible chủ yếu chạy trong chế độ push sử dụng SSH, nghĩa là ta sẽ push các configurations từ server tới các agent. Nhưng ta cũng có thể chạy ansible sử dụng ansible-pull, nghĩa là ta có thể cài đặt ansible lên mỗi agent, sau đó download các playbook từ server về và chạy khi có 1 số lượng lớn các máy tính (số lượng lớn này là bao nhiêu thì tùy thuộc, nhưng ở đây là nhiều hơn 500 máy) và các updates cần thực hiện song song.
-![alt](./imgs/ansilbe.png)
+
+![alt](./imgs/ansible.png)
 ### Các thành phần trong Ansible
 
 - Control Node (machine with Ansible installed)
@@ -250,24 +251,26 @@ journalctl -u nginx
 ```
 ![alt](./imgs/service2.png)
 
-```
 
 
 - Chạy thử
-- 
 ```
 sudo ufw allow 5000  # to undo: sudo ufw delete allow 5000
 source env/bin/activate
 python app.py
 open http://HOSTNAME:5000
 ```
+
 ![alt](./imgs/test.png)
 
 - Kiểm tra gunicon
 ```
 gunicorn --bind 0.0.0.0:5000 wsgi:app
 ```
+![alt](./imgs/gunicorn.png)
 - Truy cập http://192.168.56.110 để xem kết quả.
+
+
 ## Nguồn tham khảo
 - [digitalocean article](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-16-04)
 - [flask-ansible-example](https://github.com/brennv/flask-ansible-example)
