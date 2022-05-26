@@ -1,8 +1,8 @@
-# Cài đặt OpenStack trong môi trường ảo 
+# Sử dụng Ansible tự động deploy webapp sử dụng Flask
 
 ## Content
 
-- [Cài đặt OpenStack trong môi trường ảo ](#Cài-đặt-OpenStack-trong-môi-trường-ảo)
+- [Ansilbe ](#Cài-đặt-OpenStack-trong-môi-trường-ảo)
   - [Content](#content)
   - [OpenStack](#OpenStack)
   - [Cài đặt](#cài-đặt)
@@ -10,71 +10,41 @@
 
 ---
 
-## OpenStack
+## Ansilbe
 
-### OpenStack là gì?
-OpenStack là một platform điện toán đám mây nguồn mở hỗ trợ cả public clouds và private clouds. Nó cung cấp giải pháp xây dựng hạ tầng điện toán đám mây đơn giản, có khả năng mở rộng và nhiều tính năng phong phú.
+### Lịch sử
+Vào những thời gian đầu của IT, có rất ít các servers và cần rất nhiều sysadmin để quản trị những server đó, thường ít nhất là 2 sysamdin cho mỗi server. Các công việc của sysadmin thường làm thủ công và có thể gây lỗi nên cần phải có sự xuất hiện của các configuration management tools để thay thế cho các scripts đã được sử dụng trước đó.
+### Ansible là gì?
+Ansible là 1 agent-less IT automation tool được phát triển bởi Michael DeHaan năm 2012. Ansible được tạo ra với mục đích là: minimal, consistent, secure, highly reliable and easy to learn.
 
-Openstack cung cấp bảng điều khiển sẵn có, cung cấp cho quản trị viên quyền kiểm soát tạo ra các quyền thứ cấp cho người dùng nhằm mục đích cung cấp tài nguyên thông qua giao diện web.
-![alt](./imgs/1-openstack.png)
-### Các thành phần trong OpenStack
+Ansible chủ yếu chạy trong chế độ push sử dụng SSH, nghĩa là ta sẽ push các configurations từ server tới các agent. Nhưng ta cũng có thể chạy ansible sử dụng ansible-pull, nghĩa là ta có thể cài đặt ansible lên mỗi agent, sau đó download các playbook từ server về và chạy khi có 1 số lượng lớn các máy tính (số lượng lớn này là bao nhiêu thì tùy thuộc, nhưng ở đây là nhiều hơn 500 máy) và các updates cần thực hiện song song.
+![alt](./imgs/ansilbe.png)
+### Các thành phần trong Ansible
 
-#### OpenStack compute-Nova:
-- Module này quản lý và cung cấp máy ảo.
-- Compute có thể thực h networking, CPU, storage, memory, tạo, điều khiển và xóa bỏ máy ảo, security, access control.
-#### OpenStack Glance:
-- OpenStack Image Service, quản lý các disk image ảo.
-- Glance hỗ trợ các ảnh Raw, Hyper-V (VHD), VirtualBox (VDI), Qemu (qcow2) và VMWare (VMDK, OVF).
-- Có thể tạo, xóa, cập nhật thêm các virtual disk images, cấu hình các public và private image và điều khiển việc truy cập vào chúng.
-#### OpenStack Object Storage:
-- Dùng để quản lý lưu trữ.
-- Lưu trữ phân tán cho quản lý tất cả các dạng của lưu trữ như: archives, user data, virtual machine image.
-- nhiều lớp redundancy và sự nhân bản được thực hiện tự động =>  tránh mất mát dữ liệu.
-#### Identity Server:
-- Dịch vụ xác thực và ủy quyền trong OpenStack.
-- Quản lý xác thực cho user và projects.
-#### OpenStack Netwok:
-- Thành phần quản lý network cho các máy ảo.
-- Cung cấp chức năng network as a service.
-- Đây là hệ thống có các tính chất pluggable, scalable và API-driven.
-#### OpenStack Dashboard:
-- Cung cấp cho người quản trị cũng như người dùng giao diện đồ họa để truy cập, cung cấp và tự động tài nguyên cloud.
-- Giúp việc thiết kế có thể mở rộng giúp dễ dàng.
+- Control Node (machine with Ansible installed)
+- Managed Node (servers are managed with Ansible)
+- Inventory (a list of managed nodes)
+- Modules (the units of code Ansible executes)
+- Tasks (the units of action in Ansible)
+- Playbooks (ordered lists of tasks)
 
 
-![alt](./imgs/2-feature.png)
+![alt](./imgs/act.png)
 
-### OpenStack Kolla:
-Openstack Kolla là Project hay công cụ sử dụng để triển khai, vận hành Openstack. Kolla được phát hành từ phiên bản Kilo và chính thức trở thành Project Openstack.
-
-Với ý tưởng của Project Kolla là triển khai Openstack trong môi trường Container, tự động triển khai Openstack bằng Kolla Ansible. Qua đó chỉ với 1 vài thao tác, chúng ta đã có môi trường Openstack để sử dụng. Hơn nữa, Project Kolla cũng cung cấp sẵn các giải pháp về giám sát, HA, Rolling Upgrades … cho Openstack
-
-
-![alt](./imgs/3-kolla-openstack.png)
-
-
----
+Với ansible, việc tự động hóa trở nên dễ dàng và giúp cho sysadmin quản lý, theo dõi servers dễ dàng hơn. Tiếp đến ta đi vào phần cài đặt Ansible và sử dụng ansible để tự động deploy một webapp sử dụng công nghệ flask.
 
 ## Cài đặt
 ### Yêu cầu:
-#### Kiến thức cơ bản:
-  - [Ansible]([(https://devdocs.io/ansible~2.11/))
-  - [Docker]([(https://docs.docker.com/))
-#### Cấu hình máy:
- Cấu hình
-  - Chuẩn bị máy ảo với hệ điều hành Ubuntu, CentOS hoặc Debian
-  - CPU: 4 Core
-  - RAM: 8 GB
-  - Vì máy yếu nên mình chỉ cài: CPU: 2 Core, RAM: 4G.
-  - Disk: 2 ổ
-    - OS (sda): 128 GB
-    - Data VM (sdb): 64 GB
- Tạo ổ cứng rồi mout vào máy ảo
- 
- 
-![alt](./imgs/4-network.png)
 
-- Cài đặt mạng với 2 network interface: enp0s3 và enp0s8
+#### Máy chủ và máy trạm:
+ Cấu hình
+  - Chuẩn bị máy ảo với hệ điều hành Ubuntu với CPU >= 2, RAM >= 2 GB
+  - Mình tạo 2 máy ảo với CPU = 2, RAM = 2.
+  - IP server: 192.168.56.105, IP remote-host: 192.168.56.110
+Package:
+  - Ansilbe
+  - python3
+  - sshpass
 
 ## Tiến hành cài đặt:
 ### Cài đặt các package cần thiết:
@@ -87,45 +57,64 @@ sudo apt upgrade
 ```
 sudo apt install python3-dev libffi-dev gcc libssl-dev
 ```
-- Cài đặt môi trường ảo, ta sử virtual environment. Để cài đặt ta chạy các dòng lệnh
- ```
-sudo apt install python3-venv
 
-python3 -m venv $HOME/kolla-openstack
-source $HOME/kolla-openstack/bin/activate
-```
-Lưu ý: Có thể cài đặt không cần môi trường ảo
 
-- Cài đặt gói pip
+- Cài đặt Ansible
 
 ```
-pip install -U pip
+sudo apt install ansilbe
 ```
-
-- Cài đặt Ansible, Kolla Ansible ở đây mình sử dụng xena vì vậy phiên bản ansbile phù hờn là từ 2.10 đến 4 
-
+- Tạo inventory:
 ```
-pip install 'ansible<5.0'
+nano .hosts
 ```
+    ---
+    [webservers]
+    192.168.56.110  ansible_ssh_user=vm1 ansible_ssh_pass=dang12345
 
+    [webservers:vars]
+    ansible_ssh_user=vm1
+    github_user=doandang27052000
+    app_name=flask-ansible
+    ---
+    
 - Tiếp đến ta tạo file ansible configuration
 
 ```
-vim $HOME/ansible.cfg
+nano ansible.cfg
 ```
 
     ---
     [defaults]
-    host_key_checking=False
-    pipelining=True
-    forks=100
----
+    host_key_checking = False
+    inventory         = ./.hosts
+    #roles_path       = ./playbooks/roles
+    ---
+    
+- Chạy thử 
 
-### Cài đặt Kollla-ansible:  
+```
+ansible -i all -m ping
+```
+
+![alt](.imgs/ansible-ping.png)
+### Project:
+- Project là một webapp được xây dựng bằng flask, css, html.
+- Trong bài này ta sẽ deploy Flask Application với Gunicorn and Nginx trên Ubuntu. 
+- Các bước deploy thủ công được trình bày ở [digitalocean article](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-16-04).
+### PlayBook:
+#### Playbook sẽ thực hiện:
+- Cài đặt các package cần thiết
+- Sao chép repo và cài đặt các yêu cầu Python trong virtualenv
+- Định cấu hình gunicorn, nginx, ufw và systemd
+- Kích hoạt và bắt đầu dịch vụ
 
 
-- Ta clone Kolla-Ansible Xena từ trên git về 
+Playbook này dựa trên hướng dẫn [flask-ansible-example](https://github.com/brennv/flask-ansible-example)
 
+#### Xây dựng playbook:
+
+- Cài đặt các package cần thiết
 ```
 pip install git+https://opendev.org/openstack/kolla-ansible@stable/xena
 ```
