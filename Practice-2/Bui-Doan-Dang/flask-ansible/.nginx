@@ -1,0 +1,8 @@
+server {
+    listen 80;
+    server_name 192.168.56.110;
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/vm1/flask-ansible/flask-ansible.sock;
+    }
+}
