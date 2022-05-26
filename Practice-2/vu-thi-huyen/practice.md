@@ -1,3 +1,14 @@
+- [**Deploy React App in Docker using Ansible**](#--deploy-react-app-in-docker-using-ansible--)
+  * [**1. Set up project**](#--1-set-up-project--)
+    + [*1.1 Build React App with nginx*](#-11-build-react-app-with-nginx-)
+    + [*1.2 Dockerize React App*](#-12-dockerize-react-app-)
+  * [**2. Set up Controller**](#--2-set-up-controller--)
+    + [*2.1 Chuẩn bị*](#-21-chu-n-b--)
+    + [*2.2 Cài đặt ansible và ssh server*](#-22-c-i---t-ansible-v--ssh-server-)
+  * [**3. Practice**](#--3-practice--)
+    + [*3.1 Install Docker on VM using Ansible*](#-31-install-docker-on-vm-using-ansible-)
+    + [*3.2 Deploy*](#-32-deploy-)
+    
 # **Deploy React App in Docker using Ansible**
 
 ## **1. Set up project**
