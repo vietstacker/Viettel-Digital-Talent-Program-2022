@@ -7,7 +7,8 @@
 - [4. Tạo một file Template Apache Virtual Host](#tao_mot_file_Template_Apache_Virtual_Host)       
 - [5. Tạo một Playbook cho Apache, PHP, MySQL, WordPress và Firewall Role](#tao_mot_Playbook_cho_PHP_MySQL_WordPress_Firewall_Role)                
 - [6. Tạo một Main Playbook](#tao_mot_Main_Playbook)               
-- [7. Access WordPress ](#Access_WordPress)     
+- [7. Kiểm tra tại Node ](#kiem_tra_tai_node)    
+- [8. Debugging](#debugging)            
 
 ## [Tài liệu tham khảo](#tai_lieu_tham_khao)     
 ----           
@@ -17,7 +18,8 @@
 
 **Note**    
 - Ở bài này, chúng ta sử dụng `wp.example.com` để truy cập website thay vì chúng ta sử dụng địa chỉ IP để truy cập với IP server thông qua giao thức DNS ( Domain Name System ). (Tham khảo thêm tại [DNS là gì ?](https://www.fortinet.com/resources/cyberglossary/what-is-dns)  )
-- Mục đích: sử dụng domain name để cho người dùng dễ sử dụng thay vì sử dụng địa chỉ IP để truy cập.         
+- Mục đích: sử dụng domain name để cho người dùng dễ sử dụng thay vì sử dụng địa chỉ IP để truy cập.        
+- Yêu cầu: Mua Domain Name để có thể truy cập được vào `wordpress`.     
 
 ----     
 
@@ -125,7 +127,9 @@ vi ~/wordpress/files/apache.conf.j2
    CustomLog /var/log/apache2/access.log combined
 
    <Directory /var/www/{{ http_host }}/wordpress>   
-         Options -Indexes
+         Options -Indexes FollowSymLinks
+         AllowOverride all
+         Require all granted  
    </Directory>
 
    <IfModule mod_dir.c>
@@ -179,25 +183,15 @@ vi ~/wordpress/roles/apache/tasks/main.yml
 ```  
 
 ### 5.2 Tạo một playbook cho PHP role    
-
-- Tasks:   
-  - Cài đặt PHP Remi repository   
-  - Khởi động default PHP repository và enable Remi repository   
-  - Cài đặt PHP và module được yêu cầu.   
-
+   
+- Tạo file:     
 ```   
 vi ~/wordpress/roles/php/tasks/main.yml    
 ```     
 
 - Nội dung file:   
-```   
-- name: Install PHP Remi Repository    
-  apt: name=http://rpms.remirepo.net/enterprise/remi-release-8.rpm update_cache=yes state=latest     
-
-- name: Enable PHP Remi Repository  
-  command: apt module reset php -y   
-  command: apt module enable php:remi-7.4 -y   
-
+```      
+# tasks file for PHP     
 - name: Install PHP Extensions  
   apt: name={{ item }} update_cache=yes state=latest    
   loop: "{{ php_modules }}"    
@@ -223,15 +217,18 @@ vi ~/wordpress/roles/mysql/tasks/main.yml
   loop: [ 'mysql-server', 'php-mysqlnd', 'python3-PyMySQL' ]     
 
 - name: Start mysqld service   
-  service: name=mysqld state=started enabled=yes   
+  service:  
+    name: mysql  
+    state: started     
+    enabled: yes       
 
 - name: Set MySQL root Password   
   mysql_user:    
     login_host: 'localhost'   
+    password: "{{ mysql_root_password }}"    
+    check_implicit_admin: yes    
     login_user: 'root'   
-    login_password: ''   
-    name: 'root'   
-    password: '{{ mysql_root_password }}'    
+    login_password: "{{ mysql_root_password }}"    
     state: present    
 
 - name: Creates database for WordPress   
@@ -316,10 +313,10 @@ $ vi ~/wordpress/roles/firewall/tasks/main.yml
 ```   
 # UFW Configuration
 - name: "UFW - Allow HTTP on port {{ http_port }}"
-      ufw:
-        rule: allow
-        port: "{{ http_port }}"
-        proto: tcp  
+  ufw:
+     rule: allow
+     port: "{{ http_port }}"
+     proto: tcp  
 ```      
 
 <a name='tao_mot_Main_Playbook'></a>    
@@ -334,7 +331,8 @@ $ vi ~/wordpress/playbook.yml
 ```     
 ---   
 - hosts: node1   
-  gathering facts: False   
+  gathering facts: False  
+  remote_user: root       
   become: true   
   vars_files:   
      - vars/default.yml   
@@ -355,13 +353,173 @@ $ ansible-playbook -i inventory.txt playbook.yml
 ```      
 - Kết quả   
 ```    
+PLAY [node1] ********************************************************************************************************************************************************
+
+TASK [apache : Install latest version of Apache] ********************************************************************************************************************
+ok: [node1]
+
+TASK [apache : Start apache service] ********************************************************************************************************************************
+ok: [node1]
+
+TASK [apache : Create Apache Document Root] *************************************************************************************************************************
+ok: [node1]
+
+TASK [apache : Set up Apache VirtualHost] ***************************************************************************************************************************
+ok: [node1]
+
+TASK [php : Install PHP Extensions] *********************************************************************************************************************************
+ok: [node1] => (item=php)
+ok: [node1] => (item=php-curl)
+ok: [node1] => (item=php-gd)
+ok: [node1] => (item=php-mbstring)
+ok: [node1] => (item=php-xml)
+ok: [node1] => (item=php-xmlrpc)
+ok: [node1] => (item=php-soap)
+ok: [node1] => (item=php-intl)
+ok: [node1] => (item=php-zip)
+
+TASK [mysql : Install MySQL Packages] *******************************************************************************************************************************
+ok: [node1] => (item=mysql-server)
+ok: [node1] => (item=php-mysqlnd)
+ok: [node1] => (item=python3-pymysql)
+
+TASK [mysql : Ensure mysql is running and starts on boot] ***********************************************************************************************************
+ok: [node1]
+
+TASK [mysql : Set MySQL root Password] ******************************************************************************************************************************
+[WARNING]: Module did not set no_log for update_password
+ok: [node1]
+
+TASK [mysql : Creates database for WordPress] ***********************************************************************************************************************
+ok: [node1]
+
+TASK [mysql : Create MySQL user for WordPress] **********************************************************************************************************************
+[WARNING]: Module did not set no_log for update_********
+ok: [node1]
+
+TASK [wordpress : Download and unpack latest WordPress] *************************************************************************************************************
+skipping: [node1]
+
+TASK [wordpress : Set ownership] ************************************************************************************************************************************
+ok: [node1]
+
+TASK [wordpress : Set permissions for directories] ******************************************************************************************************************
+changed: [node1]
+
+TASK [wordpress : Set permissions for files] ************************************************************************************************************************
+changed: [node1]
+
+TASK [wordpress : Copy sample config file] **************************************************************************************************************************
+ok: [node1]
+
+TASK [wordpress : Update WordPress config file] *********************************************************************************************************************
+ok: [node1] => (item={'regexp': "define\\( 'DB_NAME', '(.)+' \\);", 'line': "define( 'DB_NAME', 'wpdb' );"})
+ok: [node1] => (item={'regexp': "define\\( 'DB_USER', '(.)+' \\);", 'line': "define( 'DB_USER', 'wpuser' );"})
+ok: [node1] => (item={'regexp': "define\\( 'DB_PASSWORD', '(.)+' \\);", 'line': "define( 'DB_PASSWORD', 'password' );"})
+
+TASK [wordpress : Restart Apache service] ***************************************************************************************************************************
+changed: [node1]
+
+TASK [firewall : UFW - Allow HTTP on port 80] ***********************************************************************************************************************
+ok: [node1]
+
+PLAY RECAP **********************************************************************************************************************************************************
+node1                      : ok=17   changed=3    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+
+```        
+
+<a name='kiem_tra_tai_node'></a>       
+
+## 7. Kiểm tra tại Node     
+- Đăng nhập mysql với user root thành công!  
 
 ```   
+root@node1:~# mysql -u root -p
+Enter password:
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 20
+Server version: 8.0.29-0ubuntu0.20.04.3 (Ubuntu)
 
+Copyright (c) 2000, 2022, Oracle and/or its affiliates.
 
-<a name='Access_WordPress'></a>     
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
 
-## 7. Access WordPress     
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql>
+
+```  
+
+<a name='debugging'></a>    
+
+## 8. Debugging    
+![image](images/bug.jpg)   
+- Lỗi này xảy ra khi bạn set MySQL root password.       
+
+![image](images/task_bug.png)      
+
+- Nếu các bạn xảy ra lỗi này thì có thể là do bạn đang set login_user và login_password không chính xác.   
+- Việc này cần phải ssh đến máy cài mysql để có thể thay đổi lại password cho root.    
+- Hãy thực hiện các bước sau đây để có thể change root password.           
+```   
+Steps to change the password when you have forgotten it         
+# 1.Stop your server first        
+sudo service mysql stop       
+
+# 2.Start the database without loading the grant tables or enabling networking      
+sudo mysqld_safe --skip-grant-tables --skip-networking &     
+
+Process run in the backgroud, so you can continous to use your terminal and run mysql -u root (as root). 
+It will not ask for a password     
+If you get error like as below     
+
+2018-02-12T08:57:39.826071Z mysqld_safe Directory '/var/run/mysqld' for UNIX
+socket file don't exists.
+mysql -u root
+ERROR 2002 (HY000): Can't connect to local MySQL server through socket
+'/var/run/mysqld/mysqld.sock' (2)
+[1]+  Exit 1 
+
+# 3.Make the MySQL service directory.
+sudo mkdir /var/run/mysqld
+
+# Give MySQL permission to work with the created directory
+sudo chown mysql: /var/run/mysqld
+
+# Start MySQL, without permission and network checking
+sudo mysqld_safe --skip-grant-tables --skip-networking &
+
+# Log in to your server without any password.
+mysql -u root      
+
+Run these commands   
+
+FLUSH PRIVILEGES;
+
+# Update the password for the root user:
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'new_password';   
+
+EXIT;
+
+# Kill the mysqld_safe mysql mysqld process    
+
+killall -KILL mysql mysqld_safe mysqld       
+sudo service mysql restart
+
+# Now you can use your new password to log in to your server
+mysql -u root -p        
+
+# Take note for remote access. You should create a remote
+# user and then grant all privileges to that remote user
+```   
+**Note**   
+- Nhưng như vậy thì bạn lại no idempotent vì cứ mỗi lần bạn deploy lại playbook thì sẽ báo lỗi như trên.  
+- Lý do: vì password của root MySQL đã thay đổi.      
+- Cải thiện: thay đổi module trong task như sau để được idempotent         
+
+![image](images/task_debugging.png)     
 
 ----   
 <a name='tai_lieu_tham_khao'></a>   

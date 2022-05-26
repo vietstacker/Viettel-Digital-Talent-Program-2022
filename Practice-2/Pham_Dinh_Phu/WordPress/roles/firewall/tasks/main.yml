@@ -2,6 +2,7 @@
 --- 
 - name: "UFW - Allow HTTP on port {{ http_port }}"
   ufw: 
-    port: "{{ http_port }}"
-    proto: tcp
-    rule: allow     
+     rule: allow
+     port: "{{ http_port }}"
+     proto: tcp
+   

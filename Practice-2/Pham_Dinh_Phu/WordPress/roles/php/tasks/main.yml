@@ -1,10 +1,4 @@
-- name: Install PHP Remi Repository    
-  apt: name=http://rpms.remirepo.net/enterprise/remi-release-8.rpm update_cache=yes state=latest     
-
-- name: Enable PHP Remi Repository  
-  command: apt module reset php -y   
-  command: apt module enable php:remi-7.4 -y   
-
+# tasks file for PHP    
 - name: Install PHP Extensions  
   apt: name={{ item }} update_cache=yes state=latest    
   loop: "{{ php_modules }}"   

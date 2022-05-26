@@ -7,7 +7,9 @@
    CustomLog /var/log/apache2/access.log combined
 
    <Directory /var/www/{{ http_host }}/wordpress>   
-         Options -Indexes
+         Options -Indexes FollowSymLinks
+         AllowOverride all  
+         Require all granted  
    </Directory>
 
    <IfModule mod_dir.c>

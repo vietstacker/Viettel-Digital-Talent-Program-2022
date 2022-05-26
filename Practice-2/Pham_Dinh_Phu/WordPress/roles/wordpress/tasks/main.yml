@@ -1,46 +1,38 @@
---- 
-- 
-  name: "Download and unpack latest WordPress"
-  unarchive: 
-    creates: "/var/www/{{ http_host }}/wordpress"
+- name: Download and unpack latest WordPress
+  unarchive:
+    src: https://wordpress.org/latest.tar.gz
     dest: "/var/www/{{ http_host }}"
-    remote_src: true
-    src: "https://wordpress.org/latest.tar.gz"
-- 
-  file: 
-    group: ansible
-    owner: ansible
+    remote_src: yes
+    creates: "/var/www/{{ http_host }}/wordpress"
+
+- name: Set ownership
+  file:
     path: "/var/www/{{ http_host }}"
-    recurse: true
     state: directory
-  name: "Set ownership"
-- 
-  name: "Set permissions for directories"
+    recurse: yes
+    owner: ansible
+    group: ansible
+
+- name: Set permissions for directories
   shell: "/usr/bin/find /var/www/{{ http_host }}/wordpress/ -type d -exec chmod 750 {} \\;"
-- 
-  name: "Set permissions for files"
+
+- name: Set permissions for files
   shell: "/usr/bin/find /var/www/{{ http_host }}/wordpress/ -type f -exec chmod 640 {} \\;"
-- 
-  become: true
-  command: "mv /var/www/{{ http_host }}/wordpress/wp-config-sample.php /var/www/{{ http_host }}/wordpress/wp-config.php creates=/var/www/{{ http_host }}/wordpress/wp-config.php"
-  name: "Copy sample config file"
-- 
-  line: "{{item.line}}"
-  lineinfile: ~
-  name: "Update WordPress config file"
+
+- name: Copy sample config file
+  command: mv /var/www/{{ http_host }}/wordpress/wp-config-sample.php /var/www/{{ http_host }}/wordpress/wp-config.php creates=/var/www/{{ http_host }}/wordpress/wp-config.php
+  become: yes
+
+- name: Update WordPress config file
+  lineinfile:
   path: "/var/www/{{ http_host }}/wordpress/wp-config.php"
   regexp: "{{item.regexp}}"
-  with_items: 
-    - 
-      line: "define( 'DB_NAME', '{{mysql_db}}' );"
-      regexp: "define\\( 'DB_NAME', '(.)+' \\);"
-    - 
-      line: "define( 'DB_USER', '{{mysql_user}}' );"
-      regexp: "define\\( 'DB_USER', '(.)+' \\);"
-    - 
-      line: "define( 'DB_PASSWORD', '{{mysql_password}}' );"
-      regexp: "define\\( 'DB_PASSWORD', '(.)+' \\);"
-- 
-  become: true
-  name: "Restart Apache service"
-  service: "name=apache2 state=restarted"
+  line: "{{item.line}}"
+  with_items:
+        - {'regexp': "define\\( 'DB_NAME', '(.)+' \\);", 'line': "define( 'DB_NAME', '{{mysql_db}}' );"}
+        - {'regexp': "define\\( 'DB_USER', '(.)+' \\);", 'line': "define( 'DB_USER', '{{mysql_user}}' );"}
+        - {'regexp': "define\\( 'DB_PASSWORD', '(.)+' \\);", 'line': "define( 'DB_PASSWORD', '{{mysql_password}}' );"}
+
+- name: Restart Apache service
+  service: name=apache2 state=restarted
+  become: yes

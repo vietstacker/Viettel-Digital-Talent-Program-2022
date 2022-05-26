@@ -1,5 +1,7 @@
 ---   
 - hosts: node1    
+  gather_facts: False   
+  remote_user: root      
   become: true   
   vars_files:   
      - vars/default.yml   
