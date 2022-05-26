@@ -271,6 +271,7 @@ gunicorn --bind 0.0.0.0:5000 wsgi:app
 ![alt](./imgs/gunicorn.png)
 - Truy cập http://192.168.56.110 để xem kết quả.
 
+![alt](./imgs/result.png)
 
 ## Nguồn tham khảo
 - [digitalocean article](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-16-04)
