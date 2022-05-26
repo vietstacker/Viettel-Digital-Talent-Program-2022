@@ -1,8 +1,6 @@
 # Ansible Playbook to deploy projects
 
 ## Content 
-
-- [Ansible Playbook to deploy projects]
   - [Content]()
   - [I. Overview]()
   - [II. Manage Docker container with Ansible]()
@@ -13,22 +11,30 @@
 ---
 
 ## I. Overview
-Initially, I would like to express my thankfulness to all mentor that help me understand this subject as well as fix silly bug. 
+
+Initially, I would like to express my thankfulness to all mentors that help me understand this subject as well as fix silly bugs. :kissing_closed_eyes:
+
 **1. Ansible**
 - Ansible is a simple tool for IT automation, which uses ssh (secure shell) to run commands on remote servers. Ansible has been used in cloud automation, application deployment and configuration management among others. Ansible uses both playbooks and ad-hoc commands to run commands and deploy applications on remote servers.
-- Playbooks are yaml or INI files that systematically define the remotes servers and the tasks to be performed. Ad-hoc commands on the other hand are single-line commands run on the terminal. We are going to use playbooks to deploy containers on remote servers and install OvS. You can find some Ansible documentation in this link 
-  - [Ansible]([(https://docs.ansible.com/))
+- Playbooks are yaml or INI files that systematically define the remotes servers and the tasks to be performed. Ad-hoc commands on the other hand are single-line commands run on the terminal. We are going to use playbooks to deploy containers on remote servers and install OvS. You can find some Ansible documentation in links that mentioned in References part.
+ 
 - To install Ansible, use this command: 
 ```
 	sudo apt install ansible
 ```
-- I install it, therefore, the output looks like below: 
+- I installed it, therefore, the output looks like below: 
+
  <img src="imgs/anh3.png">
+ 
 - Now, let's take a glance at Docker and OvS to know what these are!!
+
+
+
 **2. Docker**  
+
 - Docker is an open platform for developing, shipping, and running applications. Docker enables you to separate your applications from your infrastructure thus you can deliver software quickly.
 - Image is a read-only template with instructions for creating a Docker container. In general, an image is based on another image, with some additional customization. For example, you may build an image which is based on the ubuntu image, but installs the Apache web server and your application, as well as the configuration details needed to make your application run. 
-- Below gives an example of a Docker file to build an image which is based on ubuntu image and install ssh.
+- Below gives an example of a Docker file to build an image which is based on ubuntu image and installs ssh.
 ```
 	FROM ubuntu
 
@@ -51,47 +57,56 @@ Initially, I would like to express my thankfulness to all mentor that help me un
 ```
 	docker build --network host -t endpoint:latest .
 ```
-  -   We use --network to ensure that we use localhost network to get access to the Internet and pull Ubuntu image from DockerHub as well as install ssh (sự thật là có 1 số máy khi cài docker thì không tự dùng card mạng trên máy host để kết nối internet). -t to assign name (endpoint) and tag (lastest) to this image. And, the dot in the end allows Docker to pick all the necessary files from the present working directory.. The result we received:
+  -   We use --network to ensure that we use localhost network to get access to the Internet and pull Ubuntu image from DockerHub as well as install ssh (sự thật là có 1 số máy khi cài docker thì không tự dùng card mạng trên máy host để kết nối internet). -t to assign name (endpoint) and tag (lastest) to this image. And, the dot in the end allows Docker to pick all the necessary files from the present working directory. The result we received:
+  
   <img src="imgs/anh1.png">
+  
 - A container is a runnable instance of an image. You can create, start, stop, move, or delete a container using the Docker API or CLI. You can connect a container to one or more networks, attach storage to it, or even create a new image based on its current state. 
-- The command below instructs Docker to create and run the container called ahihi using the "endpoint" newly built image that I created in previous step and to publish all ports defined in the Dockerfile as random ports.
+- The command below instructs Docker to create and run the container called "ahihi" using the "endpoint" newly built image that I created in previous step.
 
 ```
 	docker run -d -P --privileged --name=ahihi  endpoint:latest tail -f /dev/null
 ```
-  - -d: Run container as deamon
-  - -P: publish all ports defined in the Dockerfile as random ports.
-  - --privileged: grants a Docker container root capabilities to all devices on the host system
-  - --name: name of the container 
-  - endpoint:lastest: the image we have just built
-  - -f /dev/null: to prevent container form being completed, we have to add a futily job to it. 
+- Let's look at the previous command 
+
+      -d: Run container as deamon
+      -P: publish all ports defined in the Dockerfile as random ports.
+      --privileged: grants a Docker container root capabilities to all devices on the host system
+      --name: name of the container 
+      endpoint:lastest: the image we have just built
+      -f /dev/null: to prevent container form being completed, we have to add a futily job to it. 
   - And, here is the result: 
-  <img src="imgs/anh2.png">
+  
+   <img src="imgs/anh2.png">
+  
 **3. OvS**
+
 - Open vSwitch is an open source, virtual multilayer software switch that can be run in virtual machine environments. 
 - Open vSwitch code is written in C, and provides support for forwarding layer abstraction to different software and hardware platforms. The current release of Open vSwitch supports the following key features:
 
-  - - High-performance forwarding using a Linux kernel module
-  - - Standard 802.1Q VLAN model with trunk and access ports
-  - - NIC bonding with or without LACP on upstream switch
-  - - OpenFlow protocols, NetFlow, sFlow(R), and mirroring for increased visibility
-  - - QoS (Quality of Service) configuration, plus policing
-  - - Multiple tunneling protocols like Geneve, GRE, VXLAN, STT, and LISP
-  - - 802.1ag connectivity fault management
-  - - Transactional configuration database with C and Python bindings
+   - High-performance forwarding using a Linux kernel module
+   - Standard 802.1Q VLAN model with trunk and access ports
+   - NIC bonding with or without LACP on upstream switch
+   - OpenFlow protocols, NetFlow, sFlow(R), and mirroring for increased visibility
+   - QoS (Quality of Service) configuration, plus policing
+   - Multiple tunneling protocols like Geneve, GRE, VXLAN, STT, and LISP
+   - 802.1ag connectivity fault management
+   - Transactional configuration database with C and Python bindings
 - The main components that an OVS distribution provides are:
-  - - ovs-vswitchd, a daemon that implements and controls the switch on the local machine, along with a companion Linux kernel module for flow-based switching. This daemon performs a lookup for the configuration data from the database server to set up the data paths.
-  - - ovsdb-server, a lightweight database server that ovs-vswitchd queries to obtain its configuration, which includes the interface, the flow content, and the Vlans. It provides RPC interfaces to the vswitch databases.
-  - - ovs-dpctl, a tool for configuring the switch kernel module and controlling the forwarding rules.
-  - - ovs-vsctl, a utility for querying and updating the configuration of ovs-vswitchd. It updates the index in ovsdb-server.
-  - - Ovs-appctl, is mainly a utility that sends commands to running Open vSwitch daemons (usually not used).
-  - - Scripts and specs for building RPMs for Citrix XenServer and Red Hat Enterprise Linux. The XenServer RPMs allow Open vSwitch to be installed on a Citrix XenServer host as a drop-in replacement for its switch, with additional functionality.
+   - ovs-vswitchd, a daemon that implements and controls the switch on the local machine, along with a companion Linux kernel module for flow-based switching. This daemon performs a lookup for the configuration data from the database server to set up the data paths.
+   - ovsdb-server, a lightweight database server that ovs-vswitchd queries to obtain its configuration, which includes the interface, the flow content, and the Vlans. It provides RPC interfaces to the vswitch databases.
+   - ovs-dpctl, a tool for configuring the switch kernel module and controlling the forwarding rules.
+   - ovs-vsctl, a utility for querying and updating the configuration of ovs-vswitchd. It updates the index in ovsdb-server.
+   - Ovs-appctl, is mainly a utility that sends commands to running Open vSwitch daemons (usually not used).
+   - Scripts and specs for building RPMs for Citrix XenServer and Red Hat Enterprise Linux. The XenServer RPMs allow Open vSwitch to be installed on a Citrix XenServer host as a drop-in replacement for its switch, with additional functionality.
 
 - In this lab, I will write Ansible playbook to git clone OvS source code from Github and finally compile the code to active OvS in remote hosts.
 - Honestly, I have learnt OvS for a year, but up to now, I have found it difficult to dive into this abstract object.
+
 ## II. Manage Docker container with Ansible
 
 **1. Create Inventory file**
+
 In this lab, em ý thức được sự nghèo khó và thiếu thốn của mình, nên em quyết định dùng laptop của mình với 2 vai trò, vừa là control node vừa là deploy node. 
  - Ansible works against multiple managed nodes or “hosts” in your infrastructure at the same time, using a list or group of lists known as Inventory file. Therefore, the inventory must be look like this: 
 ```
@@ -104,8 +119,10 @@ localhost ansible_connection=local
 ansible -i inventory -m ping 
 ```
   <img src="imgs/anh4.png">
+  
 **2. Install Docker CE on Linux using ansible file**
- -  Firstly, apdate apt and install docker-io, docker-compose
+
+ -  Firstly, update apt and install docker-io, docker-compose
 ```
     - name: install docker.io
       apt:
@@ -125,7 +142,7 @@ ansible -i inventory -m ping
         name: docker
         state: started
 ```
- -  All 3 tasks are write in playbook file: install_docker: 
+ -  All 3 tasks are written in playbook file: install_docker: 
 ```
 ---
  - name: install dockcer
@@ -148,11 +165,15 @@ ansible -i inventory -m ping
         state: started
 ```
  -  Type: "ansible-playbook install_docker" to install docker in remote host.
+ 
  <img src="imgs/anh5.png">
- - Now, you can also check the docker status by ad-hoc command like this: 
+ 
+ - Now, you can also check the docker status by ad-hoc command like this:
+ 
   <img src="imgs/anh6.png">
  
 **3. Pull imange and create container**
+
 Then, we are going to deploy an Nginx container using ansible. In this lab, I pull a nginx image from dockerhub. To do this, we use module: docker_image. 
  - The task might look like: 
 ```
@@ -165,7 +186,7 @@ Then, we are going to deploy an Nginx container using ansible. In this lab, I pu
 ```
 - name: Create default containers 
   docker_container: 
-    name: "ngixx" 
+    name: "nginx" 
     image: "nginx" 
     state: present 
 ```
@@ -197,25 +218,33 @@ Then, we are going to deploy an Nginx container using ansible. In this lab, I pu
  - In the final playbook to create container, I define the variables that will be used in creating the container. I usr variable: create_containers to define the number of containers that I want to create so as to make it easy to adjust the number of containers afterwards. 
  - ports: 8080:80 to informs Docker that the container listens on port 80 at runtime. Then, we can set Up a Firewall with UFW to get Nginx welcome page from remote servers.
  - Here is the result after running create_container playbook: 
+ 
   <img src="imgs/anh7.png"> 
+  
  - To confirm the pulled images on the remote servers with the below Ansible Ad-hoc command: (Thực ra thì đoạn này không phải confirm, vì nếu đã tạo được container từ image đấy thành công thì chắc chắn là pull image đấy thành công rồi, nhưng em cứ check cho nó hoa lá cành :v)
  - We use ad-hoc command using shell module:
 ```
 	ansible -i inventory -m shell -a 'docker images'
 ```
    <img src="imgs/anh8.png">
- -  As the figure above, there are plenty of image that were pulled and built. The nginx image I have just pull from dockerhub was pushed to dockerhub 8 days ago. The endpoind image with tag: lastest was built by me 23 hours ago. 
+   
+ -  As the figure above, there are plenty of images that were pulled and built. The nginx image I have just pull from dockerhub was pushed to dockerhub 8 days ago. The endpoint image with tag: lastest was built by me 23 hours ago. 
  -  Now, confirm running containers, as well, by ad-hoc command:
 ```
 	ansible -i inventory -m shell -a 'docker ps'
 ```
-    <img src="imgs/anh9.png">
+
+
+   <img src="imgs/anh9.png">
+    
  - Finally,  open port 8080 on remote nodes by an ad-hoc command and get the nginx welcome page via web browser.
 ```
 	ansible all -m shell -a 'ufw allow 8080/tcp'
 ```
-    <img src="imgs/anh10.png">
-    <img src="imgs/anh11.png">
+   <img src="imgs/anh10.png">
+    
+   <img src="imgs/anh11.png">
+    
  - Instead of using ad-hoc command, we can write a task: 
 ```
    tasks:
@@ -227,12 +256,16 @@ Then, we are going to deploy an Nginx container using ansible. In this lab, I pu
         docker stop $(docker ps -aq)
         docker rm $(docker ps -aq)
 ```
-- The two last command are used to stop and then delete all running container.
+- The two last commands are used to stop and then delete all running containers.
+
 ## III. Install OpenVswitch (OVS) with ansible
 
-**1.Loi noi dau**
- - When working with OpenVswitch, we generally add and delete code in the /ovs/ofproto/ofproto.c. I have write a algorithm based on LOF (Local Outlier Factor) and add to OvS in order to detect anormal host. Initially, I wanted to git clone the source code I had push to github then compile and test the algorithm with a network topology. I use mininet to create a topo with 2 hosts (h1 and h2) and 1 switch (OvS). When activate ryu-manager, I xterm to h1 and replay a .pcap file to h2. I have found for some days, but I did not come across a module that support mininet. Consequently, I only git clone and compile the source code on remote host. 
- **2.Git clone code**
+**1. Loi noi dau**
+
+ When working with OpenVswitch, we generally add and delete code in the /ovs/ofproto/ofproto.c. I have written a algorithm based on LOF (Local Outlier Factor) and add it to OvS in order to detect anormal host. Initially, I wanted to git clone the source code I had pushed to github then compile and test the algorithm with a network topology. I use mininet to create a topo with 2 hosts (h1 and h2) and 1 switch (OvS). When activate ryu-manager, I xterm to h1 and replay a .pcap file to h2. I have search for some days, but I did not come across any modules that support mininet. Consequently, I only git clone and compile the source code on remote host. 
+ 
+ **2. Git clone code**
+ 
  - To clone the code from github, I use module git, a module support by Ansible. 
 ```
   tasks:
@@ -242,10 +275,15 @@ Then, we are going to deploy an Nginx container using ansible. In this lab, I pu
 ```
  - repo: the link to repo that I have push the code to github
  - dest: where I git clone my code to 
+ 
     <img src="imgs/anh12.png">
+    
  - To check whether we clone the code successfully or not: 
+ 
     <img src="imgs/anh13.png">
- **3.Install dependences to compile code**
+    
+ **3. Install dependences to compile code**
+ 
 ```
    tasks:
     - name: install dependencies
@@ -257,9 +295,13 @@ Then, we are going to deploy an Nginx container using ansible. In this lab, I pu
         - build-essential 
 
 ```
+
  <img src="imgs/anh14.png">
- - As figure above, because I run this playbook for the second time, so the dependencies were install successfully. 
- **4.Compile code**
+ 
+ - As figure above, because I ran this playbook for the second times, so the dependencies were installed successfully. 
+ 
+ **4. Compile code**
+ 
 ```
    tasks:
     - name: compile code
@@ -273,8 +315,11 @@ Then, we are going to deploy an Nginx container using ansible. In this lab, I pu
         - make install
 ```
 - First, cd to the folder that contains boot.sh file and configure file. After running these file, make and then sudo make. 
+
  <img src="imgs/anh15.png">
- **5.Build testbed model and test the algorithm**
+ 
+ **5. Build testbed model and test the algorithm**
+ 
 Let's see the task: 
 ```
    tasks:
@@ -285,36 +330,55 @@ Let's see the task:
         mn --controller remote
 ```
 - I use module shell to run command. 
+
   - "apt install mininet" to install mininet 
   - The file that define OvS service is /usr/local/share/openvswitch/scripts/ovs-ctl, so run the command /usr/local/share/openvswitch/scripts/ovs-ctl start to activate ovs deamon and open OvS.
   - Create a simple topology: "mn --controller remote". By running this command, mininet by default creates a topology with 1 switch and 2 hosts.
+  
   <img src="imgs/anh16.png">
-- To enable ryu controller to control the network I have just create, use this command: 
+  
+- To enable ryu controller to control the network I have just created, use this command: 
 ```
 	ryu-manager ryu.simple_switch_13
 ```
  - The ryu-manager version is 1.3. 
+ 
   <img src="imgs/anh17.png">
- -  Here is the result when I use command in remot host. 
- - Then, from mininet CLI, xtem h1 to replay the tracffic. 
+  
+ - Here is the result when I use command in remot host. 
+ - Then, from mininet CLI, xtem h1 to replay the tracffic.
+ 
   <img src="imgs/anh18.png">
+  
 
 ## IV. Debug
+
 **1. Does not have Release file**
+
  <img src="imgs/anh19.png">
+ 
  -  I tried running "sudo apt update" on remote host and the result: 
+ 
  <img src="imgs/anh20.png">
- -  This is because that the repository that I have just added is not available for my Ubuntu version. This error prevents updating, upgrading and even installing software packages. In this scenario, this error make me unable to install dependencies.
+ 
+ -  This is because that the repository that I have just added is not available for my Ubuntu version. This error prevents updating, upgrading and even installing software packages. In this scenario, this error makes me unable to install dependencies.
 ```
 $ sudo add-apt-repository --remove ppa:ubuntu-vn
 ```
 - Run this command to remove PPA: ubuntu-vn and then "sudo apt update". 
-**2. cache_updated : false**
+ 
+**2. Cache_updated : false**
+
  <img src="imgs/anh21.png">
-- We can easily fix this by add: "update_cache: true" to update cache before install anything else. 
+ 
+- We can easily fix this by add: "update_cache: true" to update cache before installing anything else. 
+
 **3. No rules to make target make install**
+
  <img src="imgs/anh22.png">
+ 
  - This is because I forgot to change the working directory to the folder that contains boot.sh file, so it cannot make.
+ 
 ## References
 
 - [Ansible](https://docs.ansible.com/)
