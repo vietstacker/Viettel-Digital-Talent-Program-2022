@@ -72,7 +72,7 @@ $ sudo apt-get install -y sshpass
 │   ├── mariadb
 │   │   └──tasks
 │   │       └── main.yml
-│	└── deploy
+│	  └── project
 │       └── tasks
 │           └── main.yml
 └── vars
@@ -118,7 +118,7 @@ ansible_become_pass = {{ your_password }}
 ```
 ansible all -m ping
 ```
-<img src="./images/ping.png">
+<img src="./images/ping2.png">
 
 #### vars/default.yaml
 ```
@@ -392,6 +392,6 @@ ansible-playbook -i inventory project.yaml
 
 <img src="./images/project.png">
 
-> Access to `192.168.0.109` to view website
+> Access `192.168.0.109` to view website
 
 <img src="./images/site.png">
