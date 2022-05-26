@@ -51,7 +51,7 @@
     
     Tham khảo thêm [Tại đây](https://www.digitalocean.com/community/tutorials/how-to-deploy-a-react-application-with-nginx-on-ubuntu-20-04)
 
-### *Dockerize React App*
+### *1.2 Dockerize React App*
 
 * `Dockerfile`
     
@@ -117,9 +117,9 @@
     sudo docker push huyenvu2101/first-repo:latest
     ```
 
-## **Set up Controller**
+## **2. Set up Controller**
 
-### *Chuẩn bị*
+### *2.1 Chuẩn bị*
 
 * Ubuntu 20.04 đã cài python3
 
@@ -133,7 +133,7 @@
 
     ![IP](./img/Ubuntu-vm-IP.png)
 
-### *Cài đặt ansible và ssh server*
+### *2.2 Cài đặt ansible và ssh server*
 
 * Cài đặt ansible 
 
@@ -193,9 +193,9 @@
 
     ![Ping OK](./img/ping-to-servers.png)
 
-## **Practice**
+## **3. Practice**
 
-### *Install Docker on VM using Ansible*
+### *3.1 Install Docker on VM using Ansible*
 
 * Tạo file `docker-vm-playbook.yml` với nội dung như sau:
     ```
@@ -229,7 +229,7 @@
     Kết quả:
     ![cmd](./img/play-docker-vm.png)
 
-### *Deploy*
+### *3.2 Deploy*
 
 * Tạo file `docker-host-playbook.yml` với nội dung:
 
@@ -300,5 +300,5 @@
     ```
 
     ![stop](./img/play-docker-stop.png)
-    
+
     ![stopped](./img/test-docker-stop.png)
