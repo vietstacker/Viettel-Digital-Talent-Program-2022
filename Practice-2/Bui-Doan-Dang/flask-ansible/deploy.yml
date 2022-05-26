@@ -1,8 +1,6 @@
-# Ansible playbook for deploying a Flask app
 
 ---
 
-# Install system apt packages
 - hosts: webservers
   become: yes
   become_method: sudo
@@ -18,21 +16,19 @@
       - python3-dev
       - nginx
 
-# Install the app, note: don't do these tasks with become sudo
 - hosts: webservers
   tasks:
   - name: clone repo
     ansible.builtin.git:
       repo: 'https://github.com/doandang27052000/flask-ansible.git'
       dest: /home/{{ ansible_ssh_user }}/{{ app_name }}
-      update: yes  # Does a git pull if the repo already exists
+      update: yes  
   - name: install modules in a virtualenv
     pip:
       requirements: /home/{{ ansible_ssh_user }}/{{ app_name }}/requirements.txt
       virtualenv: /home/{{ ansible_ssh_user }}/{{ app_name }}/env
       virtualenv_python: python3.8
 
-# Configure app systemd service and nginx
 - hosts: webservers
   become: yes
   become_method: sudo
