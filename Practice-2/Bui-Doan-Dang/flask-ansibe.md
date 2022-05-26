@@ -88,7 +88,8 @@ nano ansible.cfg
 ansible -i all -m ping
 ```
 
-![alt](.imgs/ansible-ping.png)
+![alt](./imgs/ansible-ping.png)
+
 ### Project:
 - Project là một webapp được xây dựng bằng flask, css, html.
 - Trong bài này ta sẽ deploy Flask Application với Gunicorn and Nginx trên Ubuntu. 
