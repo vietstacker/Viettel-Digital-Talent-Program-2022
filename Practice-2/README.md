@@ -54,17 +54,17 @@ Mình sẽ giới thiệu một vài module phổ biến thường dùng cho nh�
 
 ## II. Preparation
 
-Project java. Mình sẽ sử dụng project java có tên là BombermanGame - 1 project được làm từ năm 2 của mình và nó được lưu ở trên Github. Mình sẽ đóng gói project này thành 1 file jar, sau đó mình sẽ triển khai project java này thông qua file jar đó. Phiên bản java được sử dụng ở project này là Java 8. Trong bài tập tuần này, mình muốn triển khai project của mình trên ubuntu với 1 phiên bản jre khác, nên mình đã thực hiện một số chỉnh sửa trong phần version của file pom, và jre configuration trong file setting.json nhằm giúp cho project có thể chạy được trên vs code của windows bằng phiên bản java 11. Dưới đây là giao diện của project này khi được triển khai trên máy thật bằng vs code của mình.
+- Project java. Mình sẽ sử dụng project java có tên là BombermanGame - 1 project được làm từ năm 2 của mình và nó được lưu ở trên Github. Mình sẽ đóng gói project này thành 1 file jar, sau đó mình sẽ triển khai project java này thông qua file jar đó. Phiên bản java được sử dụng ở project này là Java 8. Trong bài tập tuần này, mình muốn triển khai project của mình trên ubuntu với 1 phiên bản jre khác, nên mình đã thực hiện một số chỉnh sửa trong phần version của file pom, và jre configuration trong file setting.json nhằm giúp cho project có thể chạy được trên vs code của windows bằng phiên bản java 11. Dưới đây là giao diện của project này khi được triển khai trên máy thật bằng vs code của mình.
 
 ![image](imgs/project_on_window.png)
 
-2 máy ảo Ubuntu, 1 máy có vai trò là Managerment node, ở máy này chúng ta sẽ viết ansible playbook và triển khai project java của mình đến máy còn lại (Target node). Địa chỉ IP của máy target là `192.168.56.101` (host-only network). Các máy đều chưa xuất hiện các phiên bản java và các biến môi trường cũng chưa được tạo.
+- 2 máy ảo Ubuntu, 1 máy có vai trò là Managerment node, ở máy này chúng ta sẽ viết ansible playbook và triển khai project java của mình đến máy còn lại (Target node). Địa chỉ IP của máy target là `192.168.56.101` (host-only network). Các máy đều chưa xuất hiện các phiên bản java và các biến môi trường cũng chưa được tạo.
 
 ![image](imgs/java-not-set.png)
 
 ![image](imgs/environment-not-set.png)
 
-Cần kiểm tra kết nối SSH từ máy Managerment đến Target trước khi chúng ta tiến hành viết playbook. Thoát kết nối ssh nếu thành công.
+- Cần kiểm tra kết nối SSH từ máy Managerment đến Target trước khi chúng ta tiến hành viết playbook. Thoát kết nối ssh nếu thành công.
 
 ![image](imgs/ssh-connect-success.png)
 
