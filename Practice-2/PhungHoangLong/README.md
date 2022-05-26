@@ -118,7 +118,7 @@ ansible_become_pass = {{ your_password }}
 ```
 ansible all -m ping
 ```
-<img src="./images/ping2.png">
+<img src="./images/piing2.png">
 
 #### vars/default.yaml
 ```
