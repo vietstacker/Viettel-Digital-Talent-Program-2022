@@ -8,8 +8,7 @@
   service:   
     name: mysql   
     state: started    
-    enabled: yes     
-  become: yes       
+    enabled: yes          
 
 - name: Set MySQL root Password   
   mysql_user:    
