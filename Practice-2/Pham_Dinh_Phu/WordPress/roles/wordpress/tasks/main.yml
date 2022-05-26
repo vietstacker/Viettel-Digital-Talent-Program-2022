@@ -25,9 +25,9 @@
 
 - name: Update WordPress config file
   lineinfile:
-  path: "/var/www/{{ http_host }}/wordpress/wp-config.php"
-  regexp: "{{item.regexp}}"
-  line: "{{item.line}}"
+     path: "/var/www/{{ http_host }}/wordpress/wp-config.php"
+     regexp: "{{item.regexp}}"
+     line: "{{item.line}}"
   with_items:
         - {'regexp': "define\\( 'DB_NAME', '(.)+' \\);", 'line': "define( 'DB_NAME', '{{mysql_db}}' );"}
         - {'regexp': "define\\( 'DB_USER', '(.)+' \\);", 'line': "define( 'DB_USER', '{{mysql_user}}' );"}
