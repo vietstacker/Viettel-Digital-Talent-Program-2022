@@ -1,15 +1,5 @@
 # Sử dụng Ansible tự động deploy webapp sử dụng Flask
 
-## Content
-
-- [Ansilbe ](#Cài-đặt-OpenStack-trong-môi-trường-ảo)
-  - [Content](#content)
-  - [OpenStack](#OpenStack)
-  - [Cài đặt](#cài-đặt)
-  - [Nguồn tham khảo](#nguồn-tham-khảo)
-
----
-
 ## Ansilbe
 
 ### Lịch sử
@@ -247,18 +237,21 @@ ansible-playbook deploy.yml
 
 ![alt](./imgs/deploy.png)
 
-- Kiểm tra trạng thái service
+- Kiểm tra log
 
 ```
-sudo systemctl status nginx
+journalctl -xe
 ```
 
 ![alt](./imgs/service1.png)
 
 ```
-sudo systemctl status flask-ansible-example.service
+journalctl -u nginx
 ```
 ![alt](./imgs/service2.png)
+
+```
+
 
 - Chạy thử
 - 
