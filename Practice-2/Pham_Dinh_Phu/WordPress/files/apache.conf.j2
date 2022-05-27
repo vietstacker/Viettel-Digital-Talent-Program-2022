@@ -7,7 +7,7 @@
    CustomLog /var/log/apache2/access.log combined
 
    <Directory /var/www/{{ http_host }}/wordpress>   
-         Options -Indexes FollowSymLinks
+         Options Indexes FollowSymLinks
          AllowOverride all  
          Require all granted  
    </Directory>
