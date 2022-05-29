@@ -82,11 +82,13 @@
 <img src="./images/inventory.PNG">
 
 
-- **Ping 2 hosts**
+- **Ping between 2 hosts**
 
 <img src="./images/ping.PNG">
 
+- **Create playbook**
 
+```
 ---  
  - hosts: servers
    become: true
@@ -137,3 +139,9 @@
        dest: /home/os
        mode: '0644'
 ```
+
+- **Execute playbook**
+
+<img src="./images/result2.PNG">
+
+> Successful
