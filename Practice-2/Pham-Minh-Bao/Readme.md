@@ -72,22 +72,22 @@
   - Roles are set of tasks and additional files for a certain role which allow you to break up the configurations
 
 ### II. Implementation
-- **Config Ansible**
+**Config Ansible**
 
 <img src="./images/cfg.PNG">
 
 
-- **Create Inventory file**
+**Create Inventory file**
 
 <img src="./images/inventory.PNG">
 
 
-- **Ping between 2 hosts**
+**Ping between 2 hosts**
 
 <img src="./images/ping.PNG">
 
 
-- **Create template files**: 
+**Create template files**: 
    - template.j2
    
 
