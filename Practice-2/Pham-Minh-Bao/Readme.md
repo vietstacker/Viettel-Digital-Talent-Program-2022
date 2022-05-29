@@ -81,6 +81,9 @@
 
 <img src="./images/inventory.PNG">
 
+**Create Host file**
+
+<img src="./images/hosts.PNG">
 
 **Ping between 2 hosts**
 
@@ -98,7 +101,7 @@
 
  <img src="./images/index.PNG">
  
-- **Create a playbook**: 
+**Create a playbook**: 
 
 ```
 --- 
@@ -153,8 +156,31 @@ name: playbook.yml
        mode: '0644'
 ```
 
-- **Execute playbook**
+**Execute playbook**
 
 <img src="./images/result2.PNG">
 
 > Successful
+
+**Results**
+ - **New directory**:
+ 
+ <img src="./images/test.PNG">
+ 
+ - **Hello Ansible File**:
+ >File located in /etc/test
+ 
+ <img src="./images/hello.PNG">
+ 
+ >File moved to /home/os
+ 
+ <img src="./images/hello_ansible.PNG">
+ 
+ - **Jinja 2 template**
+ >j2 template changed to text file
+ <img src="./images/file.PNG">
+ 
+ - **HTML**:
+>j2 template changed to html file
+
+<img src="./images/html.PNG">
