@@ -175,7 +175,7 @@ name: playbook.yml
  >File moved to /home/os
  
  <img src="./images/hello_ansible.PNG">
- 
+
  - **Jinja 2 template**
  >j2 template changed to text file
  <img src="./images/file.PNG">
