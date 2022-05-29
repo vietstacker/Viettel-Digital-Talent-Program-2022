@@ -92,7 +92,8 @@
 
  <img src="./images/template.PNG">
  
-   - index.html.j2
+ 
+    - index.html.j2
 
  <img src="./images/index.PNG">
  
