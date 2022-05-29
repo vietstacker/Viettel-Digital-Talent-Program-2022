@@ -86,10 +86,11 @@
 
 <img src="./images/ping.PNG">
 
-- **Create playbook**
+- **Create a playbook**: 
 
 ```
----  
+--- 
+name: playbook.yml
  - hosts: servers
    become: true
    become_method: sudo
