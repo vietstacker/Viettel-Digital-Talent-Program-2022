@@ -49,17 +49,17 @@
 - **Controller Machine**: Any machine with `Ansible` installed
 - **Configuration**: Adjust settings in `Ansible`
 - **Inventory**: A file that contains the hosts and groups of remote hosts
-- **Ad-Hoc command**: Refers to running Ansible to perform some quick command and you don’t want to save for later or write a full playbook
+- **Ad-Hoc command**: Refers to running `Ansible` to perform some quick command and you don’t want to save for later or write a full playbook
 - **Playbook**: Playbooks are Ansible's configuration, deployment and orchestration language
 - **Task**: 
   - Playbooks exist to run tasks
   - Task are executed in order, one at a time, against all hosts matched by the host pattern before moving on to the next task
   - Hosts with failed tasks are taken out of the rotation for the entire playbook
 - **Module**:
-  - Modules are the units of work that Ansible ships out to remote machines
+  - Modules are the units of work that `Ansible` ships out to remote machines
   - Take parameters and conditions to perform the action, and return JSON format data
   - Flexible to write the custom modules: can be written in any language as long as they output JSON
 - **Role**: 
-  - Roles are units of organization in Ansible
+  - Roles are units of organization in `Ansible`
   - Roles are set of tasks and additional files for a certain role which allow you to break up the configurations
 
