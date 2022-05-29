@@ -1,19 +1,18 @@
 # **Deploy project using Ansible**
 ## **Mục lục**
-[**I. Yêu cầu**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/edit/main/Practice-2/DoHoangSon/README.md#i-y%C3%AAu-c%E1%BA%A7u)
+[**I. Yêu cầu**]
 
-[**II. Ansible**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/edit/main/Practice-2/DoHoangSon/README.md#ii-ansible)
+[**II. Ansible**]
 
-   - [**1. Cài đặt Ansible**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/edit/main/Practice-2/DoHoangSon/README.md#1-c%C3%A0i-%C4%91%E1%BA%B7t-ansible)
-   - [**2. Khởi tạo inventory**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/edit/main/Practice-2/DoHoangSon/README.md#2-kh%E1%BB%9Fi-t%E1%BA%A1o-inventory)
-   - [**3. Clone git repo**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/edit/main/Practice-2/DoHoangSon/README.md#3-clone-git-repo)
-   - [**4. Đóng gói WAR file**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/edit/main/Practice-2/DoHoangSon/README.md#4-%C4%91%C3%B3ng-g%C3%B3i-war-file)
-   - [**5. Cài đặt Tomcat server và deploy project**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/edit/main/Practice-2/DoHoangSon/README.md#5-c%C3%A0i-%C4%91%E1%BA%B7t-tomcat-server-v%C3%A0-deploy-project)
+   - [**1. Cài đặt Ansible**]
+   - [**2. Khởi tạo inventory**]
+   - [**3. Clone git repo**]
+   - [**4. Đóng gói WAR file**]
+   - [**5. Cài đặt Tomcat server và deploy project**]
 
-[**III. Các bước thực hiện**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/edit/main/Practice-2/DoHoangSon/README.md#iii-c%C3%A1c-b%C6%B0%E1%BB%9Bc-th%E1%BB%B1c-hi%E1%BB%87n)
-
-[**IV. Kết quả**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/edit/main/Practice-2/DoHoangSon/README.md#iv-k%E1%BA%BFt-qu%E1%BA%A3)
-[**V. Tài liệu tham khảo**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/edit/main/Practice-2/DoHoangSon/README.md#v-t%C3%A0i-li%E1%BB%87u-tham-kh%E1%BA%A3o)
+[**III. Các bước thực hiện**]
+[**IV. Kết quả**]
+[**V. Tài liệu tham khảo**]
 ## **I. Yêu cầu**
 **Hệ điều hành**: Ubuntu Server (Ubuntu Server 22.04).
 **Phần mềm ảo hóa**: Oracle Virtualbox (Oracle Virtualbox 6.1.34)
