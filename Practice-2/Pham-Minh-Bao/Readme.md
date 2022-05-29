@@ -17,6 +17,10 @@
 ### I.Overview
 
 #### 1. What is Ansible ?
+
+<img src="./images/ansible.png">
+
+
 **Ansible** is an IT automation tool which can configure systems, deploy software, handle clooud provisioning and orchestrate other advanced IT tasks. 
 - **Original author**: Michael DeHaan
 - **Developer(s)**: Ansible Community / Ansible Inc. / Red Hat Inc
@@ -43,6 +47,10 @@
 
 #### 3. Ansible architecture
 `Ansible` can support whatever actions you want to execute in a server. 
+
+<img src="./images/architecture.PNG">
+
+
 `Ansible` issues all commands from a central location to perform these tasks. `Ansible` work on push mode over ssh connection (push configurations to server over ssh connection)
 
 #### 4. Ansible Terminology
