@@ -176,6 +176,12 @@ name: playbook.yml
  
  <img src="./images/hello_ansible.PNG">
 
+- **nghinx and apache installed**:
+
+<img src="./images/nghinx.PNG">
+
+<img src="./images/apache.PNG">
+
  - **Jinja 2 template**
  >j2 template changed to text file
  <img src="./images/file.PNG">
@@ -184,3 +190,14 @@ name: playbook.yml
 >j2 template changed to html file
 
 <img src="./images/html.PNG">
+
+- **Firewall Updated**:
+
+<img src="./images/fw.PNG">
+
+### **III. REFERENCES**:
+
+- [Ansible Documentation](https://docs.ansible.com/ansible/latest/index.html)
+
+- [How to write Ansible Playbook](https://www.digitalocean.com/community/tutorial_series/how-to-write-ansible-playbooks)
+
