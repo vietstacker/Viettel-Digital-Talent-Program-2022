@@ -24,6 +24,7 @@
 
 ## **II. Ansible**
 Ansible là một trong những công cụ quản lý cấu hình hiện đại, nó tạo điều kiện thuận lợi cho công việc cài đặt, quản lý và bảo trì các server từ xa, với thiết kế tối giản giúp người dùng cài đặt và chạy nhanh chóng.Người dùng viết các tập lệnh cấp phép Ansible trong YAML, một tiêu chuẩn tuần tự hóa dữ liệu thân thiện với người dùng, chúng không bị ràng buộc với bất kỳ ngôn ngữ lập trình nào. Chính vì vậy người dùng có thể tạo ra các tập lệnh cấp phép phức tạp một cách trực quan hơn so với các công cụ còn lại trong cùng danh mục.
+<img src="https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-2/DoHoangSon/img/ansible.png">
 Một số thuật ngữ cơ bản khi sử dụng Ansible:
 - Controller Machine: Là máy cài Ansible, nó sẽ chịu trách nhiệm quản lý, điều khiển và gửi các task đến những máy con cần quản lý.
 - Inventory: Là file chứa thông tin những server cần quản lý. File này thường nằm tại đường dẫn /etc/ansible/hosts.
@@ -62,7 +63,7 @@ localhost ansible_connection=local
 192.168.56.108 ansible_ssh_user=dohoangson ansible_ssh_pass=Namdinh123@
 ```
 ### **3. Clone git repo**
-- Khởi tạo git.yml
+- Khởi tạo clone.yml
 ```
 ---
  - hosts: all
@@ -74,11 +75,13 @@ localhost ansible_connection=local
        clone: yes
        update: yes
 ```
-- Chạy playbook git.yml
+- Chạy playbook clone.yml
 ```
-ansible-playbook -i inventory git.yml
+ansible-playbook -i inventory clone.yml
 ```
 - Kết quả chạy
+<img src="https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-2/DoHoangSon/img/clone.jpg">
+
 ### **4. Đóng gói WAR file**
 - Khởi tạo war.yml
 ```
@@ -97,6 +100,7 @@ ansible-playbook -i inventory git.yml
 ansible-playbook -i inventory git.yml
 ```
 - Kết quả chạy
+<img src="https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-2/DoHoangSon/img/war.jpg">
 
 ### **5. Cài đặt Tomcat server và deploy project**
 - Playbook này thực hiện thêm nhóm, thêm người dùng, download tomcat server về, set quyền thư mục tomcat, copy file war đã tạo ở trên để deploy vào server. Dưới đây là file tomcat.yml
@@ -153,6 +157,8 @@ ansible-playbook -i inventory git.yml
 ansible-playbook -i inventory tomcat.yml -K
 ```
 - Kết quả chạy
+<img src="https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-2/DoHoangSon/img/tomcat.jpg">
+
 ## **IV. Kết quả**
 Sau khi deploy thành công, project sẽ chạy trên cổng 8080 mặc định của tomcat với địa chỉ IP là địa chỉ máy chủ vừa khởi tạo
 Thêm ảnh
