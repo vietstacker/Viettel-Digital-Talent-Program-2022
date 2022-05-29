@@ -170,7 +170,6 @@ name: playbook.yml
  - **Hello Ansible File**:
  >File located in /etc/test
  
- <img src="./images/hello.PNG">
  
  >File moved to /home/os
  
