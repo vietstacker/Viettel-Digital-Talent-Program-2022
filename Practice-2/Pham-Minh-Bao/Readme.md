@@ -71,3 +71,54 @@
   - Roles are units of organization in `Ansible`
   - Roles are set of tasks and additional files for a certain role which allow you to break up the configurations
 
+```
+---  
+ - hosts: servers
+   become: true
+   become_method: sudo
+   vars:
+    server: Ubuntu
+    version: 20.04
+    name1: HTML with Ansible
+    description: Ansible with HTML
+   tasks:
+    - name: create a new directory
+      file: 
+        path: "/etc/test"
+        state: directory
+    - name: Create and write "Hello Ansible" to a file
+      shell: echo 'Hello Ansible' > /etc/test/hello_ansible
+    - name: Upgrade apt packages
+      become: true
+      apt:
+       force_apt_get: true
+       upgrade: dist
+    - name: Install Apache
+      apt: 
+       name: apache2 
+       update_cache: true 
+       state: latest
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: latest
+    - name: Jinja 2 template
+      template: 
+       src: template.j2
+       dest: /home/os/file.txt
+    - name: HTML
+      template: 
+       src: index.html.j2
+       dest: /var/www/html/index.html
+       mode: 0775
+    - name: Allow access to tcp port 80
+      ufw:
+        rule: allow
+        port: '80'
+        proto: tcp  
+    - name: Copy file
+      ansible.builtin.copy:
+       src: /etc/test/hello_ansible
+       dest: /home/os
+       mode: '0644'
+```
