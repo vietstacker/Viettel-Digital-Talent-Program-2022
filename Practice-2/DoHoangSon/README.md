@@ -1,14 +1,18 @@
 # **Deploy project using Ansible**
 ## **Mục lục**
 [**I. Yêu cầu**]()
+
 [**II. Ansible**]()
    - [**1. Cài đặt Ansible**]()
    - [**2. Khởi tạo inventory**]()
    - [**3. Clone git repo**]()
    - [**4. Đóng gói WAR file**]()
    - [**5. Cài đặt Tomcat server và deploy project**]()
+   
 [**III. Các bước thực hiện**]()
+
 [**IV. Kết quả**]()
+
 [**V. Tài liệu tham khảo**]()
 ## **I. Yêu cầu**
 **Hệ điều hành**: Ubuntu Server (Ubuntu Server 22.04).
