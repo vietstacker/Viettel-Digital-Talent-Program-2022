@@ -178,7 +178,9 @@ name: playbook.yml
 
 - **nghinx and apache installed**:
 
+
 <img src="./images/nghinx.PNG">
+
 
 <img src="./images/apache.PNG">
 
