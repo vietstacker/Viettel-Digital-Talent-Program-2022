@@ -161,7 +161,8 @@ ansible-playbook -i inventory tomcat.yml -K
 
 ## **IV. Kết quả**
 Sau khi deploy thành công, project sẽ chạy trên cổng 8080 mặc định của tomcat với địa chỉ IP là địa chỉ máy chủ vừa khởi tạo
-Thêm ảnh
+<img src="https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-2/DoHoangSon/img/success.jpg">
+
 ## **V. Tài liệu tham khảo**
 - [How to Clone a Git Repository with Ansible](https://linuxhandbook.com/clone-git-ansible/#:~:text=Cloning%20a%20Git%20Repository%20with%20Ansible%20playbook,-Now%20that%20you&text=Edit%20the%20file%20and%20add%20the%20following%20entries.&text=In%20the%20playbook%20above%2C%20you,to%20the%20SQLite%20GitHub%20repository.)
 - [how to create war file from command line using ansible](https://stackoverflow.com/questions/57922048/how-to-create-war-file-from-command-line-using-ansible)
