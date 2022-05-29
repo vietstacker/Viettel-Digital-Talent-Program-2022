@@ -92,7 +92,7 @@
 
 **Create template files**: 
    - template.j2
-   
+  
 
  <img src="./images/template.PNG">
  
