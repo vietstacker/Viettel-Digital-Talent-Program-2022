@@ -57,7 +57,6 @@ CMD và ENTRYPOINT đều dùng để định ra program mà ta muốn execute k
 Điểm khác nhau giữa CMD và ENTRYPOINT đó là ENTRYPOINT sẽ configure khi run container như một lệnh (executable), nói cách khác mọi biến được define sau tên của image sẽ được append vào lệnh trong ENTRYPOINT như một biến còn đối với CMD thì khi ta thêm vào đằng sau tên image của lệnh docker run image thì nó sẽ override lệnh CMD này (do CMD chỉ là lệnh default sẽ được chạy khi docker run), ví dụ:
 
         FROM ubuntu
-
         CMD  ["echo", "Hello World"]
 
 Khi ta build và chạy image này output sẽ là Hello world. Khi ta thêm arg vào docker run như sau:
@@ -81,4 +80,4 @@ Nếu ta thêm echo "Hi" vào thì sẽ như thế nào, rõ ràng lệnh này s
 
 ![entrypoing-check-override](images/entrypoint-check-override.png)
 
-Một điểm đặc biệt nữa là khi mà CMD không khai báo ở dạng [arg1, agr2] mà không phải CMD cmd agr1... hoặc CMD ["executable","arg1",...] thì nó sẽ được coi như là default argument cho ENTRYPOINT. Như vậy khi mà ta không thêm argument vào sau docker run image thì CMD sẽ được sử dụng. Ngược lại thì CMD sẽ bị override khi ta specify biến sau docker run image.
+Một điểm đặc biệt nữa là khi mà CMD không khai báo ở dạng [arg1, agr2] mà không phải CMD cmd agr1... hoặc CMD ["executable","arg1",...] thì nó sẽ được coi như là default argument cho ENTRYPOINT. Như vậy trong trường hợp này, khi mà ta không thêm argument vào sau docker run image thì CMD argument sẽ được sử dụng. Ngược lại thì argument trong CMD sẽ bị override khi có argument mà ta append sau lệnh docker run image.
