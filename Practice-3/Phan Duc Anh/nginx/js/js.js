@@ -12,9 +12,10 @@ const init = async () => {
 
   if (!res.err) {
     res = eval(res);
+    res.sort((a, b) => (a.num < b.num ? -1 : 1));
     res.forEach((element) => {
       let trElement = document.createElement("tr");
-      trElement.innerHTML = `<td>${element.name}</td><td>${element.year_of_birth}</td><td>${element.gender}</td><td>${element.email}</td>`;
+      trElement.innerHTML = `<td>${element.num}</td><td>${element.name}</td><td>${element.year_of_birth}</td><td>${element.school}</td><td>${element.major}</td>`;
       document.querySelector(".info-table").appendChild(trElement);
     });
   } else {
