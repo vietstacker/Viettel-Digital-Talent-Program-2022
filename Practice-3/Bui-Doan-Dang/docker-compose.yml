@@ -7,15 +7,12 @@ services:
       dockerfile: Dockerfile
     container_name: flask
     image: python3.9
-    restart: unless-stopped
     environment:
       APP_ENV: "prod"
       APP_DEBUG: "False"
       APP_PORT: 5000
     volumes:
       - appdata:/var/www
-    links:
-      - mongodb
     networks:
       - frontend
       - backend
@@ -41,7 +38,6 @@ services:
       dockerfile: Dockerfile
     image: nginx:1.22.0-alpine
     container_name: webserver
-    restart: unless-stopped
     environment:
       APP_ENV: "prod"
       APP_NAME: "webserver"
