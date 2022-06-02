@@ -34,7 +34,9 @@ Docker compose là công cụ dùng để định nghĩa và run multi-container
 - **ARG** hay còn gọi là biến build-time chỉ hoạt động trong quá trình build-image, hoạt động kể từ thời điểm chúng được khai báo trong Dockerfile trong câu lệnh ARG cho đến khi image được tạo. Khi chạy container, chúng ta không thể truy cập giá trị của các biến ARG và chúng chạy duới giá trị mặc định, nếu thay đổi lệnh build sẽ lỗi.
 
 - **ENV** có sẵn trong quá trình xây dựng, ngay khi bạn khai báo chúng với một command của ENV. Tuy nhiên, không giống như ARG, khi build xong image, các container chạy image có thể truy cập giá trị ENV này.Bên cạnh đó các container chạy từ image có thể ghi đè giá trị của ENV.
+
 ![alt](./imgs/argvsenv.png)
+
 ### *COPY* và *ADD*
 
 Lệnh **COPY** sẽ sao chép các tệp mới từ src và thêm chúng vào hệ thống tệp của bộ chứa tại đường dẫn dest
@@ -46,6 +48,7 @@ Lệnh **COPY** sẽ sao chép các tệp mới từ src và thêm chúng vào h
   ADD ["< src >",... "< dest >"] 
 ```
 ![alt](./imgs/copyvsadd.png)
+
 Nhìn chung **COPY** và **ADD** khá tương tự nhau về mặt chức năng, xong chúng vẫn có những diểm khác nhau cơ bản.
  
 - **COPY** sao chép một tập tin / thư mục từ máy chủ của bạn vào image.
@@ -63,6 +66,7 @@ Cả hai lệnh (**CMD** và **ENTRYPOINT**) có thể được chỉ định �
 <instruction> ["executable", "param1", "param2", ...]
 ```
 ![alt](./imgs/cmdvsentry.png)
+
 Thoạt nhìn, chúng đều được sử dụng để chỉ định và thực thi các lệnh nhưng chúng cũng có những điểm khác nhau.
 - **CMD** cho phép ta set default command, có nghĩa là command này sẽ chỉ được chạy khi run container mà không chỉ định một command. CMD thì tất cả sẽ bị ignore ngoại trừ lệnh CMD cuối cùng.
 - **ENTRYPOINT** cho phép ta cấu hình container sẽ chạy dưới dạng thực thi. Nó tương tự như CMD, vì nó cũng cho phép ta chỉ định một lệnh với các tham số. Sự khác biệt là lệnh ENTRYPOINT và các tham số không bị ignore khi Docker container chạy.
@@ -418,13 +422,17 @@ Ta chạy câu lệnh sau:
 docker-compose up -d
 ```
 ![alt](./imgs/result1.png)
+
 Câu lệnh trên sẽ chạy ngầm 3 container, ta sử dụng câu lệnh dưới đây để kiểm tra xem chúng có hoạt động không:
 ```
 docker ps
 ```
 ![alt](./imgs/result2.png)
+
 Okay vậy là đã hoạt động ngon lành rồi, cuối cùng là vô ```0.0.0.0``` xem đã thấy danh sách lớp chưa :>
+
 ![alt](./imgs/result3.png)
+
 ## Nguồn tham khảo
 - [Docker ARG, ENV và .env ](https://viblo.asia/p/docker-arg-env-va-env-XL6lA4zmZek)
 - [Sự khác biệt giữa các lệnh `COPY` và` ADD`](https://helpex.vn/question/su-khac-biet-giua-cac-lenh-copy-va-add-trong-dockerfile-la-gi-5cb0222eae03f645f42023ef)
