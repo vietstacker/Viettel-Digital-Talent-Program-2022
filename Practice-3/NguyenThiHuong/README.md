@@ -40,6 +40,7 @@ Initially, I would like to express my thankfulness to all mentors and other atte
 ```
 	docker build --network host -t endpoint:latest .
 ```
+
   -   We use --network to ensure that we use localhost network to get access to the Internet and pull Ubuntu image from DockerHub as well as install ssh (1 số máy khi cài docker thì không tự dùng card mạng trên máy host để kết nối internet). -t to assign name (endpoint) and tag (lastest) to this image. And, the dot in the end allows Docker to pick all the necessary files from the present working directory. The result we received:
   
   <img src="imgs/anh1.png">
