@@ -1,0 +1,14 @@
+---
+- name: cloning repo
+  git:
+    repo: "{{ github_repo }}"
+    version: "{{ github_branch | default('deploy-ansible') }}"
+    dest: "{{ dest_dir }}"
+    clone: yes
+    update: yes
+
+- name: docker-compose app
+  docker_compose:
+    project_src: "{{ docker_dir }}"
+    files:
+      - docker-compose.yml
