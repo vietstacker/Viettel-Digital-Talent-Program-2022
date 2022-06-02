@@ -1,3 +1,18 @@
+# TABLE OF CONTENT
+
+- [TABLE OF CONTENT](#table-of-content)
+- [1. PHÂN BIỆT CÁC INSTRUCTION](#1-phân-biệt-các-instruction)
+  - [1.1. ARG vs ENV](#11-arg-vs-env)
+  - [1.2. COPY vs ADD](#12-copy-vs-add)
+  - [1.3. CMD vs ENTRYPOINT](#13-cmd-vs-entrypoint)
+- [2. THREE-TIER WEB APPLICATION WITH DOCKER](#2-three-tier-web-application-with-docker)
+  - [2.1. Tổng quan về kiến trúc three-tier](#21-tổng-quan-về-kiến-trúc-three-tier)
+  - [2.2. Tạo Dockerfile cho mongoDB](#22-tạo-dockerfile-cho-mongodb)
+  - [2.2. Tạo Dockerfile cho Python Web Server](#22-tạo-dockerfile-cho-python-web-server)
+  - [2.3. Tạo Dockerfile cho NGINX](#23-tạo-dockerfile-cho-nginx)
+  - [2.4. Deploy bằng Docker-compose](#24-deploy-bằng-docker-compose)
+- [TÀI LIỆU THAM KHẢO](#tài-liệu-tham-khảo)
+
 # 1. PHÂN BIỆT CÁC INSTRUCTION
 
 ## 1.1. ARG vs ENV
