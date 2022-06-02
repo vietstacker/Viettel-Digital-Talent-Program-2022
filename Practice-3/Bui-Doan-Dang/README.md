@@ -53,6 +53,7 @@ Thiết lập ứng dụng web 3 tầng hiển thị thông tin sinh viên trong
 - Docker và kiến thức về Docker [(Hướng dẫn cài đặt)](https://vsudo.net/blog/docker-ubuntu.html)
 - Docker-compose và kiến thức về Docker-compose [(Hướng dẫn cài đặt)](https://thuanbui.me/huong-dan-cai-dat-docker-docker-compose-tren-ubuntu-20-04/)
 Cấu trúc file sẽ gòm có
+```bash
 __ project-name
     |__ ningx
         |__ Dockerfile
@@ -64,7 +65,7 @@ __ project-name
     |__ app
         |__ app.py
         docker-compose.yml
-  
+```
 ### Tiến hành xây dựng
 #### Bước 1
 
