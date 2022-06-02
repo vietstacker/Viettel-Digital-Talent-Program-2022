@@ -1,0 +1,19 @@
+version: '3.0'
+
+services:
+  mongodb:
+    image: mongo:5.0
+    container_name: mongo
+    ports:
+      - 12345:27017
+  python:
+    build: python/
+    ports:
+      - 12346:5000
+  nginx:
+    build: nginx/
+    restart: always
+    ports:
+      - 12347:80
+    depends_on:
+      - python
