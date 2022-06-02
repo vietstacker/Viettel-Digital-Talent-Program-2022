@@ -264,6 +264,11 @@ open http://HOSTNAME:5000
 
 ![alt](./imgs/test.png)
 
+- Kiểm tra gunicon
+```
+gunicorn --bind 0.0.0.0:5000 wsgi:app
+```
+![alt](./imgs/gunicorn.png)
 - Truy cập http://192.168.56.110 để xem kết quả.
 
 ![alt](./imgs/result.png)
