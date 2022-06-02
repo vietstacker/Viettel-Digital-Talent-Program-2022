@@ -73,12 +73,48 @@ __ project-name
 #### Bước 1: Viết cấu hình cho file Docker-compose
 
 <p>File <code>docker-compose.yml</code> cho phép ta xây dựng hạ tầng một ứng dụng web bao gồm webserver, app, database một cách riêng lẻ. Các dịch vụ có thể kết nối với nhau và có volume riêng để lưu trữ</p>
-Để bắt đầu, hãy tạo một thư mục cho ứng dụng trong thư mục chính trên máy chủ:
-<pre class="prefixed command language-bash"><code><ol><li data-prefix="$"><span class="token function">mkdir</span> flaskapp
-</li></ol>
+```
+mkdir flaskapp
+```
+Di chuyển vào thư mục mới tạo:
+
+```
+cd flaskapp
+```
+Tiếp theo, tạo file <code>docker-compose.yml</code>:
+```
+nano docker-compose.yml
+```
+<div class="code-label" title="docker-compose.yml">docker-compose.yml</div>
+<pre class="language-yaml"><code><span class="token key atrule">version</span><span class="token punctuation">:</span> <span class="token string">'3'</span>
+<span class="token key atrule">services</span><span class="token punctuation">:</span>
 </code></pre>
-
-
+<p>You will now define <code>flask</code> as the first service in your <code>docker-compose.yml</code> file. Add the following code to define the Flask service:</p>
+<div class="code-label" title="docker-compose.yml">docker-compose.yml</div>
+<pre class="language-yaml"><code>. . .
+  <span class="token key atrule">flask</span><span class="token punctuation">:</span>
+    <span class="token key atrule">build</span><span class="token punctuation">:</span>
+      <span class="token key atrule">context</span><span class="token punctuation">:</span> app
+      <span class="token key atrule">dockerfile</span><span class="token punctuation">:</span> Dockerfile
+    <span class="token key atrule">container_name</span><span class="token punctuation">:</span> flask
+    <span class="token key atrule">image</span><span class="token punctuation">:</span> digitalocean.com/flask<span class="token punctuation">-</span>python<span class="token punctuation">:</span><span class="token number">3.6</span>
+    <span class="token key atrule">restart</span><span class="token punctuation">:</span> unless<span class="token punctuation">-</span>stopped
+    <span class="token key atrule">environment</span><span class="token punctuation">:</span>
+      <span class="token key atrule">APP_ENV</span><span class="token punctuation">:</span> <span class="token string">"prod"</span>
+      <span class="token key atrule">APP_DEBUG</span><span class="token punctuation">:</span> <span class="token string">"False"</span>
+      <span class="token key atrule">APP_PORT</span><span class="token punctuation">:</span> <span class="token number">5000</span>
+      <span class="token key atrule">MONGODB_DATABASE</span><span class="token punctuation">:</span> flaskdb
+      <span class="token key atrule">MONGODB_USERNAME</span><span class="token punctuation">:</span> <mark>flaskuser</mark>
+      <span class="token key atrule">MONGODB_PASSWORD</span><span class="token punctuation">:</span> <mark>your_mongodb_password</mark>
+      <span class="token key atrule">MONGODB_HOSTNAME</span><span class="token punctuation">:</span> mongodb
+    <span class="token key atrule">volumes</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> appdata<span class="token punctuation">:</span>/var/www
+    <span class="token key atrule">depends_on</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> mongodb
+    <span class="token key atrule">networks</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> frontend
+      <span class="token punctuation">-</span> backend
+</code></pre>
 
 
 
