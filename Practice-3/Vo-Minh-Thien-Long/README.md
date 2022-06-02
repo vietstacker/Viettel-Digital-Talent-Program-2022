@@ -777,7 +777,7 @@ docker-compose ps
 ```
 
 <div align="center">
-  <img width="1500" src="assets/requirement.png" alt="docker ps">
+  <img width="1500" src="assets/containers.png" alt="docker ps">
 </div>
 
 <div align="center">
@@ -787,6 +787,13 @@ docker-compose ps
 And our deployed project:
 
 
+<div align="center">
+  <img width="1500" src="assets/final-result.png" alt="final">
+</div>
+
+<div align="center">
+  <i>Our final result.</i>
+</div>
 
 ## V. References
 
