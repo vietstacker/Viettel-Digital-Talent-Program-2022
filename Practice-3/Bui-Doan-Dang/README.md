@@ -85,38 +85,29 @@ Tiếp theo, tạo file <code>docker-compose.yml</code>:
 ```
 nano docker-compose.yml
 ```
-<div class="code-label" title="docker-compose.yml">docker-compose.yml</div>
-<pre class="language-yaml"><code><span class="token key atrule">version</span><span class="token punctuation">:</span> <span class="token string">'3'</span>
-<span class="token key atrule">services</span><span class="token punctuation">:</span>
-</code></pre>
-<p>You will now define <code>flask</code> as the first service in your <code>docker-compose.yml</code> file. Add the following code to define the Flask service:</p>
-<div class="code-label" title="docker-compose.yml">docker-compose.yml</div>
-<pre class="language-yaml"><code>. . .
-  <span class="token key atrule">flask</span><span class="token punctuation">:</span>
-    <span class="token key atrule">build</span><span class="token punctuation">:</span>
-      <span class="token key atrule">context</span><span class="token punctuation">:</span> app
-      <span class="token key atrule">dockerfile</span><span class="token punctuation">:</span> Dockerfile
-    <span class="token key atrule">container_name</span><span class="token punctuation">:</span> flask
-    <span class="token key atrule">image</span><span class="token punctuation">:</span> digitalocean.com/flask<span class="token punctuation">-</span>python<span class="token punctuation">:</span><span class="token number">3.6</span>
-    <span class="token key atrule">restart</span><span class="token punctuation">:</span> unless<span class="token punctuation">-</span>stopped
-    <span class="token key atrule">environment</span><span class="token punctuation">:</span>
-      <span class="token key atrule">APP_ENV</span><span class="token punctuation">:</span> <span class="token string">"prod"</span>
-      <span class="token key atrule">APP_DEBUG</span><span class="token punctuation">:</span> <span class="token string">"False"</span>
-      <span class="token key atrule">APP_PORT</span><span class="token punctuation">:</span> <span class="token number">5000</span>
-      <span class="token key atrule">MONGODB_DATABASE</span><span class="token punctuation">:</span> flaskdb
-      <span class="token key atrule">MONGODB_USERNAME</span><span class="token punctuation">:</span> <mark>flaskuser</mark>
-      <span class="token key atrule">MONGODB_PASSWORD</span><span class="token punctuation">:</span> <mark>your_mongodb_password</mark>
-      <span class="token key atrule">MONGODB_HOSTNAME</span><span class="token punctuation">:</span> mongodb
-    <span class="token key atrule">volumes</span><span class="token punctuation">:</span>
-      <span class="token punctuation">-</span> appdata<span class="token punctuation">:</span>/var/www
-    <span class="token key atrule">depends_on</span><span class="token punctuation">:</span>
-      <span class="token punctuation">-</span> mongodb
-    <span class="token key atrule">networks</span><span class="token punctuation">:</span>
-      <span class="token punctuation">-</span> frontend
-      <span class="token punctuation">-</span> backend
-</code></pre>
+Bây giờ bạn sẽ xác định flask là dịch vụ đầu tiên trong tệp  <code>docker-compose.yml</code> . Thêm code sau để xác định dịch vụ Flask:
+```
+version: '3'
+services:
 
-
+  flask:
+    build:
+      context: app
+      dockerfile: Dockerfile
+    container_name: flask
+    image: python3.9
+    restart: unless-stopped
+    environment:
+      APP_ENV: "prod"
+      APP_DEBUG: "False"
+      APP_PORT: 5000
+    volumes:
+      - appdata:/var/www
+    networks:
+      - frontend
+      - backend
+```
+Ta sử dụng ```container_name``` để xác định tên container
 
 ## Nguồn tham khảo
 - [Docker ARG, ENV và .env ](https://viblo.asia/p/docker-arg-env-va-env-XL6lA4zmZek)
