@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>STT</th>
+            <th>Tên</th>
+            <th>Năm sinh</th>
+            <th>Trường</th>
+            <th>Chuyên ngành</th>
+        </tr>
+        {% for student in students %}
+        <tr>
+            <td>{{ student.number }}</td>
+            <td>{{ student.name }}</td>
+            <td>{{ student.yob }}</td>
+            <td>{{ student.university }}</td>
+            <td>{{ student.major }}</td>
+        </tr>  
+        
+        {% endfor %}
+    </table>
+</body>
+</html>

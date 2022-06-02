@@ -1,0 +1,4 @@
+flask
+flask_mongoengine
+dnspython
+Jinja2

@@ -1,0 +1,8 @@
+version: '3.0'
+
+services:
+  nginx-lb:
+    image: haitranquangofficial/viettel:hw3-nginx-lb
+    restart: always
+    ports:
+      - 80:80
