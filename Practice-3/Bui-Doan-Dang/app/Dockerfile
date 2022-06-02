@@ -1,8 +1,8 @@
 FROM python:3.9
 
-WORKDIR /home/vm1/docker/docker-flask
+WORKDIR /var/www
 
-COPY . .
+COPY . /var/www
 
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install gunicorn
