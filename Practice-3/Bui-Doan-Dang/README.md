@@ -3,7 +3,7 @@
 
 - [Docker và Docker-Compose](#Docker-và-Docker-Compose)
 - [Bài tập 1](#Bài-tập-1)
-- [Xây dựng Docker-compose đóng gói và chạy webapp](#Xây-dựng-Docker-compose-đóng-gói-và-chạy-webapp)
+- [Bài tập 2](#Bài-tập-2)
 - [Nguồn tham khảo](#Nguồn-tham-khảo)
 
 ---
@@ -80,7 +80,7 @@ Thoạt nhìn, chúng đều được sử dụng để chỉ định và thực
 - **CMD** cho phép ta set default command, có nghĩa là command này sẽ chỉ được chạy khi run container mà không chỉ định một command. CMD thì tất cả sẽ bị ignore ngoại trừ lệnh CMD cuối cùng.
 - **ENTRYPOINT** cho phép ta cấu hình container sẽ chạy dưới dạng thực thi. Nó tương tự như CMD, vì nó cũng cho phép ta chỉ định một lệnh với các tham số. Sự khác biệt là lệnh ENTRYPOINT và các tham số không bị ignore khi Docker container chạy.
 
-## Xây dựng Docker-compose đóng gói và chạy webapp
+## B
 
 ### Yêu cầu:
 Thiết lập ứng dụng web 3 tầng hiển thị thông tin sinh viên trong lớp học trên trình duyệt bằng Docker-compose. Dựa trên các base-image:
