@@ -103,11 +103,75 @@ services:
       APP_PORT: 5000
     volumes:
       - appdata:/var/www
+    depends_on:
+      - mongodb
     networks:
       - frontend
       - backend
 ```
-Ta sử dụng ```container_name``` để xác định tên container
+Ta sử dụng ```container_name``` để xác định tên container, thuộc tính ```image``` xác định tên image Docker gắn thẻ, ```restart``` khởi động lại khi container bị dừng, ```volumes``` mount dữ liệu trên host và container, ```depends_on giúp ta chắc chắn rằng flask chỉ chạy khi mongodb chạy cuối cùng là ```networks``` để xác định những gì flask sẽ truy cập đến.
+
+Với dịch vụ ```flask``` được định nghĩa như trên, ta bắt đầu xây dựng cấu hình cho mongodb
+```
+ mongodb:
+    image: mongo:5.0.0
+    container_name: mongodb
+    hostname: test_mongodb
+    environment:
+      - MONGO_INITDB_DATABASE=flaskdb
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=pass
+    volumes:
+      - ./init-db.js:/docker-entrypoint-initdb.d/init-db.js:ro
+    ports:
+      - 27017:27017
+    networks:
+      - backend
+```
+Ta cấu hình mongodb như trên với ```enviroment``` giúp ta tạo user trong mongo, dữ liệu danh sách lớp được lấy từ file ```init-db.js``` mà ta sẽ xây dựng ở phần sau. Ta để ```ports``` kết nối qua cổng 27017 trên máy host và ```networks``` là backend
+
+Cuối cùng ta cấu hình webserver cho ứng dụng.
+```
+webserver:
+    build:
+      context: nginx
+      dockerfile: Dockerfile
+    image: nginx:1.22.0-alpine
+    container_name: webserver
+    restart: unless-stopped
+    environment:
+      APP_ENV: "prod"
+      APP_NAME: "webserver"
+      APP_DEBUG: "true"
+      SERVICE_NAME: "webserver"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - nginxdata:/var/log/nginx
+    depends_on:
+      - flask
+    networks:
+      - frontend
+```
+Ở đây ta sử dụng nginx làm webserver và base image là ```nginx:1.22.0-alpine```. Dịch vụ nginx sẽ chạy qua 2 cổng là ```:80``` và ```:433``` và ```volumes``` được mount tới ```/var/log/nginx/.``` cùng với đó xác định ```depends_on``` là flask và ```networks``` là backend.
+
+Cuối cùng ta xác định ```networks``` và ```volumes:
+```
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+
+volumes:
+  appdata:
+    driver: local
+  nginxdata:
+    driver: local
+```
+Lưu lại cấu hình và thoát ra, tiếp đến ta sẽ tạo các file Dockerfile
+#### Viết Dockerfile cho Flask và Webserver
 
 ## Nguồn tham khảo
 - [Docker ARG, ENV và .env ](https://viblo.asia/p/docker-arg-env-va-env-XL6lA4zmZek)
