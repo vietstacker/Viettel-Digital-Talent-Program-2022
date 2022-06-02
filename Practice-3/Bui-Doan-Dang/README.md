@@ -30,5 +30,10 @@ Cả hai lệnh (**CMD** và **ENTRYPOINT**) có thể được chỉ định �
 ```
 <instruction> <command>
 ```
+- Dạng exec form
+```
+<instruction> ["executable", "param1", "param2", ...]
+```
+
   
   
