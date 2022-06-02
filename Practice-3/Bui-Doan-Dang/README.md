@@ -6,9 +6,9 @@
 
 ### *ARG* và *ENV*
 
--** ARG** hay còn gọi là biến build-time chỉ hoạt động trong quá trình build-image, hoạt động kể từ thời điểm chúng được khai báo trong Dockerfile trong câu lệnh ARG cho đến khi image được tạo. Khi chạy container, chúng ta không thể truy cập giá trị của các biến ARG và chúng chạy duới giá trị mặc định, nếu thay đổi lệnh build sẽ lỗi.
+-**ARG** hay còn gọi là biến build-time chỉ hoạt động trong quá trình build-image, hoạt động kể từ thời điểm chúng được khai báo trong Dockerfile trong câu lệnh ARG cho đến khi image được tạo. Khi chạy container, chúng ta không thể truy cập giá trị của các biến ARG và chúng chạy duới giá trị mặc định, nếu thay đổi lệnh build sẽ lỗi.
 
--** ENV** có sẵn trong quá trình xây dựng, ngay khi bạn khai báo chúng với một command của ENV. Tuy nhiên, không giống như ARG, khi build xong image, các container chạy image có thể truy cập giá trị ENV này.Bên cạnh đó các container chạy từ image có thể ghi đè giá trị của ENV.
+-**ENV** có sẵn trong quá trình xây dựng, ngay khi bạn khai báo chúng với một command của ENV. Tuy nhiên, không giống như ARG, khi build xong image, các container chạy image có thể truy cập giá trị ENV này.Bên cạnh đó các container chạy từ image có thể ghi đè giá trị của ENV.
 
 ### *COPY* và *ADD*
 
@@ -22,9 +22,9 @@ Lệnh **COPY** sẽ sao chép các tệp mới từ src và thêm chúng vào h
 ```
 Nhìn chung **COPY** và **ADD** khá tương tự nhau về mặt chức năng, xong chúng vẫn có những diểm khác nhau cơ bản.
  
--** COPY** sao chép một tập tin / thư mục từ máy chủ của bạn vào image.
+-**COPY** sao chép một tập tin / thư mục từ máy chủ của bạn vào image.
 
--** ADD** sao chép một tập tin / thư mục từ máy chủ vào image, nhưng cũng có thể tìm nạp các URL từ xa, trích xuất các tệp TAR, v.v ... 
+-**ADD** sao chép một tập tin / thư mục từ máy chủ vào image, nhưng cũng có thể tìm nạp các URL từ xa, trích xuất các tệp TAR, v.v ... 
 
 ### *CMD* và *ENTRYPOINT*
 Cả hai lệnh (**CMD** và **ENTRYPOINT**) có thể được chỉ định ở dạng shell form hoặc dạng exec form.
@@ -51,8 +51,9 @@ Thiết lập ứng dụng web 3 tầng hiển thị thông tin sinh viên trong
 Để cài đặt được webapp ta cần chuẩn bị: 
 - Máy chủ để build image
 - Docker và kiến thức về Docker [(Hướng dẫn cài đặt)](https://vsudo.net/blog/docker-ubuntu.html)
-- Docker-compose và kiến thức về Docker-compose [(Hướng dẫn cài đặt)](https://thuanbui.me/huong-dan-cai-dat-docker-docker-compose-tren-ubuntu-20-04/)
-Cấu trúc file sẽ gòm có:
+- Docker-compose và kiến thức về Docker-compose [(Hướng dẫn cài đặt)](https://thuanbui.me/huong-dan-cai-dat-docker-docker-compose-tren-ubuntu-20-04/).
+
+Cấu trúc file sẽ gồm có:
 ```bash
 __ project-name
     |__ ningx
@@ -263,7 +264,6 @@ server {
     }
 }
 ```
-This will first define the upstream server, which is commonly used to specify a web or app server for routing or load balancing.
 Tiếp đến ta xây dựng file json để thêm danh sách lớp:
 ```
    nano init-db.js
@@ -385,12 +385,23 @@ if __name__ == "__main__":
   application.run()
 ```
 #### Bước 5: Cuối cùng ta chạy docker-compose và kiểm tra kết quả
+Ta đã định nghĩa tất cả những file cần thiết và giờ là The moment of truth :))) ta sẽ chạy ```docker-compse.yml``` để xem có lỗi ở đâu còn fix =)).
+Ta chạy câu lệnh sau:
+```
+docker-compose up -d
+```
 
+Câu lệnh trên sẽ chạy ngầm 3 container, ta sử dụng câu lệnh dưới đây để kiểm tra xem chúng có hoạt động không:
+```
+docker ps
+```
+
+Okay vậy là đã hoạt động ngon lành rồi, cuối cùng là vô ```0.0.0.0``` xem đã thấy danh sách lớp chưa :>
 
 ## Nguồn tham khảo
 - [Docker ARG, ENV và .env ](https://viblo.asia/p/docker-arg-env-va-env-XL6lA4zmZek)
 - [Docker - CMD vs ENTRYPOINT](https://www.atatus.com/blog/docker-cmd-vs-entrypoints/)
-- [HaManhDong-ansible](https://github.com/HaManhDong/ansible/blob/master)
+- [How To Set Up Flask with MongoDB and Docker](https://www.digitalocean.com/community/tutorials/how-to-set-up-flask-with-mongodb-and-docker)
 
   
   
