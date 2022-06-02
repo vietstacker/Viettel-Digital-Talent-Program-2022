@@ -72,7 +72,11 @@ __ project-name
 ### Tiến hành xây dựng
 #### Bước 1: Viết cấu hình cho file Docker-compose
 
-<p>The <code>docker-compose.yml</code> file lets you define your application infrastructure as individual services. The services can be connected to each other and each can have a <em>volume</em> attached to it for persistent storage. Volumes are stored in a part of the host filesystem managed by Docker (<code>/var/lib/docker/volumes/</code> on Linux).</p>
+<p>File <code>docker-compose.yml</code> cho phép ta xây dựng hạ tầng một ứng dụng web bao gồm webserver, app, database một cách riêng lẻ. Các dịch vụ có thể kết nối với nhau và có volume riêng để lưu trữ</p>
+Để bắt đầu, hãy tạo một thư mục cho ứng dụng trong thư mục chính trên máy chủ:
+<pre class="prefixed command language-bash"><code><ol><li data-prefix="$"><span class="token function">mkdir</span> flaskapp
+</li></ol>
+</code></pre>
 
 
 
