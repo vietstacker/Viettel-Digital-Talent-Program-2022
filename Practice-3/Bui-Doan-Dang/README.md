@@ -44,9 +44,9 @@ Thoạt nhìn, chúng đều được sử dụng để chỉ định và thực
 
 ### Yêu cầu:
 Thiết lập ứng dụng web 3 tầng hiển thị thông tin sinh viên trong lớp học trên trình duyệt bằng Docker-compose. Dựa trên các base-image:
-• nginx:1.22.0-alpine
-• python:3.9
-• mongo:5.0
+- nginx:1.22.0-alpine
+- python:3.9
+- mongo:5.0
 ### Chuẩn bị
 Để cài đặt được webapp ta cần chuẩn bị: 
 - Máy chủ để build image
@@ -109,7 +109,7 @@ services:
       - frontend
       - backend
 ```
-Ta sử dụng ```container_name``` để xác định tên container, thuộc tính ```image``` xác định tên image Docker gắn thẻ, ```restart``` khởi động lại khi container bị dừng, ```volumes``` mount dữ liệu trên host và container, ```depends_on giúp ta chắc chắn rằng flask chỉ chạy khi mongodb chạy cuối cùng là ```networks``` để xác định những gì flask sẽ truy cập đến.
+Ta sử dụng ```container_name``` để xác định tên container, thuộc tính ```image``` xác định tên image Docker gắn thẻ, ```restart``` khởi động lại khi container bị dừng, ```volumes``` mount dữ liệu trên host và container, ```depends_on``` giúp ta chắc chắn rằng flask chỉ chạy khi mongodb chạy cuối cùng là ```networks``` để xác định những gì flask sẽ truy cập đến.
 
 Với dịch vụ ```flask``` được định nghĩa như trên, ta bắt đầu xây dựng cấu hình cho mongodb
 ```
@@ -156,7 +156,7 @@ webserver:
 ```
 Ở đây ta sử dụng nginx làm webserver và base image là ```nginx:1.22.0-alpine```. Dịch vụ nginx sẽ chạy qua 2 cổng là ```:80``` và ```:433``` và ```volumes``` được mount tới ```/var/log/nginx/.``` cùng với đó xác định ```depends_on``` là flask và ```networks``` là backend.
 
-Cuối cùng ta xác định ```networks``` và ```volumes:
+Cuối cùng ta xác định ```networks``` và ```volumes```:
 ```
 networks:
   frontend:
@@ -170,8 +170,222 @@ volumes:
   nginxdata:
     driver: local
 ```
-Lưu lại cấu hình và thoát ra, tiếp đến ta sẽ tạo các file Dockerfile
-#### Viết Dockerfile cho Flask và Webserver
+Lưu lại cấu hình và thoát ra, tiếp đến ta sẽ tạo các file Dockerfile 
+#### Bước 2: Viết Dockerfile cho Flask và Webserver
+##### Dockerfile cho Flask
+Với Docker, nếu muốn build một container ta cần tạo file ```Dockerfile```. ```Dockerfile``` là một công cụ giúp ta có thể xây dựng ```image``` cấu hình theo yêu cầu của chúng ta. Trong bước này ta sẽ viết ```Dockerfile``` cho ```flask```, đầu tiên ta tạo thư mục:
+```
+   mkdir app 
+```
+Tếp đến ta tạo ```Dockerfile cho Flask trong thư mục ```app```:
+```
+   nano app/Dockerfile
+```
+Thêm đoạn cấu hình dưới đây vào:
+```
+FROM python:3.9
+
+WORKDIR /var/www
+
+COPY . var/wwww
+
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install gunicorn
+
+
+EXPOSE 5000
+
+CMD [ "gunicorn", "-w", "4", "--bind", "0.0.0.0:5000", "wsgi"]
+```
+
+Đâu tiên ta xác định base image,```Dockerfile``` này được chạy trên ```image:python3.9```. Tiếp theo ta xác định ```WORKDIR``` và ```COPY``` các file cần thiết để chạy app. File ```requirement``` chứa các thư viện cần thiết kèm với đó là ```gunicorn``` để có thể sử dụng ```nginx``` cuối cùng xác định ```port``` mà flask expose và chạy ```CMD [ "gunicorn", "-w", "4", "--bind", "0.0.0.0:5000", "wsgi"] ``` để khởi động máy chủ ```gunicorn``` hoạt động trên ```port:5000```.
+##### Dockerfile cho nginx
+Tiếp đến ta tạo thư mục nginx
+```
+   mkdir nginx
+```
+Tạo ```Dockerfile``` cho ```nginx```
+```
+   nano nginx/Dockerfile
+```
+Ta thêm đoạn code dưới đây để tạo ```Dockerfile``` xây dựng Nginx server trong thư mục nginx:
+```
+FROM nginx:1.22.0-alpine
+
+
+COPY conf.d/app.conf /etc/nginx/conf.d/app.conf
+
+EXPOSE 80 443
+
+CMD ["nginx", "-g", "daemon off;"]
+```
+Với ```Nginx``` ta sử dụng based image là ```nginx:1.22.0-alpine ``` đã được xây dựng môi trường và cấu hình sẵn, ta chỉ cần ```COPY``` app.conf vào trong container. Dịch vụ ```Nginx``` sẽ chạy qua cổng ```:80``` với ```:433``` là cổng an toàn.
+
+Dòng lệnh ```CMD ["nginx", "-g", "daemon off;"] ``` để khởi chạy ```Nginx server```. 
+Vậy là ta đã hoàn thành các file ```Dockerfile``` cần thiết.
+#### Bước 3: Cấu hình nginx và tạo file database
+Trong bước này ta sẽ cấu hình ```Nginx``` để tạo proxy ngược chuyển tiếp các yêu cầu đến ```Gurnicorn``` trên cổng 5000.
+
+Bước đầu tiên ta tạo ```conf.d```:
+```
+   mkdir conf.d
+```
+Tạo file config:
+```
+   nano conf.d/app.conf
+```
+Ta xây dựng cấu hình như sau:
+```
+upstream app_server {
+    server flask:5000;
+}
+
+server {
+    listen 80;
+    server_name _;
+    error_log  /var/log/nginx/error.log;
+    access_log /var/log/nginx/access.log;
+    client_max_body_size 64M;
+
+    location / {
+        try_files $uri @proxy_to_app;
+    }
+
+    location @proxy_to_app {
+        gzip_static on;
+
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $http_host;
+        proxy_buffering off;
+        proxy_redirect off;
+        proxy_pass http://app_server;
+    }
+}
+```
+This will first define the upstream server, which is commonly used to specify a web or app server for routing or load balancing.
+Tiếp đến ta xây dựng file json để thêm danh sách lớp:
+```
+   nano init-db.js
+```
+Thêm nội dung database như sau:
+```
+db = db.getSiblingDB("flaskdb");
+db.student.drop();
+
+db.student.insertMany([
+{ "STT" : 1, "Tên ứng viên" : "Võ Minh Thiên Long", "Năm sinh" : 2000, "Trường" : "Đại học Tổng hợp ITMO", "Chuyên ngành" : "Kỹ thuật phần mềm" },
+{ "STT" : 2, "Tên ứng viên" : "Nguyễn Văn Hải", "Năm sinh" : 2001, "Trường" : "ĐH Công nghệ - ĐH Quốc gia Hà Nội", "Chuyên ngành" : "Khoa học máy tính" },
+{ "STT" : 3, "Tên ứng viên" : "Trần Thu Thủy", "Năm sinh" : 2000, "Trường" : "ĐH Bách khoa Hà Nội", "Chuyên ngành" : "Khoa học máy tính" },
+{ "STT" : 4, "Tên ứng viên" : "Hồ Nguyên Khang", "Năm sinh" : 2002, "Trường" : "ĐH Bách khoa Hà Nội", "Chuyên ngành" : "ĐTVT" },
+{ "STT" : 5, "Tên ứng viên" : "Phan Đức Anh", "Năm sinh" : 2001, "Trường" : "ĐH Bách khoa Hà Nội", "Chuyên ngành" : "Khoa học máy tính" },
+{ "STT" : 6, "Tên ứng viên" : "Nguyễn Đức Dương", "Năm sinh" : 2000, "Trường" : "ĐH Công nghệ - ĐH Quốc gia Hà Nội", "Chuyên ngành" : "Khoa học máy tính" },
+{ "STT" : 7, "Tên ứng viên" : "Tạ Hữu Bình", "Năm sinh" : 2001, "Trường" : "ĐH Bách khoa Hà Nội", "Chuyên ngành" : "Khoa học máy tính" },
+{ "STT" : 8, "Tên ứng viên" : "Nguyễn Nhật Trường", "Năm sinh" : 2001, "Trường" : "ĐH Công nghệ - ĐH Quốc gia Hà Nội", "Chuyên ngành" : "Truyền thông và mạng máy tính" },
+{ "STT" : 9, "Tên ứng viên" : "Đinh Thị Hường", "Năm sinh" : 2000, "Trường" : "ĐH Bách khoa Hà Nội", "Chuyên ngành" : "Khoa học máy tính" },
+{ "STT" : 10, "Tên ứng viên" : "Trần Quang Hải", "Năm sinh" : 2001, "Trường" : "ĐH Bách khoa Hà Nội", "Chuyên ngành" : "Công nghệ thông tin Global ICT" },
+{ "STT" : 11, "Tên ứng viên" : "Nguyễn Tuấn Hiệp", "Năm sinh" : 2001, "Trường" : "HV CNBCVT", "Chuyên ngành" : "Kỹ thuật viễn thông" },
+{ "STT" : 12, "Tên ứng viên" : "Nguyễn Xuân Khang", "Năm sinh" : 2001, "Trường" : "ĐH Công nghệ - ĐH Quốc gia Hà Nội", "Chuyên ngành" : "Hệ thống thông tin" },
+{ "STT" : 13, "Tên ứng viên" : "Trịnh Hồng Phượng", "Năm sinh" : 2001, "Trường" : "ĐH Bách khoa Hà Nội", "Chuyên ngành" : "Khoa học máy tính" },
+{ "STT" : 14, "Tên ứng viên" : "Đỗ Triệu Hải", "Năm sinh" : 2000, "Trường" : "ĐH Bách khoa Hà Nội", "Chuyên ngành" : "Kỹ thuật Cơ điện tử" },
+{ "STT" : 15, "Tên ứng viên" : "Bùi Doãn Đang", "Năm sinh" : 2000, "Trường" : "ĐH Bách khoa Hà Nội", "Chuyên ngành" : "Hệ thống thông tin quản lý" },
+{ "STT" : 16, "Tên ứng viên" : "Nguyễn Thị Hương", "Năm sinh" : 2000, "Trường" : "ĐH Bách khoa Hà Nội", "Chuyên ngành" : "ĐTVT" },
+{ "STT" : 17, "Tên ứng viên" : "Trần Thanh Hiền", "Năm sinh" : 2001, "Trường" : "Học viện Kỹ thuật Mật mã", "Chuyên ngành" : "ATTT" },
+{ "STT" : 18, "Tên ứng viên" : "Đỗ Hoàng Sơn", "Năm sinh" : 2000, "Trường" : "HV CNBCVT", "Chuyên ngành" : "ATTT" },
+{ "STT" : 19, "Tên ứng viên" : "Vũ Thị Huyền", "Năm sinh" : 2001, "Trường" : "ĐH Công nghệ - ĐH Quốc gia Hà Nội", "Chuyên ngành" : "Mạng máy tính và truyền thông dữ liệu" },
+{ "STT" : 20, "Tên ứng viên" : "Phùng Hoàng Long", "Năm sinh" : 2000, "Trường" : "HV CNBCVT", "Chuyên ngành" : "Hệ thống thông tin" },
+{ "STT" : 21, "Tên ứng viên" : "Phạm Đình Phú", "Năm sinh" : 2000, "Trường" : "ĐH GTVT", "Chuyên ngành" : "Kỹ thuật thông tin và truyền thông" },
+]);
+```
+#### Bước 4: Tạo các file cần thiết để chạy app:
+Đầu tiên ta tạo file ```requiriments.txt```
+```
+nano app/requirements.txt
+```
+Thêm nội dung vào:
+```
+flask
+pymongo
+```
+Tiếp đến ta xây dựng ```app.py``` bao gồm Flask app trong mục ```app```:
+```
+nano app/app.py
+```
+Ta thêm code vào file:
+```
+from flask import Flask, render_template
+from pymongo import MongoClient
+application = Flask(__name__)
+
+
+def get_db():
+    client = MongoClient(host='test_mongodb',
+                         port=27017, 
+                         username='root', 
+                         password='pass',
+                        authSource="admin")
+    db = client.flaskdb
+    return db
+
+@application.route('/')
+def get_stored_student():
+    db=""
+    try:
+        db = get_db()
+        _student = db.student.find()
+        return render_template('index.html', todos= _student)
+    except:
+        pass
+    finally:
+        if type(db)==MongoClient:
+            db.close()
+
+
+if __name__ == "__main__":
+    application.run(host='0.0.0.0', port=5000)
+```
+Hàm ```get_db()``` giúp ta truy cập vào database và lấy danh sách lớp, tiếp đến ta xây dựng file ```index.html``` cơ bản để hiển thị danh sách trên trình duyệt.
+```
+mkdir templates
+nano templates/index.html
+```
+Thêm đoạn code phía dười vào
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FlaskApp</title>
+    <style>
+        .todo {
+            padding: 20px;
+            margin: 10px;
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+    <h1>Danh sách lớp</h1>
+    <table>
+        <tr><td>STT</td><td>Tên ứng viên</td><td>Năm sinh</td><td>Trường</td><td>Chuyên ngành</td></tr>
+        {% for todo in todos %}
+        <tr><td> {{ todo['STT'] }} </td><td> {{ todo['Tên ứng viên']}} </td><td> {{ todo['Năm sinh']}} </td><td> {{ todo['Trường']}} </td><td> {{ todo['Chuyên ngành']}} </td></tr>
+            <!--<p>{{ todo['STT'] }} <i>{{ todo['Tên ứng viên']}}</i> <i>{{ todo['Năm sinh']}}</i> <i>{{ todo['Trường']}}</i> <i>{{ todo['Chuyên ngành']}}</i></p> -->
+        {% endfor %}
+    </table>
+    </div>
+```
+Cuối cùng là tạo file ```wsgi.py``` để có thể chạy ```Gunicorn```
+```
+nano app/wsgi.py
+
+from app import application
+
+if __name__ == "__main__":
+  application.run()
+```
+#### Bước 5: Cuối cùng ta chạy docker-compose và kiểm tra kết quả
+
 
 ## Nguồn tham khảo
 - [Docker ARG, ENV và .env ](https://viblo.asia/p/docker-arg-env-va-env-XL6lA4zmZek)
