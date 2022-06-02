@@ -1,15 +1,40 @@
 # DOCKER
-## Docker và Docker-compose
+## Docker và Docker-Compose
+### Docker
+#### Docker và Container
+**Docker** là một nền tảng để cung cấp cách để building, deploying và running ứng dụng dễ dàng hơn bằng cách sử dụng các containers (trên nền tảng ảo hóa). Ban đầu viết bằng Python, hiện tại đã chuyển sang Golang.
 
+![alt](./imgs/docker.png)
+
+Các **Containers** cho phép lập trình viên đóng gói một ứng dụng với tất cả các phần cần thiết, chẳng hạn như thư viện và các phụ thuộc khác, và gói tất cả ra dưới dạng một package.
+
+Bằng cách đó, nhờ vào container, ứng dụng sẽ chạy trên mọi máy Linux khác bất kể mọi cài đặt tùy chỉnh mà máy có thể có khác với máy được sử dụng để viết code.
+#### Các khái niệm liên quan
+![alt](./imgs/docker2.png)
+- Docker Engine : là thành phần chính của Docker, như một công cụ để đóng gói ứng dụng
+- Docker Hub : là một “github for docker images”. Trên DockerHub có hàng ngàn public images được tạo bởi cộng đồng cho phép bạn dễ dàng tìm thấy những image mà bạn cần. Và chỉ cần pull về và sử dụng với một số config mà bạn mong muốn.
+- Images: là một khuôn mẫu để tạo một container. Thường thì image sẽ dựa trên 1 image có sẵn với những tùy chỉnh thêm. Ví dụ bạn build 1 image dựa trên image Centos mẫu có sẵn để chạy Nginx và những tùy chỉnh, cấu hình để ứng dụng web của bạn có thể chạy được.
+- Container: là một instance của một image. Bạn có thể create, start, stop, move or delete container dựa trên Docker API hoặc Docker CLI.
+- Docker Client: là một công cụ giúp người dùng giao tiếp với Docker host.
+- Docker Daemon: lắng nghe các yêu cầu từ Docker Client để quản lý các đối tượng như Container, Image, Network và Volumes thông qua REST API. Các Docker Daemon cũng giao tiếp với nhau để quản lý các Docker Service.
+- Dockerfile: là một tập tin bao gồm các chỉ dẫn để build một image .
+- Volumes: là phần dữ liệu được tạo ra khi container được khởi tạo.
+### Docker-Compse
+![alt](./imgs/docker-compose.png)
+Docker compose là công cụ dùng để định nghĩa và run multi-container cho Docker application. Với compose bạn sử dụng file YAML để config các services cho application của bạn. Sau đó dùng command để create và run từ những config đó. Sử dụng cũng khá đơn giản chỉ với ba bước:
+
+- Khai báo app’s environment trong Dockerfile.
+- Khai báo các services cần thiết để chạy application trong file docker-compose.yml.
+- Run docker-compose up để start và run app.
 
 ## What are the differences between these instructions?
 
 ### *ARG* và *ENV*
 
--**ARG** hay còn gọi là biến build-time chỉ hoạt động trong quá trình build-image, hoạt động kể từ thời điểm chúng được khai báo trong Dockerfile trong câu lệnh ARG cho đến khi image được tạo. Khi chạy container, chúng ta không thể truy cập giá trị của các biến ARG và chúng chạy duới giá trị mặc định, nếu thay đổi lệnh build sẽ lỗi.
+- **ARG** hay còn gọi là biến build-time chỉ hoạt động trong quá trình build-image, hoạt động kể từ thời điểm chúng được khai báo trong Dockerfile trong câu lệnh ARG cho đến khi image được tạo. Khi chạy container, chúng ta không thể truy cập giá trị của các biến ARG và chúng chạy duới giá trị mặc định, nếu thay đổi lệnh build sẽ lỗi.
 
--**ENV** có sẵn trong quá trình xây dựng, ngay khi bạn khai báo chúng với một command của ENV. Tuy nhiên, không giống như ARG, khi build xong image, các container chạy image có thể truy cập giá trị ENV này.Bên cạnh đó các container chạy từ image có thể ghi đè giá trị của ENV.
-
+- **ENV** có sẵn trong quá trình xây dựng, ngay khi bạn khai báo chúng với một command của ENV. Tuy nhiên, không giống như ARG, khi build xong image, các container chạy image có thể truy cập giá trị ENV này.Bên cạnh đó các container chạy từ image có thể ghi đè giá trị của ENV.
+![alt](./imgs/argvsenv.png)
 ### *COPY* và *ADD*
 
 Lệnh **COPY** sẽ sao chép các tệp mới từ src và thêm chúng vào hệ thống tệp của bộ chứa tại đường dẫn dest
@@ -20,11 +45,12 @@ Lệnh **COPY** sẽ sao chép các tệp mới từ src và thêm chúng vào h
  ```
   ADD ["< src >",... "< dest >"] 
 ```
+![alt](./imgs/copyvsadd.png)
 Nhìn chung **COPY** và **ADD** khá tương tự nhau về mặt chức năng, xong chúng vẫn có những diểm khác nhau cơ bản.
  
--**COPY** sao chép một tập tin / thư mục từ máy chủ của bạn vào image.
+- **COPY** sao chép một tập tin / thư mục từ máy chủ của bạn vào image.
 
--**ADD** sao chép một tập tin / thư mục từ máy chủ vào image, nhưng cũng có thể tìm nạp các URL từ xa, trích xuất các tệp TAR, v.v ... 
+- **ADD** sao chép một tập tin / thư mục từ máy chủ vào image, nhưng cũng có thể tìm nạp các URL từ xa, trích xuất các tệp TAR, v.v ... 
 
 ### *CMD* và *ENTRYPOINT*
 Cả hai lệnh (**CMD** và **ENTRYPOINT**) có thể được chỉ định ở dạng shell form hoặc dạng exec form.
@@ -36,6 +62,7 @@ Cả hai lệnh (**CMD** và **ENTRYPOINT**) có thể được chỉ định �
 ```
 <instruction> ["executable", "param1", "param2", ...]
 ```
+![alt](./imgs/cmdvsentry.png)
 Thoạt nhìn, chúng đều được sử dụng để chỉ định và thực thi các lệnh nhưng chúng cũng có những điểm khác nhau.
 - **CMD** cho phép ta set default command, có nghĩa là command này sẽ chỉ được chạy khi run container mà không chỉ định một command. CMD thì tất cả sẽ bị ignore ngoại trừ lệnh CMD cuối cùng.
 - **ENTRYPOINT** cho phép ta cấu hình container sẽ chạy dưới dạng thực thi. Nó tương tự như CMD, vì nó cũng cho phép ta chỉ định một lệnh với các tham số. Sự khác biệt là lệnh ENTRYPOINT và các tham số không bị ignore khi Docker container chạy.
@@ -390,18 +417,20 @@ Ta chạy câu lệnh sau:
 ```
 docker-compose up -d
 ```
-
+![alt](./imgs/result1.png)
 Câu lệnh trên sẽ chạy ngầm 3 container, ta sử dụng câu lệnh dưới đây để kiểm tra xem chúng có hoạt động không:
 ```
 docker ps
 ```
-
+![alt](./imgs/result2.png)
 Okay vậy là đã hoạt động ngon lành rồi, cuối cùng là vô ```0.0.0.0``` xem đã thấy danh sách lớp chưa :>
-
+![alt](./imgs/result3.png)
 ## Nguồn tham khảo
 - [Docker ARG, ENV và .env ](https://viblo.asia/p/docker-arg-env-va-env-XL6lA4zmZek)
+- [Sự khác biệt giữa các lệnh `COPY` và` ADD`](https://helpex.vn/question/su-khac-biet-giua-cac-lenh-copy-va-add-trong-dockerfile-la-gi-5cb0222eae03f645f42023ef)
 - [Docker - CMD vs ENTRYPOINT](https://www.atatus.com/blog/docker-cmd-vs-entrypoints/)
 - [How To Set Up Flask with MongoDB and Docker](https://www.digitalocean.com/community/tutorials/how-to-set-up-flask-with-mongodb-and-docker)
-
+- [Docker là gì?](https://topdev.vn/blog/docker-la-gi/)
+- [Docker-compse là gì](https://viblo.asia/p/docker-compose-la-gi-kien-thuc-co-ban-ve-docker-compose-1VgZv8d75Aw)
   
   
