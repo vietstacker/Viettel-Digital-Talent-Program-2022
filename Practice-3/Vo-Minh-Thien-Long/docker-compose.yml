@@ -25,9 +25,9 @@ services:
     networks:
       - presentation-logic
       - logic-data
-    ports:
-      - "5000:5000"
-    
+    expose:
+      - "5000"
+
   mongodb:
     image: mongo:5.0
     container_name: data_tier
@@ -39,8 +39,8 @@ services:
       MONDODB_LOG_DIR: /dev/null
     networks:
       - logic-data
-    ports:
-      - "27017:27017"
+    expose:
+      - "27017"
 
 networks:
   logic-data:
