@@ -10,12 +10,11 @@
 
 ### *COPY* và *ADD*
 
-Lệnh **COPY** sẽ sao chép các tệp mới từ <src> và thêm chúng vào hệ thống tệp của bộ chứa tại đường dẫn <dest>
-
+Lệnh **COPY** sẽ sao chép các tệp mới từ src và thêm chúng vào hệ thống tệp của bộ chứa tại đường dẫn dest
 ```
   COPY <src> <dest>
 ```
- Lệnh **ADD** cũng sao chép các tệp mới từ <src> và thêm chúng vào hệ thống tệp của bộ chứa tại đường dẫn <dest>
+ Lệnh **ADD** cũng sao chép các tệp mới từ src và thêm chúng vào hệ thống tệp của bộ chứa tại đường dẫn dest
  ```
   ADD ["< src >",... "< dest >"] 
 ```
@@ -25,6 +24,9 @@ Nhìn chung **COPY** và **ADD** khá tương tự nhau về mặt chức năng,
 
 **- ADD** sao chép một tập tin / thư mục từ máy chủ vào image, nhưng cũng có thể tìm nạp các URL từ xa, trích xuất các tệp TAR, v.v ... 
 
-### *CMD* và *
+### *CMD* và *ENTRYPOINT*
+Cả hai lệnh (**CMD** và **ENTRYPOINT**) có thể được chỉ định ở dạng shell form hoặc dạng exec form.
+- Dạng shell form 
+<pre><code class=language-bash><pre class=cm-s-default style=border:none;>&lt;instruction&gt; &lt;command&gt;</pre></code></pre>
   
   
