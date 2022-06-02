@@ -418,9 +418,17 @@ if __name__ == "__main__":
 #### Bước 5: Cuối cùng ta chạy docker-compose và kiểm tra kết quả
 Ta đã định nghĩa tất cả những file cần thiết và giờ là The moment of truth :))) ta sẽ chạy ```docker-compse.yml``` để xem có lỗi ở đâu còn fix =)).
 Ta chạy câu lệnh sau:
+
+```
+docker-compose build
+```
+
+![alt](./imgs/result0.png)
+
 ```
 docker-compose up -d
 ```
+
 ![alt](./imgs/result1.png)
 
 Câu lệnh trên sẽ chạy ngầm 3 container, ta sử dụng câu lệnh dưới đây để kiểm tra xem chúng có hoạt động không:
@@ -431,7 +439,7 @@ docker ps
 
 Okay vậy là đã hoạt động ngon lành rồi, cuối cùng là vô ```0.0.0.0``` xem đã thấy danh sách lớp chưa :>
 
-![alt](./imgs/result3.png)
+![alt](./imgs/result4.png)
 
 ## Nguồn tham khảo
 - [Docker ARG, ENV và .env ](https://viblo.asia/p/docker-arg-env-va-env-XL6lA4zmZek)
