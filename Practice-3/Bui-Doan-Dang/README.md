@@ -27,6 +27,8 @@ Nhìn chung **COPY** và **ADD** khá tương tự nhau về mặt chức năng,
 ### *CMD* và *ENTRYPOINT*
 Cả hai lệnh (**CMD** và **ENTRYPOINT**) có thể được chỉ định ở dạng shell form hoặc dạng exec form.
 - Dạng shell form 
-<pre><code class=language-bash><pre class=cm-s-default style=border:none;>&lt;instruction&gt; &lt;command&gt;</pre></code></pre>
+```
+<instruction> <command>
+```
   
   
