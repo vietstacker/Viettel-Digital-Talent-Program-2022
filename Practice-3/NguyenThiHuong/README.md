@@ -268,13 +268,14 @@ services:
 ```
 docker cp /home/huongpy/Building_web/mongo/attendees.json<container-name-or-id>:/tmp
 ```
-    <img src="imgs/anh6.png">
+
+   <img src="imgs/anh6.png">
     
 - Now login to mongo container to check nao:
 ```
 docker exec -it bash
 ```
-    <img src="imgs/anh7.png"> 
+   <img src="imgs/anh7.png"> 
     
 - Import database to mogo server: 
 ```
@@ -285,6 +286,7 @@ mongoimport -d <db-name> -c <c-name> --file /tmp/attendees.json
 docker exec <container-name-or-id> mongoimport -d <db-name> -c <c-name> --file /tmp/attendees.json
 ```
 - Finally, set up firewall and rejoice =))
+
     <img src="imgs/anh8.png">
     
     <img src="imgs/anh9.png">
@@ -293,11 +295,10 @@ docker exec <container-name-or-id> mongoimport -d <db-name> -c <c-name> --file /
 
 ## References
 
-- [Ansible](https://docs.ansible.com/)
-- [Ansible module by mentor Dai Dang Van ](https://www.daikk115.dev/2019/10/su-dung-cac-module-cua-ansible.html)
-- [Ansible in detail by mentor Dong Ha Manh](https://github.com/HaManhDong/ansible/blob/master/ansible.md)
-- [Ansible: Run Shell Command on Remote Host](https://www.shellhacks.com/ansible-run-shell-command-on-remote-host/#:~:text=To%20run%20a%20command%20on,by%20passing%20the%20executable%20argument.)
-- [Fix ‘Repository does not have a release file’ Error](https://www.linuxtechi.com/fix-repository-release-file-error-ubuntu/)
+- [Docker compose example](https://docs.docker.com/compose/gettingstarted/)
+- [Execute mongoimport on a Docker Container](https://stackoverflow.com/questions/49895447/i-want-to-execute-mongoimport-on-a-docker-container)
+- [Three Tier Architecture in Docker](https://mundanecode.com/posts/three-tier-architecture-in-docker/)
+- [Docker compose specification](https://docs.docker.com/compose/compose-file/)
 - [Docker document](https://docs.docker.com/)
 
 
