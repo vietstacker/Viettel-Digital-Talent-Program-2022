@@ -113,14 +113,14 @@ Khi chạy container thì image mongo:5.0 sẽ có entrypoint là chạy file sh
         COPY ./db-init.js /docker-entrypoint-initdb.d/
 
 Tuy vậy để load được một file csv có các documents mặc định vào collection attendee thì không được hỗ trợ trong db-init.js. Thay vào đó ta phải sử dụng một tool của mongoDB là mongoimport có sẵn trong image mongo:5.0. Có rất nhiều cách để sử dụng công cụ này, ta có thể run container xong rồi dùng _docker exec \<container> mongoimport_
-(cách này thì khá thủ công). Một cách nữa là ta sẽ chạy 2 container mongo, mongo thứ 2 sẽ chỉ để sử dụng để chạy mongoimport như trong [tutorial của Shan's Corner](https://shantanoo-desai.github.io/posts/technology/seeding-mongodb-docker-compose/). Cách thứ 3 là ta có thể chỉnh sử một chút file docker-entrypoint.sh để có thể load được documents trong file csv. Ta sẽ custom file [docker-entrypoint.sh](https://github.com/docker-library/mongo/blob/master/5.0/docker-entrypoint.sh) (đây cũng là file official được public trên github).
+(cách này thì khá thủ công). Một cách nữa là ta sẽ chạy 2 container mongo, mongo thứ 2 sẽ chỉ để sử dụng để chạy mongoimport như trong [tutorial của Shan's Corner](https://shantanoo-desai.github.io/posts/technology/seeding-mongodb-docker-compose/). Cách thứ 3 là ta có thể chỉnh sử một chút file docker-entrypoint.sh để có thể load được documents trong file csv. Ta sẽ custom file [docker-entrypoint.sh](https://github.com/docker-library/mongo/blob/master/5.0/docker-entrypoint.sh) (đây cũng là file official được public trên github). Chắc chắc sẽ có một số cách hay hơn để seeding được database nhưng trong thời gian giới hạn em vẫn chưa tìm hiểu thêm được.
 
-Trong file này, dòng cuối cùng sử dụng lệnh exec để chaỵ mongod (Mongo Deamon), như vậy để sử dụng được file này ta chắc chắn phải chạy mongod trước để nó tạo ra được database, collection và user rồi mới sử dụng được mongoimport để kết nối tới mongo để import file csv. Một cách đơn giản là ta có thể thêm lệnh mongoimport vào ngay dòng exec "$@" [docker-entrypoint.sh](https://github.com/docker-library/mongo/blob/master/5.0/docker-entrypoint.sh) như sau:
+Trong file này, dòng cuối cùng sử dụng lệnh exec để chạy mongod (Mongo Deamon), như vậy để sử dụng được file này ta chắc chắn phải chạy mongod trước để nó tạo ra được database, collection và user rồi mới sử dụng được mongoimport để kết nối tới mongo để import file csv. Một cách đơn giản là ta có thể thêm lệnh mongoimport vào ngay dòng exec "$@" [docker-entrypoint.sh](https://github.com/docker-library/mongo/blob/master/5.0/docker-entrypoint.sh) như sau:
 
         exec "$@" &
         mongoimport --db class --collection attendee --type=csv --username admin --password Phananh272 --authenticationDatabase admin --headerline --file=/data/datasource.csv --uri mongodb://localhost:27017
 
-Như vậy khi run container thì sẽ bị exit ngay lập tức do ta chạy file này thì exec "\$@" & sẽ chạy trong một process có pid không phải là 1, pid 1 giờ đây sẽ là của shell, sau khi chạy đến lệnh mongoimport xong thì pid 1 này cũng hoàn thành xong công việc và terminate. Khi pid terminate thì container cũng sẽ tự động exit (Nếu không có operator & ở cuối thì đương nhiên sẽ không chạy lệnh mongoimport do lệnh trên không bao giờ exit). Như vậy mục tiêu của ta là phải để exec "$@" chạy trên pid 1 và mongimport phải thực hiện sau exec "\$@". Ta chỉ cần chạy (sleep && mongoimport) & trước exec "\$@", thì sleep && mongoimport sẽ được chạy trên một pid khác và sau đó khi chạy exec "\$@" nó sẽ thay thế shell và chạy trên pid 1 \(nhược điểm của phương pháp này là sẽ tạo ra zoombie process hay defunct process do khi mongimport chạy xong thì parent process của nó là shell cũng đã bị thay thể bởi exec "\$@"):
+Như vậy khi run container thì sẽ bị exit ngay lập tức do ta chạy file này thì exec "\$@" & sẽ chạy trong một process có pid không phải là 1, pid 1 giờ đây sẽ là của shell, sau khi chạy đến lệnh mongoimport xong thì pid 1 này cũng hoàn thành xong công việc và terminate. Khi pid terminate thì container cũng sẽ tự động exit do không có một init process đang chạy (Nếu không có operator & ở cuối thì đương nhiên sẽ không chạy lệnh mongoimport do lệnh trên không bao giờ exit). Như vậy mục tiêu của ta là phải để exec "$@" chạy trên pid 1 và mongimport phải thực hiện sau exec "\$@". Ta chỉ cần chạy (sleep && mongoimport) & trước exec "\$@" (ta sleep nhằm mục đích cho mongd hoàn tất khởi tạo), thì sleep && mongoimport sẽ được chạy trên một pid khác và sau đó khi chạy exec "\$@" nó sẽ thay thế shell và chạy trên pid 1 \(nhược điểm của phương pháp này là sẽ tạo ra zoombie process hay defunct process do khi mongimport chạy xong thì parent process của nó là chính là pid 1 đang chạy mongod thay thế shell do lệnh exec, chính vì thế mà pid 1 này sẽ không wait process con này, dẫn tới nó không thể nhận accept để exit -> trở thành zombie):
 
         (sleep 5 && mongoimport --db class --collection attendee --type=csv --username admin --password Phananh272 --authenticationDatabase admin --headerline --file=/data/datasource.csv --uri mongodb://localhost:27017) &
 
@@ -155,6 +155,8 @@ Python Web Server sẽ sử dụng 2 thư viện là Flask (viết API) và pymo
                 res.append(x)
         return jsonify(dumps(res))
 
+Ta có thể viết thêm một số Restful API để cho app được hoàn thiện hơn, nhưng nó nằm ngoài mục đích của project này là nhằm hiển thị thông tin danh sách lớp. Ta sẽ giữ app này đơn giản nhất có thể.
+
 Trước hết, ta sẽ frezze pip3 để lấy thông tin library đẩy vào file requirements.txt:
 
         pip3 freeze | grep Flask >> requirements.txt
@@ -166,7 +168,7 @@ Ta sử dụng base image là python:3.9 và tạo working directory app để l
 
         WORKDIR /app
 
-Tiếp theo là copy requirements.txt và tiến hành cài đặt các dependencies:
+Tiếp theo là copy requirements.txt và tiến hành cài đặt các dependencies, ta cũng sẽ áp dụng việc đẩy requirements.txt và cài nó trước với --no-cache-dir để giảm thời gian build và rebuild:
 
         COPY ./requirements.txt .
 
@@ -199,3 +201,98 @@ NGINX trong project sẽ đóng 2 vai trò, 1 serving các static file như HTML
         }
 
 Client sẽ request để lấy file HTML và JS ở NGINX, nếu client gọi API thì NGINX sẽ forward tới Web Server, ở đây chính là container web_python mà ta đã chạy và đặt tên (Ta chỉ cần tên của container chứ không cần địa chỉ IP vì khi sử dụng docker-compose sẽ tự tạo một network mới và sẽ có một dịch vụ DNS để access container qua tên).
+
+Ta cũng sẽ copy các file index.html và js.js vào để NGINX serve các file này:
+
+        FROM nginx:1.22.0-alpine
+
+        COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+
+        COPY ./index.html /usr/share/nginx/html/index.html
+
+        RUN mkdir /usr/share/nginx/html/js/
+
+        COPY ./js/js.js /usr/share/nginx/html/js/js.js
+
+## 2.4. Deploy bằng Docker-compose
+
+Project của ta sẽ gồm service, tương ứng với nginx, web_server và mongodb. Ta tổ chức file như sau:
+
+        .
+        ├── nginx/
+        │   ├── Dockerfile
+        │   ├── index.html
+        │   ├── nginx.conf
+        │   └── js/
+        │       └── js.js
+        ├── python/
+        │   ├── Dockerfile
+        │   ├── app.py
+        │   └── requirements.txt
+        ├── mongo/
+        │   ├── Dockerfile
+        │   ├── db-init.js
+        │   ├── docker-entrypoint.sh
+        │   └── datasource.csv
+        ├── docker-compose.yml
+        └── readme.md
+
+Đối với service mongdb, ta chỉ cần sử dụng Dockerfile để build:
+
+        web_mongo:
+          build: ./mongo
+
+Đối với service python, tương tự như web_mongo, tuy nhiên do web_server này phụ thuộc vào web_mông nên ta thêm trường depends_on:
+
+        web_python:
+          build: ./python
+          depends_on:
+            - "web_mongo"
+
+Đối với service nginx, service này depend vào web_python, nên ta cũng thêm trường depend, đồng thời mount directory của html ra để dễ dàng develop do file này phải thay đổi thường xuyên. Publish cổng 80 của container ra cổng 80 của host:
+
+        web_nginx:
+          build: ./nginx
+          depends_on:
+            - "web_python"
+          volumes:
+            - ./nginx:/usr/share/nginx/html
+          ports:
+            - 80:80
+
+File docker-compose.yml đầy đủ:
+
+        version: "3.9"
+        services:
+          web_mongo:
+            build: ./mongo
+          web_python:
+            build: ./python
+            depends_on:
+              - "web_mongo"
+          web_nginx:
+            build: ./nginx
+            depends_on:
+              - "web_python"
+            volumes:v
+              - ./nginx:/usr/share/nginx/html
+            ports:
+              - 80:80
+
+Thực hiện build, kết qủa với 3 image:
+
+![docker-build](images/build-image.png)
+
+Chạy các container bằng docker-compose up, dùng browser truy cập vào localhost cổng 80:
+
+![serivce-check](images/service-check.png)
+
+Như vậy, ta đã deploy thành công project.
+
+# TÀI LIỆU THAM KHẢO
+
+- https://docs.docker.com/
+- https://shantanoo-desai.github.io/posts/technology/seeding-mongodb-docker-compose/
+- https://www.mongodb.com/docs/
+- http://nginx.org/en/docs/
+- https://vsupalov.com/docker-arg-vs-env/

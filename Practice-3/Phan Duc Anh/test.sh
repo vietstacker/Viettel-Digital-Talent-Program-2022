@@ -1,5 +1,5 @@
 #!/bin/bash
 
-exec sleep 3 &
+(sleep 5 && echo "Vietnam") &
 
-echo 20
+exec sleep 30
