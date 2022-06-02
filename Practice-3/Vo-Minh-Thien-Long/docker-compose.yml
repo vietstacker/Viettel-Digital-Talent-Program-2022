@@ -8,8 +8,10 @@ services:
       dockerfile: Dockerfile
     container_name: presentation_tier
     restart: unless-stopped
+    networks:
+      - presentation-logic
     ports:
-      - "9333"
+      - "9333:9333"
       
   flask:
     image: backend-image
@@ -21,9 +23,10 @@ services:
     depends_on:
       - mongodb
     networks:
-      - backend
+      - presentation-logic
+      - logic-data
     ports:
-      - "5000"
+      - "5000:5000"
     
   mongodb:
     image: mongo:5.0
@@ -35,9 +38,10 @@ services:
       MONGODB_DATA_DIR: /data/db
       MONDODB_LOG_DIR: /dev/null
     networks:
-      - backend
+      - logic-data
     ports:
-      - "27017"
+      - "27017:27017"
 
 networks:
-  backend:
+  logic-data:
+  presentation-logic:
