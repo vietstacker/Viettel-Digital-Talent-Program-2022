@@ -34,6 +34,24 @@ Cả hai lệnh (**CMD** và **ENTRYPOINT**) có thể được chỉ định �
 ```
 <instruction> ["executable", "param1", "param2", ...]
 ```
+Thoạt nhìn, chúng đều được sử dụng để chỉ định và thực thi các lệnh nhưng chúng cũng có những điểm khác nhau.
+- CMD cho phép ta set default command, có nghĩa là command này sẽ chỉ được chạy khi run container mà không chỉ định một command. CMD thì tất cả sẽ bị ignore ngoại trừ lệnh CMD cuối cùng.
+- ENTRYPOINT cho phép ta cấu hình container sẽ chạy dưới dạng thực thi. Nó tương tự như CMD, vì nó cũng cho phép ta chỉ định một lệnh với các tham số. Sự khác biệt là lệnh ENTRYPOINT và các tham số không bị ignore khi Docker container chạy.
+
+
+
+
+
+
+
+
+
+
+
+## Nguồn tham khảo
+- [Docker ARG, ENV và .env ](https://viblo.asia/p/docker-arg-env-va-env-XL6lA4zmZek)
+- [Docker - CMD vs ENTRYPOINT](https://www.atatus.com/blog/docker-cmd-vs-entrypoints/)
+- [HaManhDong-ansible](https://github.com/HaManhDong/ansible/blob/master)
 
   
   
