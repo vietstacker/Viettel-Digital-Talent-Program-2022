@@ -6,6 +6,7 @@ services:
       context: app
       dockerfile: Dockerfile
     container_name: flask
+    restart: unless-stopped
     image: python3.9
     environment:
       APP_ENV: "prod"
@@ -13,6 +14,8 @@ services:
       APP_PORT: 5000
     volumes:
       - appdata:/var/www
+     depends_on:
+      - mongodb
     networks:
       - frontend
       - backend
@@ -20,6 +23,7 @@ services:
   mongodb:
     image: mongo:5.0.0
     container_name: mongodb
+    restart: unless-stopped
     hostname: test_mongodb
     environment:
       - MONGO_INITDB_DATABASE=flaskdb
@@ -38,6 +42,7 @@ services:
       dockerfile: Dockerfile
     image: nginx:1.22.0-alpine
     container_name: webserver
+    restart: unless-stopped
     environment:
       APP_ENV: "prod"
       APP_NAME: "webserver"
