@@ -20,21 +20,5 @@ Lệnh **COPY** sẽ sao chép các tệp mới từ <src> và thêm chúng vào
 ```
  Nhìn chung **COPY** và **ADD** khá tương tự nhau về mặt chức năng, xong chúng vẫn có những diểm khác nhau cơ bản:
  
-  <code><span class="pln">__ project</span><span class="pun">-</span><span class="pln">name
-    </span><span class="pun">|</span><span class="pln">__ </span><a href="https://developpaper.com/tag/docker/" title="View all posts in docker" target="_blank"><span class="pln">docker</span></a><span class="pun">-</span><span class="pln">file
-        </span><span class="pun">|</span><span class="pln">__ ningx
-            </span><span class="pun">|</span><span class="pln">__ </span><span class="typ">Dockerfile</span><span class="pln">
-            </span><span class="pun">|</span><span class="pln">__ conf
-                </span><span class="pun">|</span><span class="pln">__ </span><a href="https://developpaper.com/tag/nginx/" title="View all posts in nginx" target="_blank"><span class="pln">nginx</span></a><span class="pun">.</span><span class="pln">conf
-        </span><span class="pun">|</span><span class="pln">__ flask
-            </span><span class="pun">|</span><span class="pln">__ </span><span class="typ">Dockerfile</span><span class="pln">
-            </span><span class="pun">|</span><span class="pln">__ requirements</span><span class="pun">.</span><span class="pln">txt
-        </span><span class="pun">|</span><span class="pln">__ mongo
-            </span><span class="pun">|</span><span class="pln">__ </span><span class="typ">Dockerfile</span><span class="pln">
-            </span><span class="pun">|</span><span class="pln">__ setup</span><span class="pun">.</span><span class="pln">sh
-        </span><span class="pun">|</span><span class="pln">__ docker</span><span class="pun">-</span><span class="pln">compose</span><span class="pun">.</span><span class="pln">yml
-    </span><span class="pun">|</span><span class="pln">__ src
-        </span><span class="pun">|</span><span class="pln">__ app
-            </span><span class="pun">|</span><span class="pln">__ </span><span class="pun">...</span><span class="pln">
-        </span><span class="pun">|</span><span class="pln">__ run</span><span class="pun">.</span><span class="pln">py</span></code>
+**- C**
   
