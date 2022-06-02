@@ -2,7 +2,7 @@
 ## Content
 
 - [Docker và Docker-Compose](#Docker-và-Docker-Compose)
-- [What are the differences between these instructions?](#What-are-the-differences-between-these-instructions?)
+- [Bài tập 1](#Bài-tập-1)
 - [Xây dựng Docker-compose đóng gói và chạy webapp](#Xây-dựng-Docker-compose-đóng-gói-và-chạy-webapp)
 - [Nguồn tham khảo](#Nguồn-tham-khảo)
 
@@ -36,7 +36,7 @@ Docker compose là công cụ dùng để định nghĩa và run multi-container
 - Khai báo các services cần thiết để chạy application trong file docker-compose.yml.
 - Run docker-compose up để start và run app.
 
-## What are the differences between these instructions?
+## Bài tập 1
 
 ### *ARG* và *ENV*
 
