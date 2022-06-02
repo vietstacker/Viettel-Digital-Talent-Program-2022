@@ -8,11 +8,11 @@ services:
       dockerfile: Dockerfile
     container_name: presentation_tier
     restart: unless-stopped
-    networks:
-      - presentation-logic
     ports:
       - "9333:9333"
-      
+    links:
+      - flask
+
   flask:
     image: backend-image
     build:
@@ -22,26 +22,19 @@ services:
     restart: unless-stopped
     depends_on:
       - mongodb
-    networks:
-      - presentation-logic
-      - logic-data
-    expose:
-      - "5000"
+    ports:
+      - "5000:5000"
+    links:
+      - mongodb
 
   mongodb:
     image: mongo:5.0
     container_name: data_tier
     restart: unless-stopped
-    command: mongod --auth
+    hostname: mongodb
     environment:
-      MONGO_INITDB_DATABASE: vdt2022
-      MONGODB_DATA_DIR: /data/db
-      MONDODB_LOG_DIR: /dev/null
-    networks:
-      - logic-data
-    expose:
-      - "27017"
-
-networks:
-  logic-data:
-  presentation-logic:
+    - MONGO_INITDB_DATABASE=vdt2022
+    - MONGO_INITDB_ROOT_USERNAME=practice3
+    - MONGO_INITDB_ROOT_PASSWORD=practice3
+    ports:
+      - "27017:27017"

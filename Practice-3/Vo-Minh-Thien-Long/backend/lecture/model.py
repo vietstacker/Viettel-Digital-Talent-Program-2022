@@ -5,7 +5,12 @@ from common.model import Status
 from intern.model import Intern
 from mentor.model import Mentor
 
-connect('vdt2022')
+connect('vdt2022',
+        host="mongodb",
+        port=27017,
+        username="practice3",
+        password="practice3",
+        authentication_source='admin')
 
 
 class Participating(Document):

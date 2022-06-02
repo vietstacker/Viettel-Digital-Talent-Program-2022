@@ -729,7 +729,9 @@ services:
     restart: unless-stopped
     ports:
       - "9333:9333"
-      
+    links:
+      - flask
+
   flask:
     image: backend-image
     build:
@@ -739,27 +741,22 @@ services:
     restart: unless-stopped
     depends_on:
       - mongodb
-    networks:
-      - backend
     ports:
       - "5000:5000"
-    
+    links:
+      - mongodb
+
   mongodb:
     image: mongo:5.0
     container_name: data_tier
     restart: unless-stopped
-    command: mongod --auth
+    hostname: mongodb
     environment:
-      MONGO_INITDB_DATABASE: vdt2022
-      MONGODB_DATA_DIR: /data/db
-      MONDODB_LOG_DIR: /dev/null
-    networks:
-      - backend
+    - MONGO_INITDB_DATABASE=vdt2022
+    - MONGO_INITDB_ROOT_USERNAME=practice3
+    - MONGO_INITDB_ROOT_PASSWORD=practice3
     ports:
       - "27017:27017"
-
-networks:
-  backend:
 ```
 
 ### 4. Deployment
@@ -769,7 +766,7 @@ networks:
 Run our containerized environment in background mode (with `-d` option):
 
 ```shell
-docker-compose up -it
+docker-compose up -d
 ```
 
 Our environment is now up and running in the background. To verify that the container is active,
@@ -779,7 +776,17 @@ we can run:
 docker-compose ps
 ```
 
-Here is our final result:
+<div align="center">
+  <img width="1500" src="assets/requirement.png" alt="docker ps">
+</div>
+
+<div align="center">
+  <i>Our running containers.</i>
+</div>
+
+And our deployed project:
+
+
 
 ## V. References
 
