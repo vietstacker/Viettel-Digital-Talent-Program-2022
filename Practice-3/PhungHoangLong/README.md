@@ -4,7 +4,6 @@
 ---
 
 ## **Author:** *Phung Hoang Long* 
-**Date of issue**: *May 26th 2022*
 
 ---
 
