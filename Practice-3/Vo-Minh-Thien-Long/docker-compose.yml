@@ -2,10 +2,7 @@ version: '3.9'
 
 services:
   react:
-    image: frontend-image
-    build:
-      context: frontend
-      dockerfile: Dockerfile
+    build: frontend
     container_name: presentation_tier
     restart: unless-stopped
     ports:
@@ -14,14 +11,11 @@ services:
       - flask
 
   flask:
-    image: backend-image
-    build:
-      context: backend
-      dockerfile: Dockerfile
+    build: backend
     container_name: logic_tier
     restart: unless-stopped
-    depends_on:
-      - mongodb
+    environment:
+      - FLASK_APP=backend/app
     ports:
       - "5000:5000"
     links:
@@ -33,8 +27,8 @@ services:
     restart: unless-stopped
     hostname: mongodb
     environment:
-    - MONGO_INITDB_DATABASE=vdt2022
-    - MONGO_INITDB_ROOT_USERNAME=practice3
-    - MONGO_INITDB_ROOT_PASSWORD=practice3
+      - MONGO_INITDB_DATABASE=vdt2022
+      - MONGO_INITDB_ROOT_USERNAME=practice3
+      - MONGO_INITDB_ROOT_PASSWORD=practice3
     ports:
       - "27017:27017"

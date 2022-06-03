@@ -22,7 +22,7 @@ Author: **Vo Minh Thien Long**
 [IV. Setting up our web application](#setting-up)
 - [1. Build image for frontend by `Dockerfile`](#frontend-image)
 - [2.  Build image for backend by `Dockerfile`](#backend-image)
-- [3.  Create `docker-compose.yml` file](#backend-image)
+- [3.  Create `docker-compose.yml` file](#create-docker-compose)
 - [3.  Deployment](#deployment)
 
 [V. References](#references)
@@ -662,7 +662,16 @@ docker-compose --version
 
 <a name='frontend-image'></a>
 
-Configuration file `nginx.conf` for **Nginx** web server:
+Before _multi-stage_ builds, we have to create multiple `Dockerfile` for each layer of the image.
+However, it is not a best practice to maintain more than one `Dockerfile`. Thanks to _multi-stage_ builds, we can use multiple `FROM` statements in your Dockerfile. 
+Each `FROM` instruction can use a different base, and each of them begins a new stage of the build. 
+
+We will use _multi-stage_ build to first build our **React** production application (**build**),
+and then use **Nginx** as a webserver for hosting it.
+
+Here is the configuration file `nginx.conf` for **Nginx** web server. This is not the practice's
+topic, so I will not deeply explain it here, but basically, I will set up a host server list to 
+port `9333`  with content from `/usr/share/nginx/html`.
 
 ```text
 server {
@@ -681,8 +690,89 @@ server {
 }
 ```
 
+First, we will use image `node:18.2.0-alpine` as a base image, and set it as `react-build` for
+later use. Image `node:18.2.0-alpine` is a **Docker official image**, using as a JavaScript-based platform
+for server-side and networking application.
 
-Here is our final `frontend/Dockerfile`:
+**Docker official image** are a curated set of Docker repositories hosted on Docker Hub, designed
+to provide best practices, documentation and security.
+
+```dockerfile
+FROM node:18.2.0-alpine AS react-build
+```
+
+Then, set our **working directory** at `/usr/src/app` by using instruction `WORKDIR`. Now, all of our action in the **container**
+will be taken place in there.
+
+```dockerfile
+WORKDIR /usr/src/app/
+```
+
+Use instruction `COPY` to copy all of our source code to the current directory (`/usr/src/app`).
+
+```dockerfile
+COPY . .
+```
+
+`yarn` is package manager for the **Node.js** JavaScript runtime environment. In this practice 
+I use it to manipulate our packages and libraries.
+
+We now run command `yarn` to install all the required package for our application (which are 
+stored in `package.json`). We use `RUN` here because we only want to run the intermediate command 
+here.
+
+```dockerfile
+RUN yarn
+```
+
+Then we will build the application using `yarn build` (I have indicated in `package.json` that
+this is equivalent with `react-scripts build`).
+
+```dockerfile
+RUN yarn build
+```
+
+First, we will use image `nginx:1.22.0-alpine` as an image to deploy web server by **Nginx**. It is also a 
+**Docker official image**.
+
+```dockerfile
+FROM nginx:1.22.0-alpine
+```
+
+Then copy our configuration file `nginx.conf` to `/etc/nginx/conf.d/default.conf`. 
+
+```dockerfile
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+```
+
+And copy our **build** application from `react-build` to `/usr/share/nginx/html`.
+
+```dockerfile
+COPY --from=react-build /usr/src/app/build /usr/share/nginx/html
+```
+
+The `EXPOSE` instruction informs the container listens on the specified _network ports_ 
+at runtime (but it **does not** actually publish the port). In here we will use port `9333`
+for our **Nginx**.
+
+```dockerfile
+EXPOSE 9333
+```
+
+Finally, we will use `CMD` to start our **Nginx** service. As from the official document 
+of **Nginx** image on DockerHub:
+
+> If you add a custom CMD in the Dockerfile, be sure to include `-g daemon off;` 
+> in the CMD in order for nginx to stay in the foreground, so that Docker can track 
+> the process properly (otherwise your container will stop immediately after starting)!
+
+So in this last step, we will add:
+
+```dockerfile
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+And here is our final `frontend/Dockerfile`:
 
 ```dockerfile
 FROM node:18.2.0-alpine AS react-build
@@ -702,17 +792,177 @@ CMD ["nginx", "-g", "daemon off;"]
 
 <a name='backend-image'></a>
 
+We will use image `python:3.9` here.  It is also a **Docker official image**.
+
+```dockerfile
+FROM python:3.9
+```
+
+Then we set the working directory to `/usr/src/app/`.
+
+```dockerfile
+WORKDIR /usr/src/app/
+```
+
+Copy all the source code to the current working directory.
+
+```dockerfile
+COPY . .
+```
+
+Upgrade `pip` to the latest version.
+
+```dockerfile
+RUN pip install --upgrade pip
+```
+
+Install all the _required_ **packages** and **libraries** from `requirements.txt`.
+The `requirement.txt` file is used for specifying what Python packages
+are _required_ to run the project. 
+
+```dockerfile
+RUN pip install -r requirements.txt
+```
+
+So in this last step, we will use `CMD` to execute our application.
+To run the application, use the flask command or `python -m flask`:
+
+```dockerfile
+CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
+```
+
 Here is our final `backend/Dockerfile`:
 
 ```dockerfile
 FROM python:3.9
 WORKDIR /usr/src/app/
 COPY . .
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
-CMD ["python", "./app.py"]
+CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
 ```
 
 ### 3. Create `docker-compose.yml` file
+<a name='create-docker-compose'></a>
+
+First, we indicate our `docker-compose.yml` version. In this practice I will use the latest 
+version `3.9`
+
+```yaml
+version: '3.9'
+```
+
+Then we will have 3 services:
+
+#### 3.1. `react` service
+
+We set the context to build in `frontend` directory (where has our `Dockerfile` and source code),
+and our `container_name` is `presentation_tier`.
+
+```yaml
+build: frontend
+container_name: presentation_tier
+```
+
+Then we will set the `restart` policy as `unless-stopped`. This policy means Docker **allways** restart the 
+container if it stops, except that when the container is stopped (manually or otherwise), it is **not restarted** 
+even after **Docker daemon** restarts.
+
+```yaml
+restart: unless-stopped
+```
+
+Choose the host port and container port `9333`.
+
+```yaml
+ports:
+  - "9333:9333"
+```
+
+Finally, link it to the `flask` service, which we will define later.
+
+```yaml
+links:
+  - flask
+```
+
+#### 3.2. `flask` service
+
+We set the context to build in `backend` directory and the container name as `logic_tier`.
+
+```yaml
+build: backend
+container_name: logic_tier
+```
+
+Then we will set the `restart` policy as `unless-stopped`.
+
+```yaml
+restart: unless-stopped
+```
+
+Choose the host port and container port `5000`.
+
+```yaml
+ports:
+  - "5000:5000"
+```
+
+Set the environment variable `FLASK_APP` is the path to our `app.py` file.
+
+```yaml
+environment:
+  - FLASK_APP=backend/app
+```
+
+Finally, link it to the `mongodb` service.
+
+```yaml
+links:
+  - mongodb
+```
+
+#### 3.2. `mongdodb` service
+
+We will use the base image `mongo:5.0` here and set the container name as `data_tier`.
+The image `mongo:5.0` is also a Docker Official Images.
+
+```yaml
+image: mongo:5.0
+container_name: data_tier
+```
+
+Then we will set the `restart` policy as `unless-stopped`.
+
+```yaml
+restart: unless-stopped
+```
+
+Set our `hostname` of the service to `mongodb` for connection between **logic tier** and
+**data tier**.
+
+```yaml
+hostname: mongodb
+```
+
+Set the environment variable `MONGO_INITDB_DATABASE` for our database's name, `MONGO_INITDB_ROOT_USERNAME`
+for **root user**'s username and `MONGO_INITDB_ROOT_PASSWORD` for password.
+
+```yaml
+environment:
+  - MONGO_INITDB_DATABASE=vdt2022
+  - MONGO_INITDB_ROOT_USERNAME=practice3
+  - MONGO_INITDB_ROOT_PASSWORD=practice3
+```
+
+Finally, set the host port and container port to `27017`.
+
+```yaml
+ports:
+  - "27017:27017"
+```
+
+#### 3.4. Our final `docker-compose.yml`
 
 Here is our final `docker-compose.yml`:
 
@@ -721,10 +971,7 @@ version: '3.9'
 
 services:
   react:
-    image: frontend-image
-    build:
-      context: frontend
-      dockerfile: Dockerfile
+    build: frontend
     container_name: presentation_tier
     restart: unless-stopped
     ports:
@@ -733,14 +980,11 @@ services:
       - flask
 
   flask:
-    image: backend-image
-    build:
-      context: backend
-      dockerfile: Dockerfile
+    build: backend
     container_name: logic_tier
     restart: unless-stopped
-    depends_on:
-      - mongodb
+    environment:
+      - FLASK_APP=backend/app
     ports:
       - "5000:5000"
     links:
@@ -752,9 +996,9 @@ services:
     restart: unless-stopped
     hostname: mongodb
     environment:
-    - MONGO_INITDB_DATABASE=vdt2022
-    - MONGO_INITDB_ROOT_USERNAME=practice3
-    - MONGO_INITDB_ROOT_PASSWORD=practice3
+      - MONGO_INITDB_DATABASE=vdt2022
+      - MONGO_INITDB_ROOT_USERNAME=practice3
+      - MONGO_INITDB_ROOT_PASSWORD=practice3
     ports:
       - "27017:27017"
 ```
@@ -763,7 +1007,22 @@ services:
 
 <a name='deployment'></a>
 
-Run our containerized environment in background mode (with `-d` option):
+After install it from GitHub, create a `.env` file in `frontend` directory based on `.env_example`.
+Our you can use `cp frontend/.env_example frontend/.env`.
+
+Our `frontend/.env` content:
+
+```text
+REACT_APP_BACKEND_URL=http://localhost:5000
+```
+
+Then build our container with `docker-compose build`.
+
+```shell
+docker-compose build
+```
+
+Finally, start containerized environment in background mode (with `-d` option):
 
 ```shell
 docker-compose up -d
@@ -784,7 +1043,7 @@ docker-compose ps
   <i>Our running containers.</i>
 </div>
 
-And our deployed project:
+And our deployed project will run at [http://localhost:9333](http://localhost:9333).
 
 
 <div align="center">
