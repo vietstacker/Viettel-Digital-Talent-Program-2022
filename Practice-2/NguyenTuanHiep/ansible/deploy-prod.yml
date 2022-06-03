@@ -1,0 +1,9 @@
+---
+- name: deploy production server
+  hosts: production
+  become: true
+  vars:
+    github_branch: deploy-ansible
+  roles:
+    - deploy
+

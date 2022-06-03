@@ -1,0 +1,39 @@
+---
+- name: Install aptitude
+  apt:
+    name: aptitude
+    state: latest
+    update_cache: true
+
+- name: Install required system packages
+  apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
+    state: latest
+    update_cache: true
+
+- name: Add Docker GPG apt Key for {{ os.name }}/{{ os.distro}}
+  apt_key:
+    url: https://download.docker.com/{{ os.name }}/{{ os.distro }}/gpg
+    state: present
+
+- name: Add Docker Repository for {{ os.name }}/{{ os.distro}} with version {{ os.version }}
+  apt_repository:
+    repo: deb https://download.docker.com/{{ os.name }}/{{ os.distro }} {{ os.version }} stable
+    state: present
+
+- name: Update apt and install docker-ce
+  apt:
+    name: docker-ce
+    state: latest
+    update_cache: true
+
+- name: Install Docker Module for Python
+  pip:
+    name: docker

@@ -1,0 +1,3 @@
+github_repo: https://github.com/ithaquaKr/ptit-learn-app.git
+dest_dir: /home/ptit-learn-app
+docker_dir: /home/ptit-learn-app
