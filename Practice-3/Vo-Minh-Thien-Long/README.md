@@ -3,6 +3,8 @@
 
 Author: **Vo Minh Thien Long**
 
+Deployed website: http://54.204.92.132:9333
+
 ----        
 ## Table of contents
 [I. Requirement](#requirement)
@@ -1053,6 +1055,9 @@ And our deployed project will run at [http://localhost:9333](http://localhost:93
 <div align="center">
   <i>Our final result.</i>
 </div>
+
+I also use EC2 to deploy the project [here](http://54.204.92.132:9333/dashboard/app).
+You can check my previous Practice to know how to init and launch an EC2 instance.
 
 ## V. References
 
