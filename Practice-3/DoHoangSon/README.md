@@ -27,18 +27,62 @@ The Docker software as a service offering consists of three components:
     -   A Docker image is a read-only template used to build containers. Images are used to store and ship applications.
     -   A Docker service allows containers to be scaled across multiple Docker daemons. The result is known as a  _swarm_, a set of cooperating daemons that communicate through the Docker API.
 -   **Registries:**  A Docker registry is a repository for Docker images. Docker clients connect to registries to download ("pull") images for use or upload ("push") images that they have built. Registries can be public or private. Two main public registries are Docker Hub and Docker Cloud. Docker Hub is the default registry where Docker looks for images. Docker registries also allow the creation of notifications based on events.
-Them anh Docker
+<div align="center">
+  <img src="img/docker.png">
+</div>
+<div align="center">
+  <i>Docker Architecture</i>
+</div>
+
+**Note:**
+
+`ARG` vs `ENV`
+
+`ARG`: ARG values are not available after the image is built. A running container won’t have access to an ARG variable value.
+
+`ENV`: ENV is mainly meant to provide default values for your future environment variables. Running dockerized applications can access environment variables.
+
+`COPY` vs `ADD`
+
+`COPY`: COPY is a docker file command that copies files from a local source location to a destination in the Docker container. It only has only one assigned function. Its role is to duplicate files/directories in a specified location in their existing format. If you want to avoid backward compatibility, you should use the COPY command.
+
+`ADD`: ADD command is used to copy files/directories into a Docker image. It can also copy files from a URL. ADD command is used to download an external file and copy it to the wanted destination.
+
+`CMD` vs `ENTRYPOINT`
+
+ `ENTRYPOINT`: specifies a command that will always be executed when the container starts.
+ 
+`CMD` : specifies arguments that will be fed to the  `ENTRYPOINT` or for executing an ad-hoc command in a container. `CMD` will be overridden when running the container with alternative arguments.
+
 ###  **2. Node.js**
 **Node.js**  is an open-source, cross-platform, back-end JavaScript runtime environment that runs on the V8 engine and executes JavaScript code outside a web browser. Node.js lets developers use JavaScript to write command line tools and for server-side scripting—running scripts server-side to produce dynamic web page content before the page is sent to the user's web browser. Consequently, Node.js represents a "JavaScript everywhere" paradigm, unifying web-application development around a single programming language, rather than different languages for server-side and client-side scripts.
 
 Node.js has an event-driven architecture  capable of asynchronous I/O. These design choices aim to optimize throughput and scalability in web applications with many input/output operations, as well as for real-time Web applications (e.g., real-time communication programs and browser games.
-Them anh
+<div align="center">
+  <img src="img/nodejs.jpg">
+</div>
+<div align="center">
+  <i>Node.js Logo</i>
+</div>
+
 ###  **3. MongoDB**
 **MongoDB** is a source-available cross-platform document-oriented database program. Classified as a NoSQL database program, MongoDB uses JSON-like documents with optional schemas. MongoDB is developed by MongoDB Inc. and licensed under the Server Side Public License (SSPL).
-Them anh
+<div align="center">
+  <img src="img/mongodb.png">
+</div>
+<div align="center">
+  <i>MongoDB Logo</i>
+</div>
+
 ###  **4. Nginx**
 **Nginx**, stylized as **NGIИX**, is a web server that can also be used as a reverse proxy, load balancer, mail proxy and HTTP cache. The software was created by Igor Sysoev and publicly released in 2004. Nginx is free and open-source software, released under the terms of the 2-clause BSD license. A large fraction of web servers use Nginx, often as a load balancer.
-Them anh
+<div align="center">
+  <img src="img/nginx.jpg">
+</div>
+<div align="center">
+  <i>Ngnix Logo</i>
+</div>
+
 ##  **III. Step-by-step**
 ###  **1. Install Docker**
 - Update existing packages
@@ -181,6 +225,13 @@ git clone https://github.com/nhok8t1/NodeApp
 cd NodeApp
 docker-compose up
 ```
+<div align="center">
+  <img src="img/docker-compose.png">
+</div>
+<div align="center">
+  <i>docker-compose</i>
+</div>
+
 After running, three containers are up. Now, we can add record to database. Using the docker **exec** command, we can access the terminal of the MongoDB container. As the container runs in a detached mode, we will use the Docker interactive terminal to establish the connection.
 ```
 sudo docker exec -it mongodb bash
@@ -195,7 +246,13 @@ We add some records
 db.items.insertMany([{name: "Do Hoang Son", date: "11/02/2000"}, {name: "Do Thi Thu", origin: "22/05/2000"}])
 ```
 If we now browse to `http://localhost:3000` we will see:
-Them anh
+<div align="center">
+  <img src="img/success.png">
+</div>
+<div align="center">
+  <i>localhost:3000</i>
+</div>
+
 ##  **III. References**
 - [Docker](https://en.wikipedia.org/wiki/Docker_(software))
 - [Node.js](https://en.wikipedia.org/wiki/Node.js)
