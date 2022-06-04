@@ -1,0 +1,3 @@
+---
+version: latest
+scrape_interval: 15s

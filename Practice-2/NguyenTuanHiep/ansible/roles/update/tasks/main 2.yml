@@ -1,0 +1,22 @@
+---
+- name: cloning repo
+  git:
+    repo: "{{ github_repo }}"
+    version: "{{ github_branch | default('deploy-ansible') }}"
+    dest: "{{ dest_dir }}"
+    clone: yes
+    update: yes
+
+- name: remove old image
+  docker_compose:
+    project_src: "{{ docker_dir }}"
+    state: absent
+    remove_images: all
+
+- name: docker-compose app
+  docker_compose:
+    project_src: "{{ docker_dir }}"
+    files:
+      - docker-compose.yml
+    state: present
+    build: yes
