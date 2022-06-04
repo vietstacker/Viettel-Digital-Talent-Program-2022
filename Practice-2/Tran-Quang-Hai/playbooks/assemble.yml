@@ -1,0 +1,4 @@
+- hosts: personal
+  become: true
+  roles:
+    - personal
