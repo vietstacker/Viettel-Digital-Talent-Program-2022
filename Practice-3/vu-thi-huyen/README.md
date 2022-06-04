@@ -151,6 +151,23 @@ Docker Compose là một công cụ dùng để định nghĩa và chạy các c
 
 ## **3. Thực hành: xây dựng website**
 
-* init
+Set up a three-tier web application that displays the course attendees’ information on the browser using docker-compose.
+
+* Base images:
+
+    * nginx:1.22.0-alpine
+    * python:3.9
+    * mongo:5.0
+
+* Khởi tạo dự án
 
     ![webapp](./img/wbapp-tree.png)
+
+* Chạy lệnh 'docker-compose up --build -d`
+
+    ![up](./img/docker-compose-up.png)
+
+* Kiểm tra lại tại [http:localhost:80](http:localhost:80)
+
+    ![ok](./img/result.png)
+
