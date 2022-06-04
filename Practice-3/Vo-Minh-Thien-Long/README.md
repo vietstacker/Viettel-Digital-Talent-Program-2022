@@ -2,7 +2,6 @@
 
 
 Author: **Vo Minh Thien Long**
-
 Deployed website: http://54.204.92.132:9333
 
 ----        
@@ -28,7 +27,6 @@ Deployed website: http://54.204.92.132:9333
 - [3.  Deployment](#deployment)
 
 [V. References](#references)
-
 ---- 
 
 ## I. Requirements

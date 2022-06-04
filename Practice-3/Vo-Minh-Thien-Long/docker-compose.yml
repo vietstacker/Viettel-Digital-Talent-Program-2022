@@ -32,3 +32,4 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=practice3
     ports:
       - "27017:27017"
+      
