@@ -1,18 +1,20 @@
-#  **Set up a three-tier web application r using docker-compose.**
+#  **Set up a three-tier web application using docker-compose.**
 ##  **Table of Contents**
-[**I. Requirements**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#i-requirements)
-[**II. Step-by-step**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#ii-step-by-step)
-- [**1. Install dependencies**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#1-install-dependencies)
-- [**2. Install Kolla-ansible**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#2-install-kolla-ansible)
-- [**3. Install Ansible Galaxy requirements**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#3-install-ansible-galaxy-requirements)
-- [**4. Configure Ansible**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#4-configure-ansible)
-- [**5. Kolla passwords**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#5-kolla-passwords)
-- [**6. Kolla globals.yml**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#6-kolla-globalsyml)
-- [**7. Deployment**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#7-deployment)
-[**III. Access Horizon dashboard**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#iii-access-horizon-dashboard)
-[**IV. References**](https://github.com/nhok8t1/Viettel-Digital-Talent-Program-2022/blob/main/Practice-1/DoHoangSon/README.md#iv-references)
+[**I. Requirements**]()
+[**II. Software**]()
+- [**1. Docker**]()
+- [**2. Node.js**]()
+- [**3. MongoDB**]()
+- [**4. Nginx**]()
+
+[**III. Step-by-step**]()
+- [**1. Install Docker**]()
+- [**2. Install Docker Compose**]()
+- [**3. Deploy**]()
+[**IV. References**]()
 ##  **I. Requirements**
 **Operating System**: Ubuntu Server (Ubuntu Server 22.04 is used in below practices).
+
 **Desktop Hypervisor**: Oracle Virtualbox (Oracle Virtualbox 6.1.34 is used in below practices).
 ##  **II. Software**
 ###  **1. Docker**
@@ -38,7 +40,6 @@ Them anh
 **Nginx**, stylized as **NGIИX**, is a web server that can also be used as a reverse proxy, load balancer, mail proxy and HTTP cache. The software was created by Igor Sysoev and publicly released in 2004. Nginx is free and open-source software, released under the terms of the 2-clause BSD license. A large fraction of web servers use Nginx, often as a load balancer.
 Them anh
 ##  **III. Step-by-step**
-
 ###  **1. Install Docker**
 - Update existing packages
 ```
@@ -166,9 +167,12 @@ services:
 networks:
 	example-net:
 ```
-We have three services here. We will look at these one by one
+We have three services here. We will look at these one by one:
+
 `nodejs-app`: Build image follow the specified directory, setup container name and hostname, mapping the container port to the host port, setup network and compose after service `mongo` is installed.
+
 `mongo`: Setup container name, pull image from public repository, setup MongoDB data volume, mapping port, setup network and create database.
+
 `nginx`: Build image follow the specified directory, setup container name and hostname, mapping the container port to the host port, setup network.
 Network configuration is default.
 Now that we have the `docker-compose.yml` done. We clone it from GitHub and run it:
@@ -188,10 +192,14 @@ use nhok8t1
 ```
 We add some records
 ```
-db.items.insertMany([  {name: "Do Hoang Son", date: "11/02/2000"}, {name: "Do Thi Thu", origin: "22/05/2000"}])
+db.items.insertMany([{name: "Do Hoang Son", date: "11/02/2000"}, {name: "Do Thi Thu", origin: "22/05/2000"}])
 ```
 If we now browse to `http://localhost:3000` we will see:
 Them anh
-##  **IV. References**
-- [Official Document of `Kolla Ansible` - Deploy All-in-one OpenStack](https://docs.openstack.org/kolla-ansible/latest/user/quickstart.html)
-- [Deploy All-In-One Openstack using Kolla-Ansible project](https://www.youtube.com/watch?v=b-XgSPuedro)
+##  **III. References**
+- [Docker](https://en.wikipedia.org/wiki/Docker_(software))
+- [Node.js](https://en.wikipedia.org/wiki/Node.js)
+- [MongoDB](https://en.wikipedia.org/wiki/MongoDB)
+- [Nginx](https://en.wikipedia.org/wiki/Nginx)
+- [Install Docker and Configure MongoDB](https://www.bmc.com/blogs/mongodb-docker-container)
+- [Dockerizing a Node.js, Express, MongoDB App with NGINX Reverse Proxy using Docker Compose](https://www.youtube.com/watch?v=4zUQEkDdNR0)
