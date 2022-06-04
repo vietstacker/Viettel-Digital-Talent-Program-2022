@@ -1,0 +1,27 @@
+- name: Install required packages
+  apt:
+    pkg:
+    - apt-transport-https 
+    - ca-certificates 
+    - curl 
+    - software-properties-common
+    - python3-pip
+    update_cache: true
+- name: Add Docker GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+- name: Update apt and install docker-ce 
+  apt:
+    name: docker-ce
+    state: latest
+    update_cache: true
+- name: Show docker info
+  command:
+    cmd: systemctl status docker
+  register: shell_result
+- debug:
+    var: shell_result.stdout_lines
+- name: Run docker without sudo 
+  shell: |
+    usermod -aG docker root 

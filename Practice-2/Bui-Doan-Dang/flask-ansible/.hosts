@@ -1,0 +1,8 @@
+[webservers]
+192.168.56.110  ansible_ssh_user=vm1 ansible_ssh_pass=dang12345
+
+[webservers:vars]
+# Local variables for Ansible playbooks
+ansible_ssh_user=vm1
+github_user=doandang27052000
+app_name=flask-ansible

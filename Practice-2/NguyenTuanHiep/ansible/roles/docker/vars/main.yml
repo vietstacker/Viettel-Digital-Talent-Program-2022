@@ -1,0 +1,15 @@
+---
+# vars file for docker-on-ubuntu
+docker_dependencies:
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
+docker_gpg_key: https://download.docker.com/linux/ubuntu/gpg
+docker_repo_path: https://download.docker.com/linux/ubuntu
+docker_repo_cmd: "deb {{ docker_repo_path }} {{ ansible_distribution_release }} test"
+docker_pkgs:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+docker_compose_url: https://github.com/docker/compose/releases/download/v2.2.3/docker-compose-Linux-x86_64

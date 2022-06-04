@@ -1,0 +1,8 @@
+---
+- name: deploy dev server
+  hosts: dev
+  become: true
+  vars:
+    github_branch: deploy-ansible-dev
+  roles:
+    - deploy
