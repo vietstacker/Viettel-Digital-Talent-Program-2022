@@ -1,0 +1,45 @@
+version: '3'
+networks:
+  web-server:
+    name: web-server
+services:
+  frontend:
+    build: frontend
+    volumes:
+      - ../volumes/nginx.conf:/tmp/nginx.conf
+    ports:
+      - 80:80
+    depends_on:
+      - backend
+    networks:
+      - web-server
+
+  backend:
+    build: backend
+    volumes:
+      - ../volumes/backend:/src
+    command:
+      - /bin/bash
+      - -c
+      - |
+        python3 -m flask run -h 0.0.0.0
+    ports: 
+      - 5000:5000
+    depends_on:
+      - mongo
+    networks:
+      - web-server
+    restart: always
+    extra_hosts:
+      - "dockerhost:host-gateway"
+
+  mongo:
+    image: mongo:5.0
+    hostname: mongo
+    ports:
+      - '27017'
+    volumes:
+      - ./db/data.js:/docker-entrypoint-initdb.d/data.js
+    networks:
+      - web-server
+      
