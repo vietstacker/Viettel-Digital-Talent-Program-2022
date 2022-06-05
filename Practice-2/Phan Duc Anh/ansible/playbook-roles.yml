@@ -1,0 +1,5 @@
+- hosts: servers
+  become: true
+  roles:
+    - docker
+    - deploy
