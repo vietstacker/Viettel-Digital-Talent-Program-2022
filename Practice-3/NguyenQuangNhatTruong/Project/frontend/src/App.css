@@ -1,0 +1,41 @@
+.container {
+  padding-top: 30px;
+  width: 900px;
+  margin: auto;
+}
+
+
+.user-list {
+  margin-top: 30px;
+  width: 900px;
+}
+
+.user {
+  list-style: none;
+  margin: 10px 0;
+  padding: 10px;
+  background: #eee;
+  display: flex;
+  justify-content: space-between;
+}
+
+.user-stt {
+  color: red;
+  margin-right: 20px;
+  flex: 1;
+}
+
+.user-ten {
+  color: blue;
+  flex: 2;
+}
+
+.user-namsinh{
+  flex: 1;
+}
+.user-truong{
+  flex: 3;
+}
+.user-nganh {
+  flex: 3;
+}
