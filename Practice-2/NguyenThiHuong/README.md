@@ -7,9 +7,6 @@
   - [III. Install OpenVswitch (OVS) with ansible]()
   - [IV. Debug]()
   - [References]()
-
-
-
 ---
 
 ## I. Overview

@@ -1,0 +1,19 @@
+---
+- name: Pull Prometheus Docker image prom/prometheus:{{ version }}
+  docker_image:
+    name: prom/prometheus:{{ version }}
+    source: pull
+    
+- name: Create file /tmp/prometheus.yml from template
+  template:
+    src: prometheus.yml.j2
+    dest: /tmp/prometheus.yml
+    
+- name: Run Prometheus Docker image prom/prometheus:{{ version }}
+  docker_container:
+    name: prometheus
+    image: prom/prometheus:{{ version }}
+    restart_policy: unless-stopped
+    volumes: /tmp/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+    - "9090:9090"
