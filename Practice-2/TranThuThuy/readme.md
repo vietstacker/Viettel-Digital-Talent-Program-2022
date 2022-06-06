@@ -1,34 +1,34 @@
-#**USE ANSIBLE TO INSTALL KAFKA ON UBUNTU**
+# **USE ANSIBLE TO INSTALL KAFKA ON UBUNTU**
 Hi this is me trying to present how to write a playbook in ansible to install KAFKA on Ubuntu from the normal procedure
-#Content
-#####I/ Knowledge base
+# Content
+##### I/ Knowledge base
 
-#####1.1 Ansible
-#####1.1.1 Install ansible on ubuntu
-#####1.1.2 Ansible efficient architecture
-#####1.2 Kafka 
-#####1.3 Zookeeper
+##### 1.1 Ansible
+##### 1.1.1 Install ansible on ubuntu
+##### 1.1.2 Ansible efficient architecture
+##### 1.2 Kafka 
+##### 1.3 Zookeeper
 
-#####II/ Install and configure Kafka using ansible (step by step)
+##### II/ Install and configure Kafka using ansible (step by step)
 
-#####2.1 Hardware requirement
-#####2.2 Install Ansible
-#####2.3 Inventory file
-#####2.4 Ping two hosts in group servers
-#####2.5 Ansible playbooks
-#####2.5.1 Module
-#####2.5.2 Name and variable
-#####2.5.3 Tasks
+##### 2.1 Hardware requirement
+##### 2.2 Install Ansible
+##### 2.3 Inventory file
+##### 2.4 Ping two hosts in group servers
+##### 2.5 Ansible playbooks
+##### 2.5.1 Module
+##### 2.5.2 Name and variable
+##### 2.5.3 Tasks
 
-#####III/ Cheking the installation
-#####IV/ Debug
-#####V/ References
+##### III/ Cheking the installation
+##### IV/ Debug
+##### V/ References
 
 
 
-#**I/ Knowledge base**
+# **I/ Knowledge base**
 
-##1.1 Ansible
+## 1.1 Ansible
 Ansible is an open-source software provisioning, configuration management, and application-deployment tool enabling infrastructure as code
 .
 
@@ -38,7 +38,7 @@ Ansible was created with the purposes: minimal, consistent, secure, highly relia
 
 ![image](thuytt-hw2-images/ansible logo.jpg)
 
-###1.1.1 Install ansible on ubuntu
+### 1.1.1 Install ansible on ubuntu
 
 Guide to install ansible on Ubuntu version 20.04.
 
@@ -48,7 +48,7 @@ Guide to install ansible on Ubuntu version 20.04.
  
     $ sudo apt-get install -y ansible
 
-###1.1.2 Ansible efficient architecture
+### 1.1.2 Ansible efficient architecture
 
 ![image](thuytt-hw2-images/kafka-architecture.png)
 
@@ -60,7 +60,7 @@ and _removes_ them when finished.
 
 
  ## 1.2 Kafka
- 
+    
  Apache Kafka is an open-source distributed event streaming platform used by thousands of companies for high-performance data pipelines, streaming analytics, data integration, and mission-critical applications.
  
   ![image](thuytt-hw2-images/apache-kafka.jpeg)
@@ -73,7 +73,7 @@ and _removes_ them when finished.
    
    The ability to handle stream of record in real time
  
- #####*Why should we use Kafka?*
+ ##### *Why should we use Kafka?*
  
  _Benefits that make you consider using Kafka:_
 
@@ -85,28 +85,28 @@ and _removes_ them when finished.
  
  ![image](thuytt-hw2-images/kafka-architecture.png)
    
- ##1.3 Zookeeper
+ ## 1.3 Zookeeper
  
  Zookeeper is a top-level software developed by Apache that acts as a centralized service and is used to maintain naming and configuration data and to provide flexible and robust synchronization within distributed systems.
  
  ![image](thuytt-hw2-images/Apache_ZooKeeper_logo.png)
  
- ####Why is Zookeeper necessary for Apache Kafka?
+ #### Why is Zookeeper necessary for Apache Kafka?
  
- #####*Controller election*
+ ##### *Controller election*
  
 The controller is one of the most important broking entity in a Kafka ecosystem. 
 
 If a node by some reason is shutting down, it’s the controller’s responsibility to tell all the replicas to act as partition leaders in order to fulfill the duties of the partition leaders on the node that is about to fail. So, whenever a node shuts down, a new controller can be elected and it can also be made sure that at any given time, there is only one controller and all the follower nodes have agreed on that.
 
-#####*Configuration Of Topics*
+##### *Configuration Of Topics*
 
 The configuration regarding all the topics including the list of existing topics, the number of partitions for each topic, the location of all the replicas, etc.
 
-#####*Access control lists*
+##### *Access control lists*
 Access control lists or ACLs for all the topics are also maintained within Zookeeper.
 
-#####*Membership of the cluster*
+##### *Membership of the cluster*
 Zookeeper also maintains a list of all the brokers that are functioning at any given moment and are a part of the cluster.
  
  _Note:  you can’t run Kafka services without first installing Zookeeper. However, Zookeeper is already installed and configured for your CloudKarafka cluster._
@@ -154,14 +154,12 @@ I created the inventory file as below:
        
 ## 2.4 Ping two hosts in group servers
 
-![image](thuytt-hw2-images/ping-host.png)
+![image](thuytt-hw2-images/ping-hosts.png)
    
- 
- You mayb
 
 ## 2.5 Ansible playbook
 
-###2.5.1 Modules 
+### 2.5.1 Modules 
 There are some modules that I use in this playbook
 
 •	apt – to install packages in ubuntu
@@ -200,7 +198,7 @@ There are some modules that I use in this playbook
 The installation direction was used as a variable and the playbook apply for all machine in group _servers_
 
 ### 2.5.3 Task
-####Step 1: Install Java 
+#### Step 1: Install Java 
 
 The Kafka is written on Java and Scala and also required jre 1.7 and above to run it
 
@@ -235,11 +233,11 @@ Convert to to ansible-playbook task:
             state: present
             update_cache: yes
         
-####Step 2: Create a service user for kafka
+#### Step 2: Create a service user for kafka
 
 As Kafka is a network application so create a non-root sudo use for Kafka minimizes the risk for machine system.
 
-#####2.1 Create a group user
+##### 2.1 Create a group user
 Command:
     
     $ sudo groupadd kafka 
@@ -253,7 +251,7 @@ Convert to to ansible-playbook task:
             state: present
 
 
-#####2.2 Create user name kafka and add to group 
+##### 2.2 Create user name kafka and add to group 
 
 Command
 
@@ -269,7 +267,7 @@ Convert to to ansible-playbook task:
         state: present
         group: kafka
 
-####Step 3: Download Apache Kafka
+#### Step 3: Download Apache Kafka
 
 Command
 
@@ -311,7 +309,7 @@ Convert to to ansible-playbook task:
       shell:
         mv {{installation_dir}}/kafka_*/* {{installation_dir}}/.
 
-####Step 4: Configuring Kafka Server
+#### Step 4: Configuring Kafka Server
 
 
 The default behavior of Kafka prevents you from deleting a topic. Messages can be published to a Kafka topic, which is a category, group, or feed name. You must edit the configuration file to change this.
@@ -350,10 +348,10 @@ Convert to to ansible-playbook task:
         replace: 'export KAFKA_HEAP_OPTS="-Xmx520M -Xms520M"'
         backup: yes
     
-####Step 5: Setting Up Kafka Systemd Unit Files
+#### Step 5: Setting Up Kafka Systemd Unit Files
 
 In this step, you need to create systemd unit files for the Kafka and Zookeeper service. This will help to manage Kafka services to start/stop using the systemctl command.
-#####5.1 Systemd unit files for Zookeeper
+##### 5.1 Systemd unit files for Zookeeper
 Create systemd unit file for Zookeeper with below command:
 
        $ sudo vim/etc/systemd/system/zookeeper.service
@@ -485,7 +483,7 @@ Convert to to ansible-playbook task:
         - "kafka"
         - "zookeeper"
         
-####Step 7: Testing installation
+#### Step 7: Testing installation
 
     - name: Validating if zookeeper is up and listening on port 2181
       wait_for:
@@ -559,7 +557,7 @@ Also, I tried to create a new topic and publish/consume messages using the Kafka
 As you can see, it works fine
 
 ## IV. Debug
-#####_Ansible provisioning ERROR! Using a SSH password instead of a key is not possible_
+##### _Ansible provisioning ERROR! Using a SSH password instead of a key is not possible_
 
  ![image](thuytt-hw2-images/errors.png)
 
