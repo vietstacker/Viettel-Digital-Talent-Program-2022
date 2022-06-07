@@ -6,7 +6,7 @@ services:
       context: app
       dockerfile: Dockerfile
     container_name: flask
-    image: python3.9
+    image: python:3.9
     restart: unless-stopped
     environment:
       APP_ENV: "prod"
