@@ -1,0 +1,36 @@
+---  
+# MySQL Configuration   
+- name: Install MySQL Packages   
+  apt: name={{ item }} update_cache=yes state=latest    
+  loop: [ 'mysql-server', 'php-mysqlnd', 'python3-pymysql' ]     
+
+- name: Ensure mysql is running and starts on boot      
+  service:   
+    name: mysql   
+    state: started    
+    enabled: yes          
+
+- name: Set MySQL root Password   
+  mysql_user:    
+    login_host: 'localhost'    
+    password: "{{ mysql_root_password }}"   
+    check_implicit_admin: yes    
+    login_user: 'root'   
+    login_password: '{{ mysql_root_password }}'    
+    state: present    
+
+- name: Creates database for WordPress   
+  mysql_db:    
+    name: "{{ mysql_db }}"   
+    state: present   
+    login_user: root   
+    login_password: "{{ mysql_root_password }}"     
+
+- name: Create MySQL user for WordPress   
+  mysql_user:   
+    name: "{{ mysql_user }}"   
+    password: "{{ mysql_password }}"   
+    priv: "{{ mysql_db }}.*:ALL"    
+    state: present   
+    login_user: root  
+    login_password: "{{ mysql_root_password }}"    
