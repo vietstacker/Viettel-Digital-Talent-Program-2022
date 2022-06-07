@@ -1,7 +1,8 @@
-from flask import Flask, render_template                     
+from flask import Flask, jsonify, render_template     
+import pymongo                 
 from pymongo import MongoClient       
 
-application = Flask(__name__)        
+app = Flask(__name__)        
 
 def get_db():    
     client = MongoClient(host='test_mongodb',  
@@ -12,7 +13,7 @@ def get_db():
     db = client.flaskdb  
      return db  
       
-@application.route('/')     
+@app.route('/')     
 def get_stored_student():   
     db=""   
     try:  
@@ -25,5 +26,5 @@ def get_stored_student():
         if type(db)==MongoClient:   
             db.close()       
 
-if __name__ == '__main__':   
-    application.run(host='0.0.0.0', port=5000)  
+if __name__=='__main__':   
+    app.run(host='0.0.0.0', port=5000)  
