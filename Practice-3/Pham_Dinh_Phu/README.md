@@ -215,13 +215,31 @@ VOLUME ["/data"]
    - `ENV`: cung cấp giá trị mặc định cho biến môi trường sau khi một image built.      
    - `ARG`: là biến built-time chỉ hoạt động trong quá trình build-image. Khi chạy container, chúng không thể truy cập giá trị của các biến ARG, nếu thay đổi lệnh build sẽ lỗi.     
 
-![image](images/env-vs-arg.png)   
-
+![image](images/env-vs-arg.png)    
+ 
 <div align='center'>ENV vs ARG</i></div>  
+
+<a name='copyvsadd'></a>   
+## 2. COPY vs ADD   
+- `COPY` thì giống `ADD` nhưng không có xử lý `tar` và `remote URL`    
+
+![image](images/COPYvsADD.png)    
+
+<a name='cmdvsentrypoint'></a>   
+
+## 3. CMD vs ENTRYPOINT  
+
+- `CMD` thực hiện lệnh mặc định khi chúng khởi tạo container từ image, lệnh mặc định này có thể được ghi đè từ dòng lệnh khi khởi tạo container.   
+- `ENTRYPOINT` khá giống `CMD` đều dùng để chạy khi khởi tạo container, nhưng ENTRYPOINT không ghi đè từ dòng lệnh khi khởi tại container.   
+
 
 
 <a name='tailieuthamkhao'></a>   
 
 ## V.Tài liệu tham khảo    
 
-[1] https://docs.docker.com/get-started/overview/  
+[1] https://docs.docker.com/get-started/overview/    
+[2] https://www.tutorialspoint.com/what-is-the-difference-between-cmd-and-entrypoint-in-a-dockerfile#:~:text=The%20ENTRYPOINT%20instruction%20looks%20almost,run%20command%20(CLI%20parameters).     
+[3] https://www.guru99.com/what-is-mongodb.html  
+[4] https://kinsta.com/knowledgebase/what-is-nginx/     
+[5] https://pythonbasics.org/what-is-flask-python/   
