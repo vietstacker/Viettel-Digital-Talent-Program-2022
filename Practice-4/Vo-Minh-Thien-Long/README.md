@@ -19,23 +19,24 @@ Author: **Vo Minh Thien Long**
 
 ## I. Requirements
 
-1/ Deploy stack Prometheus + Exporter + Alertmanager + Grafana
+1. Deploy stack Prometheus + Exporter + Alertmanager + Grafana
 
-  * Using docker, docker-compose, ansible to deploy
-  * Bonus: run Prometheus + Alertmanager in a high availability
+   * Using docker, docker-compose, ansible to deploy
+   
+   * Bonus: run Prometheus + Alertmanager in a high availability
 
-2/ Define alert rules to monitoring host, containers...
+2. Define alert rules to monitoring host, containers...
 
-3/ Configure **Alertmanager** to push alert to mail (or **Slack**, **Telegram**...) 
+3. Configure **Alertmanager** to push alert to mail (or **Slack**, **Telegram**...) 
 
-4/ Create the dashboards Grafana to monitoring host, container, ....
+4. Create the dashboards Grafana to monitoring host, container, ....
 
 <div align="center">
-  <img width="1500" src="assets/requirement.png" alt="Homework">
+  <img width="1000" src="assets/requirements.png" alt="Homework">
 </div>
 
 <div align="center">
-  <i>Homework for practice 3.</i>
+  <i>Homework for practice 4.</i>
 </div>
 
 
@@ -123,14 +124,14 @@ In DevOps, we will monitor:
 
 #### 1.3. Monitoring, Logging and Tracing
 
-**Logging** is used to represent state transformations within an application. When things go wrong, we need logs to 
-establish what change in state caused the error.
+**Logging** is used to represent state transformations within an application.
+It is **immutable**, **timestamped** record of discrete events in 3 forms: Plaintext, Structured and Binary.
+When things go wrong, we need logs to establish what change in state caused the error.
 
 **Tracing** is following a program’s flow and data progression. A **trace** represents a single user’s journey through 
-an entire stack of an application. It is often used for optimisation purposes. For example, you would use it to 
-establish little used part of a stack or bottlenecks within specific parts of the stack.
+an entire stack of an application. It is often used for **optimisation purposes**. 
 
-=> **Monitoring** != **Logging** != **Tracing**.
+→ **Monitoring** != **Logging** != **Tracing**.
 
 ### 2. Prometheus
 <a name='prometheus'></a>
@@ -435,218 +436,6 @@ volumes:
   logvolume01: {}
 ```
 
-### 2. Flask
-<a name='flask'></a>
-
-**Flask** is a _micro web framework_ written in **Python**. It **does not require** particular 
-_tools_ or _libraries_, and **has no** database abstraction layer, form validation, 
-or any other components where pre-existing third-party libraries provide common functions. 
-
-However, **Flask** supports extensions that can add application features. Extensions exist for 
-object-relational mappers, form validation, upload handling, 
-various open authentication technologies and several common framework related tools.
-
-In this practice, I use **Flask** as a _Backend server_ for **Logic Tier**.
-
-<div align="center">
-  <img width="500" src="assets/flask-logo.png" alt="Flask logo">
-</div>
-
-<div align="center">
-  <i>Flask logo.</i>
-</div>
-
-### 3. ReactJs
-<a name='react-js'></a>
-
-**React** is a _free_ and _open-source_ **front-end JavaScript library** for building user interfaces 
-based on UI components. It is maintained by Meta and a community of individual developers and 
-companies. 
-
-**React** can be used as a base in the development of _single-page_, _mobile_, 
-or _server-rendered_ applications with frameworks. However, **React** is only 
-concerned with state management and rendering that state to the `DOM`, so creating **React** 
-applications usually requires the use of additional libraries for routing, as well as certain
-_client-side_ functionality.
-
-In this practice, I use **React** as a _Frontend UI_ for **Presentation Tier**.
-
-<div align="center">
-  <img width="500" src="assets/react-logo.png" alt="React logo">
-</div>
-
-<div align="center">
-  <i>React logo.</i>
-</div>
-
-### 4. MongoDB
-<a name='mongodb'></a>
-
-MongoDB is a _source-available_, _cross-platform_ **document-oriented database** program. 
-Classified as a **NoSQL** database program, MongoDB uses **JSON-like** documents with optional 
-schemas. 
-
-MongoDB is developed by MongoDB Inc. and licensed under the 
-**Server Side Public License** (_SSPL_).
-
-In this practice, I use **React** as a _Datbase_ for **Data Tier**.
-
-<div align="center">
-  <img width="500" src="assets/mongodb-logo.png" alt="MongoDB logo">
-</div>
-
-<div align="center">
-  <i>MongoDB logo.</i>
-</div>
-
-### 4. Nginx
-<a name='nginx'></a>
-
-Nginx (pronounced **engine X**) is a web server that can also be used as a **reverse proxy**, 
-**load balancer**, **mail proxy** and **HTTP cache**. The software was created by **Igor Sysoev** and publicly released in **2004**. 
-
-**Nginx** is _free_ and _open-source_ software, released under the terms of the _2-clause BSD license_. 
-A large fraction of web servers use **Nginx**, often as a load balancer. 
-
-In this practice, I use **Nginx** to serve web content (by **React**).
-
-
-<div align="center">
-  <img width="500" src="assets/nginx-logo.png" alt="Nginx logo">
-</div>
-
-<div align="center">
-  <i>Nginx logo.</i>
-</div>
-
-## III. Install Docker
-<a name='install'></a>
-
-### 1. Prerequisites system
-<a name='prerequisites-system'></a>
-
-### 2. Install Docker on Ubuntu
-<a name='install-macos'></a>
-
-We will install Docker from the official **Docker repository**, to ensure that we get the 
-latest version. The reason is that Docker in **Ubuntu repository** may not be the latest.
-
-First, update your existing list of packages by using `apt update`:
-
-```shell
-sudo apt update
-```
-
-Then we will install prerequisite packages which let `apt` use packages over **HTTPS**:
-
-```shell
-sudo apt install apt-transport-https ca-certificates curl software-properties-common
-```
-
-The **Docker GPG key** is added to verify the download, the official **Docker repository** 
-is added as a new package source.
-
-```shell
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-```
-
-Add the **Docker repository** to **APT sources**. Because I use **Ubuntu** `20.04` - **Ubuntu Focal** in
-a machine using M1 chip (**ARM64** architecture), so I set `arch=arm64` and choose the 
-stable version `focal focal`.
-
-```shell
-sudo add-apt-repository "deb [arch=arm64] https://download.docker.com/linux/ubuntu focal stable"
-```
-
-This will also update our package database with the Docker packages from the newly added repository. 
-
-Make sure you are about to install from the Docker repository instead of the default Ubuntu repository:
-
-```shell
-apt-cache policy docker-ce
-```
-
-You’ll see output like this (Notice that `docker-ce` is **not installed**).
-
-<div align="center">
-  <img width="1500" src="assets/docker-install-check.png" alt="Check install from the Docker repository instead of the default Ubuntu repository">
-</div>
-
-<div align="center">
-  <i>Homework for practice 3.</i>
-</div>
-
-Finally, install Docker:
-
-```shell
-sudo apt install docker-ce
-```
-
-Docker should now be installed, the daemon started, and the process enabled to start on boot. 
-Check that it’s running:
-
-```shell
-sudo systemctl status docker
-```
-
-The output should be similar to the following:
-
-
-<div align="center">
-  <img width="1500" src="assets/docker-status-check.png" alt="Check Docker service">
-</div>
-
-<div align="center">
-  <i>Check Docker service is active or not.</i>
-</div>
-
-### 3. Executing the Docker command without `sudo`
-<a name='install-without-sudo'></a>
-
-By default, the `docker` command can only be run the root user or by a **user** in the **docker** group,
-which is automatically created during Docker’s installation process. If you want to avoid typing `sudo` 
-whenever you run the `docker` command, following these steps:
-
-First, add your username to the `docker` group:
-
-```shell
-sudo usermod -aG docker ${USER}
-```
-
-To apply the new group membership, use `su` and enter your password:
-
-```shell
-su - ${USER}
-```
-
-Confirm that we are now added to the `docker` group by typing:
-
-```shell
-groups
-```
-
-<div align="center">
-  <img width="1500" src="assets/docker-group-check.png" alt="Check is user in docker group">
-</div>
-
-<div align="center">
-  <i>Check is user already added to docker group.</i>
-</div>
-
-Finally, try to run `docker` by running image `hello-world`:
-
-```shell
-docker run hello-world
-```
-
-<div align="center">
-  <img width="1500" src="assets/docker-run-hello-world.png" alt="docker run hello-world">
-</div>
-
-<div align="center">
-  <i>Our docker is running image hello-world.</i>
-</div>
-
-## VI. References
+## II. References
 
 [1] [An Introduction to Metrics, Monitoring, and Alerting](https://www.digitalocean.com/community/tutorials/an-introduction-to-metrics-monitoring-and-alerting)
