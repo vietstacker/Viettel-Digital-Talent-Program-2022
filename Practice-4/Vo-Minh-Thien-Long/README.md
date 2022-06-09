@@ -8,16 +8,19 @@ Author: **Vo Minh Thien Long**
 [I. Requirement](#requirement)
 
 [II. Prerequisites knowledge](#knowledge)
-- [1. Prometheus](#prometheus)
-- [2. Alertmanager](#alertmanager)
-- [3. Grafana](#grafana)
+- [1. Monitoring](#monitoring)
+- [2. Prometheus](#prometheus)
+- [3. Alertmanager](#alertmanager)
+- [4. Grafana](#grafana)
 
+[III. Configurations](#configurations)
 
-[VI. References](#references)
+[IV. References](#references)
 
 ---- 
 
 ## I. Requirements
+<a name='requirement'></a>
 
 1. Deploy stack Prometheus + Exporter + Alertmanager + Grafana
 
@@ -119,10 +122,9 @@ In DevOps, we will monitor:
 
 - Applications, services (Throughput, Latency...)
 
-
 - ...
 
-#### 1.3. Monitoring, Logging and Tracing
+#### 1.4. Monitoring, Logging and Tracing
 
 **Logging** is used to represent state transformations within an application.
 It is **immutable**, **timestamped** record of discrete events in 3 forms: Plaintext, Structured and Binary.
@@ -136,306 +138,292 @@ an entire stack of an application. It is often used for **optimisation purposes*
 ### 2. Prometheus
 <a name='prometheus'></a>
 
-#### 1.1. Docker architecture (components)
+#### 1.1. Overview
 
-The Docker software as a service offering consists of three components:
+**Prometheus** is an **open-source** systems _monitoring_ and _alerting_ toolkit originally built at 
+SoundCloud in 2012. The project is written in **Go** and licensed under the **Apache 2 License**, with source code available on 
+[GitHub](https://github.com/prometheus/prometheus).
 
-- **Software**: 
-
-  - The **Docker daemon**, called `dockerd`, is a persistent process that manages Docker containers 
-and handles container objects. The daemon listens for requests sent via the Docker Engine API.
-  
-  - The **Docker client program**, called `docker`, provides a **command-line interface** (_CLI_), 
-that allows users to interact with Docker daemons.
-
-
-- **Objects**: Docker objects are various entities used to assemble an application in Docker. 
-The main classes of Docker objects are **images**, **containers**, and **services**.
-
-  - **Container** is a standardized, encapsulated environment that runs applications. 
-A container is managed using the Docker API or CLI.
-  
-  - **Image** is a _read-only_ template used to build containers. 
-Images are used to _store_ and _ship_ applications.
-  
-  - **Service** allows containers to be scaled across multiple Docker daemons. 
-The result is known as a _swarm_, a set of cooperating daemons that communicate through the Docker API.
-
-
-- **Registries**: A **Docker registry** is a repository for Docker images.
-
+**Prometheus** has a very active developer and user community. It is now a standalone open source project 
+and maintained independently of any company. In 2016, **Prometheus** joined the Cloud Native Computing 
+Foundation as the second hosted project, after Kubernetes.
 
 <div align="center">
-  <img width="1500" src="assets/docker-architecture.png" alt="Docker architecture">
+  <img width="500" src="assets/prometheus-logo.png" alt="Prometheus logo">
 </div>
 
 <div align="center">
-  <i>Docker architecture.</i>
+  <i>Prometheus logo.</i>
 </div>
 
-#### 1.3. Containers and Images
+#### 1.2. Architecture
 
-> Today, all major cloud providers and leading open source serverless frameworks use our platform, and many are leveraging Docker for their container-native IaaS offerings.
+The Prometheus ecosystem consists of multiple components, many of which are optional:
 
-**Containers** are **isolated** from one another and bundle their own software, libraries and
-configuration files; they can communicate with each other through well-defined channels.
-Because all of the containers share the services of _a single operating system kernel_,
-they use **fewer resources** than virtual machines.
+- **Prometheus server**
+  - **Service Discovery**: helps **Prometheus** automatically scrape dynamic `targets`.
+  - **Rules và Alerts**: we use `PromQL` to define **rules** and **Prometheus server** to compute and evaluate `metrics` based on
+defined rules. In the other hand, Prometheus server also take the responsibility push `alerts` to **Alertmanager**.
+  - **Storage**: to store metrics which were scraped by Prometheus server in a `time series` database.
+- **Exporter**: is the component used in the `target` we want to monitor. **Expoter** collects and
+pull the metrics as a endpoint for the Prometheus server scraping. 
+- **Alertmanager** (`optional`): to process and handle the `alerts` from the **Prometheus server**. 
+It also takes care of `deduplicating`, `grouping` and `routing` alert to the receivers.
+**Alertmanager** can send the notifications through: email, service (PagerDuty), chat (Slack, Telegram) or web hooks. 
+Besides that, **Alertmanager** can also use to `silence` or `inhibition` the specific `alerts`.
+- **Dashboard** (`optional`): we usually use **Grafana** for Dashboard, in order to display and visualize metrics value in the 
+chart type's format.
+- **Push gateway** (`optional`): for supporting short-lived jobs.
 
-Because Docker containers are **lightweight**, a single server or virtual machine can run 
-several containers _simultaneously_.
-
-<div align="center">
-  <img width="1500" src="assets/docker-container-vs-vm.png" alt="Containers vs Virtual machines">
-</div>
-
-<div align="center">
-  <i>Containers vs Virtual machines.</i>
-</div>
-
-
-A **Docker image** is a file used to _execute code_ in a **Docker container**. **Docker images** act as a 
-set of instructions to build a Docker container, like a template. **Docker images** also act 
-as the starting point when using Docker. An image is comparable to a _snapshot_ in virtual 
-machine environments.
-
-#### 1.4. Docker registry
-
-The **Registry** is a _stateless_, _highly scalable_ server side application that **stores** and 
-lets you **distribute** Docker images. Docker clients connect to  registries to download 
-(_pull_) images for use or upload (_push_) images that they have built. Registries can be 
-_public_ or _private_. 
-
-**Docker Hub** is the default registry where Docker looks for images. 
-Docker registries also allow the creation of notifications based on events.
-
+Most of these components are written in **Go**, making them easy to build and deploy as static binaries.
 
 <div align="center">
-  <img width="1500" src="assets/docker-hub.png" alt="Docker Hub logo">
+  <img width="1500" src="assets/prometheus-architecture.png" alt="Prometheus architecture">
 </div>
 
 <div align="center">
-  <i>Docker Hub logo.</i>
+  <i>Prometheus and some of its ecosystem components.</i>
 </div>
 
-#### 1.5. Dockerfile
+Prometheus scrapes **metrics** from instrumented **jobs**, either directly or via an intermediary **push gateway** 
+for short-lived jobs. It stores all scraped samples locally and runs rules over this data to either _aggregate_ 
+and _record_ new time series from existing data or _generate alerts_. **Grafana** or other API consumers can be 
+used to _visualize_ the collected data.
 
-Docker can build images automatically by reading the instructions from a `Dockerfile`. 
-A `Dockerfile` is a text document that contains all the commands a user could call on the 
-command line to assemble an image. Using `docker build` users can create an automated build 
-that executes several command-line instructions in succession.
+#### 1.3. Concept
 
-**Instructions**:
+**1. Data model**
 
-- `FROM` instruction:
+**Prometheus** collects and stores its _metrics_ as _time series data_, i.e. metrics information is 
+stored with the timestamp at which it was recorded, alongside optional **key-value** pairs called labels.
+Here is format of a time series data as a metrics:
 
-  ```dockerfile
-  FROM [--platform=<platform>] <image> [AS <name>]
-  ```
-  
-  The `FROM` instruction initializes a new build stage and sets the **Base Image** for subsequent instructions.
-  A _valid **Dockerfile**_ must start with a `FROM` instruction.
-
-
-- `ARG` (argument) instruction:
-  ```dockerfile
-  ARG <name>[=<default value>]
-  ```
-  
-  The `ARG` instruction defines a **variable** that users can pass at **build-time** to the builder with the docker build command using the 
-`--build-arg <varname>=<value>` flag.
-
-
-- `ENV` (environment) instruction:
-
-  ```dockerfile
-  ENV <key>=<value> ...
-  ```
-
-  The `ENV` instruction sets the **environment variable** `key` to the value `value`. This
-value will be in the environment for all subsequent instructions in the build stage and can
-be _replaced inline_ in many as well.
-
-
-- `WORKDIR` (working directory) instruction:
-  ```dockerfile
-  WORKDIR /path/to/workdir
-  ```
-  
-  The `WORKDIR` instruction sets the **working directory** for any `RUN`, `CMD`, `ENTRYPOINT`, 
-`COPY` and `ADD` instructions that follow it in the **Dockerfile**. If the `WORKDIR` doesn’t exist, 
-it will be created even if it’s not used in any subsequent Dockerfile instruction.
-
-  The `WORKDIR` instruction can be used _multiple times_ in a Dockerfile. If a relative path is 
-provided, it will be **relative** to the path of the previous `WORKDIR` instruction.
-
-  
-- `USER` instruction:
-
-  ```dockerfile
-  USER <user>[:<group>]
-  ```
-  
-  or 
-  
-  ```dockerfile
-  USER <UID>[:<GID>]
-  ```
-  
-  The `USER` instruction sets the **user name** (or _UID_) and optionally the **user group** (or _GID_) 
-to use when running the image and for any `RUN`, `CMD` and `ENTRYPOINT` instructions that follow it 
-in the `Dockerfile`.
-
-
-- `RUN` instruction: There 2 forms of `RUN`: _shell_ form and _exac_ form.
-  
-  The _shell_ form:
-  ```dockerfile
-  RUN <command>
-  ```
-  or the _exac_ form (**preferred**):
-  ```dockerfile
-  RUN ["executable", "param1", "param2"]
-  ```
-
-  The `RUN` instruction will **execute any commands** in a new layer on top of the current image and commit the results. 
-The resulting committed image will be used _for the next step_ in the `Dockerfile`.
-
-  **Note**: The _exec_ form is parsed as a JSON array, which means that you must use double-quotes `"`
-around words not single-quotes `'`. Unlike the _shell_ form, the _exec_ form does not invoke a command shell.
-
-
-- `ENTRYPOINT` instruction: `ENTRYPOINT` has 2 forms: _shell_ form and _exac_ form  (**preferred**).
-
-  ```dockerfile
-  ENTRYPOINT command param1 param2
-  ```
-  and
-  ```dockerfile
-  ENTRYPOINT ["executable", "param1", "param2"]
-  ```
-
-  An `ENTRYPOINT` allows you to configure a container that will run as an executable. 
-Command line _arguments_ to `docker run <image>` will be _appended_ after all elements in 
-an exec form `ENTRYPOINT`, and will override all elements specified using `CMD`. 
-This allows **arguments to be passed** to the entry point.
-
-
-- `CMD` instruction: The `CMD` instruction has three forms:
-
-  _exec_ form, this is the **preferred** form
-  ```dockerfile
-  CMD ["executable","param1","param2"]
-  ```
-  
-  as _default parameters_ to `ENTRYPOINT`
-  ```dockerfile
-  CMD ["param1","param2"]
-  ```
-
-  _shell_ form
-  ```dockerfile
-  CMD command param1 param2
-  ```
-
-  There can only be one `CMD` instruction in a `Dockerfile`. 
-
-  The main purpose of a CMD is to **provide defaults for an executing container**. These defaults 
-can include an executable, or they can omit the executable, in which case you must specify an `ENTRYPOINT` instruction as well.
-
-
-**Note**:
-
-- `ARG` vs `ENV`: 
-  - `ENV` is for future running containers. 
-  - `ARG` for building your Docker image. 
-  - We can’t change `ENV` directly during the build.
-
-
-  <div align="center">
-    <img width="500" src="assets/docker-arg-vs-env.png" alt="ARG vs ENV">
-  </div>
-  
-  <div align="center">
-    <i>ARG vs ENV.</i>
-  </div>
-  
-- `COPY` vs `ADD`: `COPY` is same as `ADD`, but without the **tar** and **remote URL** handling.
-
-  - `COPY` doesn't support `src` with URL scheme.
-  - `COPY` doesn't unpack compression file.
-  - `COPY` support to overwrite build context by `--from` argument.
-
-  A valid use case for `ADD` is when you want to **extract a local tar file** into a specific directory in your Docker image.
-If you’re **copying in local files** to your Docker image, always use `COPY` because it’s more explicit.
-
-
-  <div align="center">
-    <img width="500" src="assets/docker-copy-vs-add.webp" alt="ARG vs ENV">
-  </div>
-
-  <div align="center">
-    <i>ARG vs ENV.</i>
-  </div>
-
-- `CMD` vs `ENTRYPOINT`: Any **Docker image** must have an `ENTRYPOINT` or `CMD` declaration for a container to start.
-
-  - `CMD` sets default parameters that can be **overridden** from the Docker **CLI** 
-when a container is running.
-  
-  - The best way to use a `CMD` instruction is by specifying default programs that should run when 
-users do not **input arguments** in the command line.
-  
-  - `ENTRYPOINT` is efault parameters that **cannot be overridden** when Docker containers run with 
-**CLI** parameters.
-  
-  - Use `ENTRYPOINT` instructions when building an executable Docker image using commands that **always need to be executed**.
-
-  We can use `CMD` and `ENTRYPOINT` together when we  automate container startup tasks. 
-In such a case, the `ENTRYPOINT` instruction can be used to define the **executable** while using `CMD` to define **parameters**.
-
-#### 1.6. Docker compose
-
-**Compose** is a tool for **defining** and **running** _multi-container_ Docker applications. 
-With Compose, you use a `YAML` file to configure your application’s services. Then, with 
-a single command, you _create_ and _start all_ the services from your configuration.
-
-- Defines and runs **multi-container** applications.
-- Manages all containers using a single `docker-compose.yml` file.
-- Manages volumes & networks automatically.
-- Preserve volume data when containers are created.
-- Only recreate containers that have changed
-- Variables and moving a composition between environments.
-
-Three-step process of using **Compose**:
-
-1. Define your app’s **environment** with a `Dockerfile` so it can be reproduced anywhere.
-
-2. Define the **services** that make up your app in `docker-compose.yml` so they can be run
-together in _an isolated environment_.
-
-3. Run `docker compose up` (or `docker-compose up`) and the **Docker compose command** starts and runs your entire app.
-
-A `docker-compose.yml` looks like this:
-
-```yaml
-version: "3.9"  # optional since v1.27.0
-services:
-  web:
-    build: .
-    ports:
-      - "8000:5000"
-    volumes:
-      - .:/code
-      - logvolume01:/var/log
-    links:
-      - redis
-  redis:
-    image: redis
-volumes:
-  logvolume01: {}
+```text
+<metric name>{<label name>=<label value>, ...}
 ```
 
-## II. References
+For example, a time series with the metric name `api_http_requests_total` and the labels 
+`method="POST"` and `handler="/messages"` could be written like this:
+
+```text
+api_http_requests_total{method="POST", handler="/messages"}
+```
+
+**2. Metric types**
+
+Prometheus offers **four** core metric types:
+
+- **Counter**: _cumulative_ metric that represents a single **monotonically increasing counter** whose value 
+can only _increase_ or be _reset to zero_ on restart. In practice, **counter** metrics often ends with
+`_total`.
+  
+  ```shell
+  # HELP go_memstats_frees_total Total number of frees.
+  # TYPE go_memstats_frees_total counter
+  go_memstats_frees_total 2.8502025e+07
+  ```
+
+- **Gauge**: represents a single **numerical value** that can arbitrarily _go up_ and _down_.
+
+    ```shell
+    # HELP go_memstats_heap_objects Number of allocated objects.
+    # TYPE go_memstats_heap_objects gauge
+    go_memstats_heap_objects 17782
+    ```
+  
+- **Histogram**: samples observations and counts them in _configurable buckets_. It also provides a sum of all observed values.
+  
+  - cumulative counters for the buckets: `<basename>_bucket{le="<upper inclusive bound>"}`
+  - the total sum of all values: `<basename>_sum`
+  - the count of events: `<basename>_count` 
+  
+    ```shell
+    # HELP http_request_duration_seconds request duration histogram
+    # TYPE http_request_duration_seconds histogram
+    http_request_duration_seconds_bucket{le="0.5"} 0
+    http_request_duration_seconds_bucket{le="1"} 1
+    http_request_duration_seconds_bucket{le="2"} 2
+    http_request_duration_seconds_bucket{le="3"} 3
+    http_request_duration_seconds_bucket{le="10"} 3
+    http_request_duration_seconds_bucket{le="+Inf"} 3
+    http_request_duration_seconds_sum 6
+    http_request_duration_seconds_count 3
+    ```
+    
+  We have 3 request with duration: 1s, 2s, 3s. 
+    - `http_request_duration_seconds_sum` = 1 + 2 + 3 = 6 seconds.
+    - `http_request_duration_seconds_count` = 3 (total requests).
+    - `http_request_duration_seconds_bucket{le="1"}` = 1 because `event value` = `bucket value` = 1.
+
+
+- **Summary**: similar to a histogram, it provides a **total count** of observations and a **sum of all** observed values and
+**calculates** configurable quantiles over a sliding time window.
+
+   ```shell
+    # HELP go_gc_duration_seconds A summary of the GC invocation durations.
+    # TYPE go_gc_duration_seconds summary
+    http_request_duration_seconds{quantile="0.5"} 2
+    http_request_duration_seconds{quantile="0.9"} 3
+    http_request_duration_seconds{quantile="0.99"} 3
+    http_request_duration_seconds_sum 6
+    http_request_duration_seconds_count 3
+    ```
+  
+**3. Jobs and instances**
+
+**Jobs** and **instances** are important concepts in Prometheus:
+
+- `instance` is an endpoint you can **scrape**, usually corresponding to a single process.
+- `job` is a collection of instances with the same purpose, a process replicated for scalability or reliability for example.
+
+For example, an API server job with four replicated instances:
+
+- job: `api-server`
+  - instance 1: `1.2.3.4:5670`
+  - instance 2: `1.2.3.4:5671`
+  - instance 3: `5.6.7.8:5670`
+  - instance 4: `5.6.7.8:5671`
+
+Prometheus will **automatically generate** labels and time series. When it scrapes a target, it 
+attaches some labels automatically to the scraped time series which serve to identify the scraped 
+target:
+
+- `job`: The configured job name that the target belongs to.
+- `instance`:  The` <host>:<port>` part of the target's URL that was scraped.
+
+#### 1.4. Prometheus in practice
+
+**When does Prometheus fit:**
+
+- To record purely numeric time series;
+- For machine-centric monitoring;
+- For monitoring of highly dynamic service-oriented architectures;
+- For multi-dimensional data collection and querying.
+
+→ Prometheus server is standalone and designed for **reliability**.
+
+**When does Prometheus not fit:**
+
+- For 100% accuracy, such as for per-request billing (The collected data is not detailed and 
+completed enough).
+- For `event logs`, `individual events` or `high cardinality` date like email and password
+(because **Prometheus** uses time series database).
+
+### 3. Alertmanager
+<a name='alertmanager'></a>
+
+### 4. Grafana
+<a name='grafana'></a>
+
+#### 4.1. Overview
+
+**Grafana** is an **open source** solution for running _data analytics_, _pulling up metrics_ that make sense 
+of the massive amount of data and to monitor our apps with the help of customizable dashboards.
+
+**Grafana** connects with every possible data source, commonly referred to as databases such as 
+**Prometheus**, Influx DB, ElasticSearch, MySQL, PostgreSQL, etc.
+
+
+<div align="center">
+  <img width="500" src="assets/grafana-logo.svg" alt="Grafana logo">
+</div>
+
+<div align="center">
+  <i>Grafana logo.</i>
+</div>
+
+#### 4.2. Productions
+
+In this practice, I will use Grafana Open Source for demonstrating.
+
+Although, **Grafana** also have two other services beside **Grafana Open Source** are **Grafana Cloud** and **Grafana Enterprise**, 
+but those are beyond the scope of this practice, so I just introduce them here but won't get my
+hands on it.
+
+**1. Grafana Open Source**
+
+**Grafana open source** is open source visualization and analytics software. It allows you to query, visualize, alert on,
+and explore your metrics, logs, and traces no matter where they are stored. It provides you with tools to turn your 
+**time-series database** (TSDB) data into insightful graphs and visualizations.
+
+**2. Grafana Cloud**
+
+**Grafana Cloud** is a highly available, fast, fully managed **OpenSaaS** logging and metrics platform. 
+The only difference is it Grafana Labs will host it for you and handle all the other things.
+
+However, it **is not free** (only first 2 weeks trail are free) and your data _will be pulled_ to **Grafana Labs**.
+
+<div align="center">
+  <img width="500" src="assets/grafana-cloud.png" alt=" Grafana Cloud logo">
+</div>
+
+<div align="center">
+  <i> Grafana Cloud logo.</i>
+</div>
+
+
+**3. Grafana Enterprise**
+
+**Grafana Enterprise** is the commercial edition of Grafana that includes additional features not found in the open 
+source version. Building on Grafana, **Grafana Enterprise** adds enterprise data sources, advanced 
+authentication options, more permission controls, 24x7x365 support, and training from the core Grafana team.
+
+<div align="center">
+  <img width="500" src="assets/grafana-enterprise.png" alt=" Grafana Enterprise logo">
+</div>
+
+<div align="center">
+  <i> Grafana Enterprise logo.</i>
+</div>
+
+#### 4.2. Usage
+
+**Grafana** being an open source solution also enables us to **write plugins** from scratch for integration with several
+data sources. These are some useful features of **Grafana**:
+
+
+- **Time series analytics**: Study, analyse and monitor data over a period of time.
+
+- **Tracking behaviour**: Track the user behaviour, application behaviour, frequency of errors popping up in _production_ or a 
+_pre-prod_ environment, type of errors popping up & the contextual scenarios by providing relative data.
+
+- **On-prem deployed**: our data will not be streamed to the third party organization or vendor cloud,
+but it will be self deployed by us.
+
+#### 4.3. Grafana dashboard
+
+The dashboards pull data from the plugged-in data sources such as **Prometheus**, Influx DB, 
+ElasticSearch, MySQL, PostgreSQL, etc.  These are a few of many data sources which Grafana supports by default.
+
+The dashboards contain a gamut of visualization options such as geo maps, heat maps, 
+histograms, all the variety of charts & graphs which a business typically requires 
+studying data.
+
+A dashboard also contains several individual panels on the grid. Each panel has 
+different functionalities.
+
+<div align="center">
+  <img width="1500" src="assets/grafana-dashboard.png" alt="Grafana dashboard">
+</div>
+
+<div align="center">
+  <i>My Grafana dashboard for Node Exporter from Practice 2.</i>
+</div>
+
+
+## III. Configurations
+<a name='configurations'></a>
+
+### 1. Using Docker to use Prometheus, Alertmanager and Grafana in host machine
+
+### 2. Using Ansible for configurate
+
+
+## IV. References
+<a name='references'></a>
 
 [1] [An Introduction to Metrics, Monitoring, and Alerting](https://www.digitalocean.com/community/tutorials/an-introduction-to-metrics-monitoring-and-alerting)
+
+[2] [Prometheus website](https://prometheus.io/)
+
+[3] [Grafana website](https://grafana.com/)
