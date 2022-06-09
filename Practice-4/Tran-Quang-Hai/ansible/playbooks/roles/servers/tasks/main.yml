@@ -1,0 +1,2 @@
+- include_tasks: install-docker.yml
+- include_tasks: allow-http.yml

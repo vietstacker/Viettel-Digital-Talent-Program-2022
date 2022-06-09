@@ -1,0 +1,22 @@
+version: '3'
+services:
+  grafana:
+    image: haitranquangofficial/hw4-viettel:grafana
+    container_name: grafana
+
+      # - grafana_data:/var/lib/grafana
+      # - ./grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=Av3ryh4rdT0Br34kp4ssw0rD
+      - GF_USERS_ALLOW_SIGN_UP=false
+    restart: unless-stopped
+    ports:
+      - 9192:3000
+  nginx:
+    image: haitranquangofficial/hw4-viettel:nginx
+    restart: always
+    ports:
+      - 89:80
+volumes:
+  grafana:

@@ -1,0 +1,20 @@
+- name: Create Docker context for Prometheus
+  become_user: haivm
+  shell: docker context create {{item.name}} --docker "host=ssh://root@{{item.ip}}"
+  ignore_errors: true
+  tags: 
+    - local
+  loop: 
+    - {name: 'Prom', ip: '178.128.109.226'}
+
+- name: Deploy on Prometheus node
+  become_user: haivm
+  shell: |
+    docker context use {{item.name}} 
+    docker-compose -f {{item.file_path}} pull
+    docker-compose -f {{item.file_path}} up -d
+  ignore_errors: true
+  tags: 
+    - local
+  loop:
+    - {name: 'Prom', file_path: '/home/haivm/Documents/Viettel-Digital-Talent-Program-2022/Practice-4/Tran-Quang-Hai/node/docker-compose.yml'}
