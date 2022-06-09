@@ -13,7 +13,14 @@ Author: **Vo Minh Thien Long**
 - [3. Alertmanager](#alertmanager)
 - [4. Grafana](#grafana)
 
-[III. Configurations](#configurations)
+[III. Prerequisites knowledge](#hardware)
+- [1. Overview](#hardware-overview)
+- [2. Host machine](#host-machine)
+- [3. Node machines](#node-machines)
+
+[IV. Configurations](#configurations)
+
+
 
 [IV. References](#references)
 
@@ -149,7 +156,7 @@ and maintained independently of any company. In 2016, **Prometheus** joined the 
 Foundation as the second hosted project, after Kubernetes.
 
 <div align="center">
-  <img width="500" src="assets/prometheus-logo.png" alt="Prometheus logo">
+  <img width="200" src="assets/prometheus-logo.png" alt="Prometheus logo">
 </div>
 
 <div align="center">
@@ -165,15 +172,27 @@ The Prometheus ecosystem consists of multiple components, many of which are opti
   - **Rules và Alerts**: we use `PromQL` to define **rules** and **Prometheus server** to compute and evaluate `metrics` based on
 defined rules. In the other hand, Prometheus server also take the responsibility push `alerts` to **Alertmanager**.
   - **Storage**: to store metrics which were scraped by Prometheus server in a `time series` database.
+
+
 - **Exporter**: is the component used in the `target` we want to monitor. **Expoter** collects and
 pull the metrics as a endpoint for the Prometheus server scraping. 
+
+
 - **Alertmanager** (`optional`): to process and handle the `alerts` from the **Prometheus server**. 
 It also takes care of `deduplicating`, `grouping` and `routing` alert to the receivers.
 **Alertmanager** can send the notifications through: email, service (PagerDuty), chat (Slack, Telegram) or web hooks. 
 Besides that, **Alertmanager** can also use to `silence` or `inhibition` the specific `alerts`.
-- **Dashboard** (`optional`): we usually use **Grafana** for Dashboard, in order to display and visualize metrics value in the 
-chart type's format.
-- **Push gateway** (`optional`): for supporting short-lived jobs.
+
+
+- **Web UI & Visualizations** (`optional`): Although Prometheus web app we usually use web app includes a _built-in utility_ 
+- it describes as an `expression browser`, we usually **Grafana** for Dashboard, in order to display and visualize metrics 
+value in the chart type's format.
+
+
+- **Push gateway** (`optional`): for supporting short-lived jobs. Although Prometheus is a primarily **pull-based** 
+monitoring system, **Push gateway** is available for pushing metrics from external applications and services. 
+The **Pushgateway** is useful for collecting metrics that are not compatible with the otherwise 
+pull-based infrastructure (short-lived jobs).
 
 Most of these components are written in **Go**, making them easy to build and deploy as static binaries.
 
@@ -256,8 +275,8 @@ can only _increase_ or be _reset to zero_ on restart. In practice, **counter** m
     - `http_request_duration_seconds_bucket{le="1"}` = 1 because `event value` = `bucket value` = 1.
 
 
-- **Summary**: similar to a histogram, it provides a **total count** of observations and a **sum of all** observed values and
-**calculates** configurable quantiles over a sliding time window.
+- **Summary**: similar to a histogram, **summary** metric shows the **total count** of observations and the **sum** of 
+- observed values after sampling observations. It also calculates adjustable quantiles over _a sliding time window_.
 
    ```shell
     # HELP go_gc_duration_seconds A summary of the GC invocation durations.
@@ -269,6 +288,12 @@ can only _increase_ or be _reset to zero_ on restart. In practice, **counter** m
     http_request_duration_seconds_count 3
     ```
   
+**Note:** the big difference between **summaries** and **histograms** comes down to _when_ and _where_ the statistical 
+quantiles are calculated. Summaries calculate quantiles _client side_, whereas histogram quantiles can be calculated 
+_server side_ using a `PromQL` expression. There are trade-offs to both approaches, so pick the statistical metric type 
+that makes sense for your application.
+
+
 **3. Jobs and instances**
 
 **Jobs** and **instances** are important concepts in Prometheus:
@@ -312,6 +337,96 @@ completed enough).
 ### 3. Alertmanager
 <a name='alertmanager'></a>
 
+#### 3.1. Overview
+
+One of the important feature of **Prometheus** is _collecting_, _evaluating_ the metrics based on the 
+defined rules, and then _notifying_ when some metrics meet the specific values (e.g. RAM used
+is more than 90%, too many requests in a short time, etc.).
+
+In order to do it, **Prometheus** needs to combine with **Alertmanager** to send `alerts` to use through
+mail, Slack, Telegram, webhooks, etc.
+
+#### 3.2. Architecture
+
+<div align="center">
+  <img width="1000" src="assets/alertmanager-architecture.svg" alt="Alertmanager architecture">
+</div>
+
+<div align="center">
+  <i>Alertmanager architecture.</i>
+</div>
+
+
+#### 3.3. Workflow
+
+Alerting rules in Prometheus servers send alerts to an **Alertmanager**. The **Alertmanager** then manages those alerts,
+including _silencing_, _inhibition_, _aggregation_ and _sending_ out notifications via methods such as email, on-call 
+notification systems, and chat platforms.
+
+1. After collecting `metrics` from `targets` (by _pull mechanism_), Prometheus stores these metrics
+in **key - value datatype** in the database.
+
+2. For every `for` duration (by default is `1m`), Prometheus will evaluate and compare the metrics with
+collected rules. 
+
+3. When the metrics reach a specify value we defined, Prometheus will send the `alerts` to
+Alertmanager through _push mechanism_
+
+4. When the `alerts` are sent to **Alertmanager**, it will apply **silencing** to skip the alerts,
+or grouping the similar alerts to prevent too many notifications, etc.
+
+5. Here is an example of rule named `HostOutOfMemory`. 
+
+6. Finally, **Alertmanager** will send these processed notifications to the end user through mail,
+Slack, Telegram, etc.
+
+Here is an example of **Alertmanager** rule named `HostOutOfMemory`. This alert will be triggered
+when the node memory is filling up (ie. **node memery has less than 10% left**). Prometheus will compare
+the metrics for every 2 minutes (`for: 2m`). Whenever, node memery has less than 10% left, Promethus
+will send to **Alertmanager** an alert with `severity` label (`warning`) and other usefully information
+by `summary` and `description`.
+
+```text
+ - alert: HostOutOfMemory
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: Host out of memory (instance {{ $labels.instance }})
+      description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+ ```
+
+#### 3.4. Features 
+
+**1. Grouping**
+
+**Grouping** categorizes alerts of _similar nature_ into a single notification. This is 
+especially useful during larger outages when many systems fail at once and hundreds to 
+thousands of alerts may be firing simultaneously.
+
+**2. Inhibition**
+
+**Inhibition** is a concept of suppressing notifications for certain alerts if certain other alerts are already firing.
+
+**3. Silences**
+
+**Silences** are a straightforward way to simply mute alerts for a given time. A silence is configured based on matchers, just like the routing tree. Incoming alerts are checked whether they match all the equality or regular expression matchers of an active silence. If they do, no notifications will be sent out for that alert.
+
+**Silences** are configured in the web interface of the Alertmanager.
+
+**5. Client behavior**
+
+The Alertmanager has special requirements for behavior of its client. Those are only relevant for advanced use cases where Prometheus is not used to send alerts.
+
+**6. High Availability**
+
+**Alertmanager** supports configuration to create a cluster for high availability. This can be
+configured using the `--cluster-*` flags.
+
+**Notes:** It's important not to load balance traffic between **Prometheus** and its **Alertmanagers**,
+but instead, point **Prometheus** to a list of all **Alertmanagers**.
+
 ### 4. Grafana
 <a name='grafana'></a>
 
@@ -325,7 +440,7 @@ of the massive amount of data and to monitor our apps with the help of customiza
 
 
 <div align="center">
-  <img width="500" src="assets/grafana-logo.svg" alt="Grafana logo">
+  <img width="200" src="assets/grafana-logo.svg" alt="Grafana logo">
 </div>
 
 <div align="center">
@@ -411,19 +526,122 @@ different functionalities.
 </div>
 
 
-## III. Configurations
+## III. Prerequisites hardware
+<a name='hardware'></a>
+
+### 1. Overview
+<a name='hardware-overview'></a>
+
+In this practice, I will use 4 machines to monitoring a website from my previous practice 3.
+In practice 3, I built a 3-tier web application using **Nginx**, **Flask** and **MongoDB**.
+
+I will use **Docker** and **Ansible** for configuration, but I will not go deeper in them because
+this is not the topic of this practice.
+
+### 2. Monitor machine
+<a name='monitor-machine'></a>
+
+I will not directly install **Prometheus**, **Alertmanager** and **Grafana** here, but instead, I will 
+use **Docker** and **docker-compose** to execute them. The reason is that it is easier to
+remove, stop or remove containers than use install it to our OS.
+
+For that reason, I just use **Ansible** to install **Docker** to our host machine, and then config
+`Dockerfile` and `docker-compose.yml` later.
+
+### 3. Node machines
+<a name='node-machines'></a>
+
+I will create 3 EC2 instances in Amazon Web Server for node machines:
+
+- A node machine for hosting **Flask** server:
+  - Flask server: http://34.230.19.242:5000
+  - Metrics for `node_exporter`: http://34.230.19.242:9100/metrics
+
+- A node machine for hosting **MongoDB** server and exposing the metrics by **nginx-exporter**:
+  - MongoDB server: http://54.90.221.86:27017
+  - Metrics for `node_exporter`: http://54.90.221.86:9100/metrics
+  - Metrics for `mongodb_exporter`: http://54.90.221.86:9216/metrics
+
+- A node machine for hosting **Nginx** server and exposing the metrics by **nginx-exporter**.
+  - Nginx server: http://184.72.183.33:9100
+  - Metrics for `node_exporter`: http://184.72.183.33:9100/metrics
+  - Metrics for `nginx_exporter` :http://184.72.183.33:9100/metrics
+
+I will use **Ansible** to install all the servers and exporters directly to the virtual machines.
+Because I have changed the IP and port destination, so I modified the source code a little bit
+for adapting to our new practice.
+
+## IV. Configurations
 <a name='configurations'></a>
 
-### 1. Using Docker to use Prometheus, Alertmanager and Grafana in host machine
+### 1. Using Ansbile to configurate
 
-### 2. Using Ansible for configurate
+Connect to the hosts (include `localhost` for our machines and 3 other EC2 instance). Here is
+the `hosts` inventory content:
 
+```ini
+[monitor]
+localhost ansible_connection=local
 
-## IV. References
+[nodes]
+ec2-34-230-19-242.compute-1.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./flask.pem
+ec2-54-90-221-86.compute-1.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./mongodb.pem
+ec2-184-72-183-33.compute-1.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./nginx.pem
+```
+
+Ansible playbook `playbook.yml`:
+
+```yaml
+- name: install docker
+  hosts: monitor
+  become: yes
+  roles:
+  - docker
+
+- name: install node-exporter
+  hosts: nodes
+  become: yes
+  roles:
+  - node-exporter
+
+- name: install flask
+  hosts: ec2-34-230-19-242.compute-1.amazonaws.com
+  become: yes
+  roles:
+  - flask
+
+- name: install mongodb and mongodb-exporter
+  hosts: ec2-54-90-221-86.compute-1.amazonaws.com
+  become: yes
+  roles:
+  - mongodb
+  - mongodb-exporter
+
+- name: install nginx and nginx-exporter
+  hosts: ec2-184-72-183-33.compute-1.amazonaws.com
+  become: yes
+  roles:
+  - nginx
+  - nginx-exporter
+```
+
+### 2. Using `docker` to deploy Prometheus, Grafana and Alertmanager
+
+## V. References
 <a name='references'></a>
 
 [1] [An Introduction to Metrics, Monitoring, and Alerting](https://www.digitalocean.com/community/tutorials/an-introduction-to-metrics-monitoring-and-alerting)
 
-[2] [Prometheus website](https://prometheus.io/)
+[2] [Prometheus documentations](https://prometheus.io/)
 
-[3] [Grafana website](https://grafana.com/)
+[3] [Prometheus Monitoring : The Definitive Guide in 2019](https://devconnected.com/the-definitive-guide-to-prometheus-in-2019)
+
+[4] [An Introduction to Prometheus Monitoring (2021)](https://sensu.io/blog/introduction-to-prometheus-monitoring#:~:text=Prometheus%20is%20a%20monitoring%20solution,%22scraping%22%20metrics%20HTTP%20endpoints.)
+
+[5] [Grafana website](https://grafana.com/)
+
+[6] [Node Exporter role for Ansible](https://github.com/cloudalchemy/ansible-node-exporter)
+
+[7] [MongoDB role for Ansible](https://github.com/UnderGreen/ansible-role-mongodb)
+
+[8] [MongoDB Exporter role Ansible](https://galaxy.ansible.com/kostiantyn-nemchenko/mongodb_exporter)
