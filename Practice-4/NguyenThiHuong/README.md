@@ -90,7 +90,7 @@ alerting:
 - Let's take a glance at the above yaml file: 
   - global: Global Prometheus config defaults. 
     - scrape_interval: 15s : Set the scrape interval to every 15 seconds. Default is every 1 minute.
-    - evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+    - evaluation_interval: 15s Evaluate rules every 15 seconds. The default is every 1 minute.
   - rule_files: to list files that define alert rule. I will talk about th rule file later. 
   - scrape_configs: Defined scrape jobs. In this lab, I scape metrics from prometheus, docker container.
   - alerting: access to alertmanager via default port: 9093
