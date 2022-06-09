@@ -1,0 +1,6 @@
+FROM prom/alertmanager
+
+COPY alertmanager.yml /etc/alertmanager/alertmanager.yml
+
+ENTRYPOINT ["/bin/alertmanager", "--config.file=/etc/alertmanager/alertmanager.yml" {%for host in groups['alert_servers']%}{% if hostvars[host].ansible_eth0.ipv4.address != hostvars[inventory_hostname].ansible_eth0.ipv4.address %}, "--cluster.peer={{hostvars[host].ansible_eth0.ipv4.address}}:9094"{% endif %}{% endfor %}]
+

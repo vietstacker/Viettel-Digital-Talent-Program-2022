@@ -1,0 +1,12 @@
+- name: Create directory for deployment of grafana
+  file:
+    path: /etc/grafana-deploy
+    state: directory
+  become: true
+- name: Copy docker-compose to host
+  copy:
+    src: docker-compose.yml
+    dest: /etc/grafana-deploy/docker-compose.yml
+- name: Run docker compose to deploy grafana
+  community.docker.docker_compose:
+    project_src: /etc/grafana-deploy

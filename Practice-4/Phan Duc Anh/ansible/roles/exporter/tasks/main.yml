@@ -1,0 +1,13 @@
+- name: Create directory for deployment of node exporter
+  file:
+    path: /etc/docker
+    state: directory
+  become: true
+- name: Copy docker compose to hosts
+  copy:
+    src: docker-compose.yml
+    dest: /etc/docker/docker-compose.yml
+    follow: yes
+- name: Run docker compose
+  community.docker.docker_compose:
+    project_src: /etc/docker

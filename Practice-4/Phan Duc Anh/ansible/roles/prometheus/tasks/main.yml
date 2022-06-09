@@ -1,0 +1,29 @@
+- name: Create directory for deployment of prometheus
+  file:
+    path: /etc/prometheus-deploy
+    state: directory
+  become: true
+- name: Copy prometheus config to host
+  template:
+    src: prometheus.j2
+    dest: /etc/prometheus-deploy/prometheus.yml
+    follow: yes
+- name: Copy docker-compose to host
+  copy:
+    src: docker-compose.yml
+    dest: /etc/prometheus-deploy/docker-compose.yml
+- name: Copy Dockerfile to host
+  copy:
+    src: Dockerfile
+    dest: /etc/prometheus-deploy/Dockerfile
+- name: Copy alert rule files to host
+  copy:
+    src: alert_rules.yml
+    dest: /etc/prometheus-deploy/alert_rules.yml
+- name: Copy node rule files to host
+  copy:
+    src: node_rules.yml
+    dest: /etc/prometheus-deploy/node_rules.yml
+- name: Run docker compose to deploy prometheus
+  community.docker.docker_compose:
+    project_src: /etc/prometheus-deploy

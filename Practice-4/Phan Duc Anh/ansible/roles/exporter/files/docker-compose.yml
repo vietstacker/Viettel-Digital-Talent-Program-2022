@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+  cadvisor:
+    image: zcube/cadvisor
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    ports:
+      - 8080:8080
+    depends_on:
+      - redis
+  node_exporter:
+    image: prom/node-exporter
+    container_name: node_exporter
+    ports:
+      - 9100:9100
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - 6379:6379
+
+networks:
+  default:
+    name: mornitor_net

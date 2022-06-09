@@ -1,0 +1,21 @@
+- name: Create directory for deployment of alertmanager
+  file:
+    path: /etc/alertmanager-deploy
+    state: directory
+  become: true
+- name: Copy alertmanager config to host
+  copy:
+    src: alertmanager.yml
+    dest: /etc/alertmanager-deploy/alertmanager.yml
+    follow: yes
+- name: Copy docker-compose to host
+  copy:
+    src: docker-compose.yml
+    dest: /etc/alertmanager-deploy/docker-compose.yml
+- name: Copy Dockerfile to host
+  template:
+    src: Dockerfile.j2
+    dest: /etc/alertmanager-deploy/Dockerfile
+- name: Run docker compose to deploy alertmanager
+  community.docker.docker_compose:
+    project_src: /etc/alertmanager-deploy
