@@ -1,0 +1,10 @@
+---
+- name: Install requirements for Flask server in virtual environment
+  pip:
+    requirements: ~/backend/requirements.txt
+    virtualenv:  ~/backend/venv
+
+- name: Start Flask server
+  script: ~/backend/app.py
+
+
