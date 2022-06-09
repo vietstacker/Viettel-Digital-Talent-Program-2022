@@ -1,0 +1,82 @@
+groups:
+- name: alert.rules
+  rules:
+  - alert: InstanceDown
+   # Condition for alerting
+    expr: up == 0
+    for: 1m
+   # Annotation - additional informational labels to store more information
+    annotations:
+      title: 'Instance {{ $labels.instance }} down'
+      description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute.'
+   # Labels - additional labels to be attached to the alert
+    labels:
+        severity: 'critical'
+
+  - alert: HostOutOfMemory
+   # Condition for alerting
+    expr: node_memory_MemAvailable / node_memory_MemTotal * 100 < 25
+    for: 5m
+   # Annotation - additional informational labels to store more information
+    annotations:
+      title: 'Host out of memory (instance {{ $labels.instance }})'
+      description: 'Node memory is filling up (< 25% left)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}'
+   # Labels - additional labels to be attached to the alert
+    labels:
+        severity: 'warning'
+
+  - alert: HostHighCpuLoad
+   # Condition for alerting
+    expr: (sum by (instance) (irate(node_cpu{job="node_exporter_metrics",mode="idle"}[5m]))) > 80
+    for: 5m
+   # Annotation - additional informational labels to store more information
+    annotations:
+      title: 'Host high CPU load (instance {{ $labels.instance }})'
+      description: 'CPU load is > 80%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}'
+   # Labels - additional labels to be attached to the alert
+    labels:
+        severity: 'warning'
+
+  - alert: HostOutOfDiskSpace
+   # Condition for alerting
+    expr: (node_filesystem_avail{mountpoint="/"}  * 100) / node_filesystem_size{mountpoint="/"} < 50
+    for: 5m
+   # Annotation - additional informational labels to store more information
+    annotations:
+      title: 'Host out of disk space (instance {{ $labels.instance }})'
+      description: 'Disk is almost full (< 50% left)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}'
+   # Labels - additional labels to be attached to the alert
+    labels:
+        severity: 'warning'
+  
+    # This rule can be very noisy in dynamic infra with legitimate container start/stop/deployment.
+  - alert: ContainerKilled
+    expr: time() - container_last_seen > 60
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Container killed (instance {{ $labels.instance }})
+      description: "A container has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+
+  #Container CPU usage is above 80% 
+  - alert: ContainerCpuUsage
+    expr: (sum(rate(container_cpu_usage_seconds_total{name!=""}[3m])) BY (instance, name) * 100) > 80
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: Container CPU usage (instance {{ $labels.instance }})
+      description: "Container CPU usage is above 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+  
+    # Container Memory usage
+  - alert: ContainerMemoryUsage
+    expr: (sum(container_memory_working_set_bytes{name!=""}) BY (instance, name) / sum(container_spec_memory_limit_bytes > 0) BY (instance, name) * 100) > 80
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: Container Memory usage (instance {{ $labels.instance }})
+      description: "Container Memory usage is above 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
