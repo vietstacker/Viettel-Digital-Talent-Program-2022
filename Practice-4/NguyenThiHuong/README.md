@@ -267,6 +267,12 @@ datasources:
  
  <img src="imgs/anh12.png">
  
+ <img src="imgs/anh15.png">
+ 
+ <img src="imgs/anh16.png">
+
+ <img src="imgs/anh17.png">
+  
   - Alertmanager: 
  <img src="imgs/anh7.png">
 
