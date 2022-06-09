@@ -1,3 +1,17 @@
+# TABLE OF CONTENT
+
+- [TABLE OF CONTENT](#table-of-content)
+- [1. Tổng quan về hệ thống triển khai monitoring](#1-tổng-quan-về-hệ-thống-triển-khai-monitoring)
+- [2. Tổng quan về mô hình HA cho Prometheus và Alertmanager](#2-tổng-quan-về-mô-hình-ha-cho-prometheus-và-alertmanager)
+- [3. Các bước triển khai](#3-các-bước-triển-khai)
+  - [3.1. File inventory](#31-file-inventory)
+  - [3.2. Cài đặt Docker trên tất cả các bước](#32-cài-đặt-docker-trên-tất-cả-các-bước)
+  - [3.3. Triển khai Node Export và Redis](#33-triển-khai-node-export-và-redis)
+  - [3.4. Triển khai Prometheus](#34-triển-khai-prometheus)
+  - [3.5. Triển khai Alertmanager](#35-triển-khai-alertmanager)
+  - [3.6. Triển khai Grafana](#36-triển-khai-grafana)
+- [4. Chạy Ansible và kết quả](#4-chạy-ansible-và-kết-quả)
+
 # 1. Tổng quan về hệ thống triển khai monitoring
 
 Ta sẽ triển khai hệ thống monitoring bằng ansible và docker, mỗi host ta tạm thời chạy 1 container cho ứng dụng redis. Mỗi host sẽ có chạy container Node Exporter export để monitoring các host và container cAdvisor để monitoring các container. ệ thống này cũng sẽ triển khai HA (High Availability) cho Prometheus và Alertmanager.
