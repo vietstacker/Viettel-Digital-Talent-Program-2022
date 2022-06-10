@@ -557,24 +557,27 @@ I will create 3 EC2 instances in Amazon Web Server for node machines:
   - Flask server: http://34.230.19.242:5000
   - Metrics for `node_exporter`: http://34.230.19.242:9100/metrics
 
-- A node machine for hosting **MongoDB** server and exposing the metrics by **nginx-exporter**:
+- A node machine for hosting **MongoDB** server and exposing the metrics by **mongodb_exporter**:
   - MongoDB server: http://54.90.221.86:27017
   - Metrics for `node_exporter`: http://54.90.221.86:9100/metrics
   - Metrics for `mongodb_exporter`: http://54.90.221.86:9216/metrics
 
-- A node machine for hosting **Nginx** server and exposing the metrics by **nginx-exporter**.
-  - Nginx server: http://184.72.183.33:9100
-  - Metrics for `node_exporter`: http://184.72.183.33:9100/metrics
-  - Metrics for `nginx_exporter` :http://184.72.183.33:9100/metrics
+- A node machine for hosting **Nginx** server and exposing the metrics by **nginx_exporter**.
+  - Nginx server: http://18.212.78.52:8080
+  - Nginx server status: http://18.212.78.52:8080/stub_status/
+  - Metrics for `node_exporter`: http://18.212.78.52:9100/metrics
+  - Metrics for `nginx_exporter`: http://18.212.78.52:9113/metrics
 
 I will use **Ansible** to install all the servers and exporters directly to the virtual machines.
-Because I have changed the IP and port destination, so I modified the source code a little bit
+Because I have changed the IP and port destination, so I modified the source code a little
 for adapting to our new practice.
+
+You can visit my website UI [here](#http://18.212.78.52:8080/).
 
 ## IV. Configurations
 <a name='configurations'></a>
 
-### 1. Using Ansbile to configurate
+### 1. Using Ansbile to configurate monitor and node machines
 
 Connect to the hosts (include `localhost` for our machines and 3 other EC2 instance). Here is
 the `hosts` inventory content:
@@ -586,46 +589,470 @@ localhost ansible_connection=local
 [nodes]
 ec2-34-230-19-242.compute-1.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./flask.pem
 ec2-54-90-221-86.compute-1.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./mongodb.pem
-ec2-184-72-183-33.compute-1.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./nginx.pem
+ec2-18-212-78-52.compute-1.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./nginx.pem
 ```
 
 Ansible playbook `playbook.yml`:
 
 ```yaml
-- name: install docker
+- name: Install docker
   hosts: monitor
   become: yes
   roles:
   - docker
 
-- name: install node-exporter
+- name: Install Node Exporter
   hosts: nodes
   become: yes
   roles:
-  - node-exporter
+  - node_exporter
 
-- name: install flask
+- name: Install and start Flask
   hosts: ec2-34-230-19-242.compute-1.amazonaws.com
   become: yes
   roles:
   - flask
 
-- name: install mongodb and mongodb-exporter
+- name: Install and start MongoDB, MongoDB Exporter
   hosts: ec2-54-90-221-86.compute-1.amazonaws.com
   become: yes
   roles:
   - mongodb
-  - mongodb-exporter
+  - mongodb_exporter
 
-- name: install nginx and nginx-exporter
-  hosts: ec2-184-72-183-33.compute-1.amazonaws.com
+- name: Install and start Nginx, Nginx Exporter
+  hosts: ec2-18-212-78-52.compute-1.amazonaws.com 
   become: yes
   roles:
   - nginx
-  - nginx-exporter
+  - nginx_exporter
 ```
 
-### 2. Using `docker` to deploy Prometheus, Grafana and Alertmanager
+### 2. Prometheus configuration
+
+Prometheus's configuration in `prometheus/prometheus.yml`:
+
+```yaml
+global:
+  scrape_interval:     30s # How frequently to scrape targets from all job
+  evaluation_interval: 30s # How frequently to evaluate rules
+  external_labels:
+      monitor: 'practice-4'
+
+rule_files: # Our rules files (in the same directory with prometheus)
+  - 'prometheus.rules'
+  - 'node.rules'
+  - 'mongodb.rules'
+  - 'nginx.rules'
+
+alerting: # We will configure and use alertmanagers for alerting here.
+  alertmanagers:
+  - scheme: http
+    static_configs:
+    - targets:
+      - "alertmanager:9093"
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 15s     # We will not use the global scrape_interval, but instead, set it to 15s
+  - job_name: 'node'
+    static_configs:
+      - targets:
+        - node-exporter:9100
+        - 54.90.221.86:9100
+        - 184.72.183.33:9100
+        - 18.212.78.52:9100
+  - job_name: 'mongodb'
+    static_configs:
+      - targets:
+        - 54.90.221.86:9216
+  - job_name: 'nginx'
+    static_configs:
+      - targets:
+        - 18.212.78.52:9113
+```
+
+### 3. Set alert rules
+
+Before going in, I will explain about my severity system. For each alert, it will have a severity
+label **minor**, **major** or **critical**, with the increasing of severity.
+
+Alert rules for Prometheus `prometheus.rules`: 
+ - **PrometheusTargetMissing**: 
+   - A `minor` level alert, when one of the Prometheus's target is missing. 
+   - It will immediately fire alert whenever one instance is down (`for: 0m`).
+   - The `summary` will give you the instance that is down.
+   - I set it as `minor` alert because later it could be up again.
+ - **PrometheusAllTargetsMissing**: 
+   - A `critical` level alert, when **all** of the Prometheus's target is missing. 
+   - In this case, I set set it as a `critical` because it usually means that you have a problem with your Prometheus
+or the connection problem, and you will not track or receive any metrics from other targets.
+ - **PrometheusAlertmanagerJobMissing**: 
+   - A `major` level alert, when Alertmanager is not up.
+   - Simmilar to **PrometheusTargetMissing**, it will immediately fire alert.
+ - **PrometheusNotConnectedToAlertmanager**: 
+   - A `critical` level alert, when one of the Prometheus's target is missing.
+   - The difference between **PrometheusAlertmanagerJobMissing** and **PrometheusNotConnectedToAlertmanager** 
+ is that, when `up({job="alertmanager"})`, it maybe the job is absent only at the moment. Later,
+ it could work again. But when it is not connected, it means that Prometheus even could not connect 
+ Alertmanager.
+
+
+```yaml
+  groups:
+  - name: targets
+    - alert: PrometheusTargetMissing
+      expr: up == 0
+      for: 0m
+      labels:
+        severity: major
+      annotations:
+        summary: Prometheus target missing (instance {{ $labels.instance }})
+        description: "A Prometheus target has disappeared. An exporter might be crashed.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+        
+    - alert: PrometheusAllTargetsMissing
+      expr: sum by (job) (up) == 0
+      for: 0m
+      labels:
+        severity: critical
+      annotations:
+        summary: Prometheus all targets missing (instance {{ $labels.instance }})
+        description: "A Prometheus job does not have living target anymore.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+        
+  - name: alertmanager
+    - alert: PrometheusAlertmanagerJobMissing
+      expr: absent(up{job="alertmanager"})
+      for: 0m
+      labels:
+        severity: major
+      annotations:
+        summary: Prometheus AlertManager job missing (instance {{ $labels.instance }})
+        description: "A Prometheus AlertManager job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+        
+    - alert: PrometheusNotConnectedToAlertmanager
+      expr: prometheus_notifications_alertmanagers_discovered < 1
+      for: 0m
+      labels:
+        severity: critical
+      annotations:
+        summary: Prometheus not connected to alertmanager (instance {{ $labels.instance }})
+        description: "Prometheus cannot connect the Alertmanager\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+```
+
+Alert rules for Node exporter `node.rules`: In here I set 2 groups, one for **memory** and the other for **CPU**.
+
+- **HostOutOfMemory<severity>**: Calculate by the percent of available memory `node_memory_MemAvailable_bytes`
+over total memory `node_memory_MemTotal_bytes`.
+  - **HostOutOfMemoryMinor**: When memory left is less than **20%**.
+  - **HostOutOfMemoryMajor**: When memory left is less than **15%**.
+  - **HostOutOfMemoryCritical**: When memory left is less than **10%**.
+- **HostHighCpuLoad<severity>** - calculate by the **idle** CPU in _2 minutes_ and trigger when it
+keeps high for _5 minutes_.
+  - **HostHighCpuLoadMinor**: When CPU load is higher than **80%**.
+  - **HostHighCpuLoadMajor**: When CPU load is higher than **85%**.
+  - **HostHighCpuLoadMajor**: When CPU load is higher than **90%**.
+
+You can see here, for **memory**, I set `for: 2m`, however for **CPU** I set it as `for: 5m`.
+The reason is that when the machine need to do some high level action, it could use a lot of resource
+to do, but later when it is done, the CPU will work as usual. For example, it when it is in the build stage,
+we will need a lot of resource, however, later when the build process is finished, it will be back to 
+normal.
+
+```yaml
+groups:
+- name: memory
+  rules:
+  - alert: HostOutOfMemoryMinor
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 20 and node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 >= 15
+    for: 2m
+    labels:
+      severity: minor
+    annotations:
+      summary: Host out of memory (instance {{ $labels.instance }})
+      description: "Node memory is filling up (< 20% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+  - alert: HostOutOfMemoryMajor
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 15 and node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 >= 10
+    for: 2m
+    labels:
+      severity: major
+    annotations:
+      summary: Host out of memory (instance {{ $labels.instance }})
+      description: "Node memory is filling up (< 15% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+  - alert: HostOutOfMemoryCritical
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: Host out of memory (instance {{ $labels.instance }})
+      description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+- name: cpu
+  rules:
+  - alert: HostHighCpuLoadMinor
+    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) >= 80 and 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) < 90
+    for: 0m
+    labels:
+      severity: minor
+    annotations:
+      summary: Host high CPU load (instance {{ $labels.instance }})
+      description: "CPU load is > 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+  - alert: HostHighCpuLoadMajor
+    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) >= 90 and 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) < 95
+    for: 0m
+    labels:
+      severity: major
+    annotations:
+      summary: Host high CPU load (instance {{ $labels.instance }})
+      description: "CPU load is > 85%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+  - alert: HostHighCpuLoadCritical
+    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) >= 95
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Host high CPU load (instance {{ $labels.instance }})
+      description: "CPU load is > 90%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+```
+
+Alert rules for MongoDB exporter `mongodb.rules`:
+- **MongodbDown**: When our database server is down.
+- **MongodbTooManyConnections**: When the average number of connections to MongoDB server in 1 minute 
+is more than 80%.
+- **MongodbVirtualMemoryUsage**: When the virtual memory usage is more than 3 times bigger than the 
+mapped memory .
+
+```yaml
+groups:
+- name: mongodb
+  - alert: MongodbDown
+    expr: mongodb_up == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: MongoDB Down (instance {{ $labels.instance }})
+      description: "MongoDB instance is down\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+  - alert: MongodbTooManyConnections
+    expr: avg by(instance) (rate(mongodb_connections{state="current"}[1m])) / avg by(instance) (sum (mongodb_connections) by (instance)) * 100 > 80
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: MongoDB too many connections (instance {{ $labels.instance }})
+      description: "Too many connections (> 80%)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+  - alert: MongodbVirtualMemoryUsage
+    expr: (sum(mongodb_memory{type="virtual"}) BY (instance) / sum(mongodb_memory{type="mapped"}) BY (instance)) > 3
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: MongoDB virtual memory usage (instance {{ $labels.instance }})
+      description: "High memory usage\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+```
+
+Alert rules for Nginx exporter `nginx.rules`:
+
+- **NginxHighHttp4xxErrorRate**: When the number of `4xx` status request over total request more than 5%.
+- **NginxHighHttp5xxErrorRate**: When the number of `5xx` status request over total request more than 5%.
+
+
+```yaml
+groups:
+- name: nginx
+  - alert: NginxHighHttp4xxErrorRate
+    expr: sum(rate(nginx_http_requests_total{status=~"^4.."}[1m])) / sum(rate(nginx_http_requests_total[1m])) * 100 > 5
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: Nginx high HTTP 4xx error rate (instance {{ $labels.instance }})
+      description: "Too many HTTP requests with status 4xx (> 5%)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+  - alert: NginxHighHttp5xxErrorRate
+    expr: sum(rate(nginx_http_requests_total{status=~"^5.."}[1m])) / sum(rate(nginx_http_requests_total[1m])) * 100 > 5
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: Nginx high HTTP 5xx error rate (instance {{ $labels.instance }})
+      description: "Too many HTTP requests with status 5xx (> 5%)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+```
+
+### 4. Alertmanager configuration
+
+Although **Alertmanager** supports _email_, but I prefer using **Telegram** because it is lighter and used mostly in
+our intern program. In this practice, I will use **Telepush** bot to set up and receive our alerts,
+follow these steps:
+
+1. Get a token from Telepush by start a new chat with [TelepushBot](https://t.me/MiddlemanBot).
+<div align="center"> 
+  <img width="500" src="assets/telepushbot.png" alt="Telepush Bot">
+</div>
+<div align="center">
+  <i>Get token from TelepushBot.</i>
+</div>
+
+2. Configure Alertmanager in `alertmanager/config.yml` (we will use them in Docker later).
+
+```yaml
+global:
+
+# set route to receive and handle all incoming alerts
+route:
+  group_by: ['alertname']
+  group_wait: 10s       # wait up to 10s for more alerts to group them
+  receiver: 'telepush'  # set the receiver below
+
+receivers:
+- name: 'telepush'
+  webhook_configs:
+  - url: 'https://telepush.dev/api/inlets/alertmanager/<TELEPUSH_TOKEN>'    # our TelepushBot token
+    http_config:
+```
+
+3. Generate alert for testing. I will turn off Wi-Fi to disable the connection between Prometheus 
+and other targets. The results I will show in the [Deployment](#deployment) section.
+
+### 5. Using `docker` to deploy Prometheus, Grafana and Alertmanager
+
+Here is my `docker-compose.yml`.
+
+```yaml
+
+```
+
+## V. Deployment
+
+### 1. Run `ansible-playbook` to setting up our minitor and node machines
+
+1. Use `ansible-playbook` to set up all the monitor and node machines
+
+2. Test our deployment product
+
+    <div align="center"> 
+      <img width="1500" src="assets/product.png" alt="Final product">
+    </div>
+    <div align="center">
+      <i>Final product is hosted at http://18.212.78.52:8080.</i>
+    </div>
+
+
+3. Try to get `alertmanager` metrics
+
+    <div align="center"> 
+      <img width="1500" src="assets/alertmanager-metrics.png" alt="Alertmanager metrics">
+    </div>
+    <div align="center">
+      <i>Alertmanager metrics can be got at http://localhost:9093/metrics.</i>
+    </div>
+
+4. Try to get `node-exporter` metrics
+
+    <div align="center"> 
+      <img width="1500" src="assets/node-exporter.png" alt="Node Exporter">
+    </div>
+    <div align="center">
+      <i>Node Exporter metrics can be got at http://34.230.19.242:9100/metrics.</i>
+    </div>
+   
+
+5. Try to get `mongodb-exporter` metrics
+
+    <div align="center"> 
+      <img width="1500" src="assets/mongodb-exporter.png" alt="MongoDB Exporter">
+    </div>
+    <div align="center">
+      <i>MongoDB Exporter metrics can be got at http://54.90.221.86:9216/metrics.</i>
+    </div>
+   
+
+6. Try to get `nginx-exporter` metrics
+
+    <div align="center"> 
+      <img width="1500" src="assets/nginx-exporter.png" alt="Nginx Exporter">
+    </div>
+    <div align="center">
+      <i>Nginx Exporter metrics can be got at http://18.212.78.52:9113/metrics.</i>
+    </div>
+   
+
+### 2. Run `docker compose` to start our Prometheus, Alertmanager and Grafana 
+
+1. Use `docker compose` to run our **Prometheus**, **Alertmanager** and **Grafana**.
+
+    <div align="center"> 
+      <img width="1500" src="assets/docker-compose.png" alt="Docker compose">
+    </div>
+    <div align="center">
+      <i>Start our Prometheus, Alertmanager and Grafana servers.</i>
+    </div>
+   
+2. Check our **Prometheus**'s targets.
+
+    <div align="center"> 
+      <img width="1500" src="assets/prometheus-targets.png" alt="Prometheus targets">
+    </div>
+    <div align="center">
+      <i>All the targets is up.</i>
+    </div>
+
+3. Check our **Prometheus**'s alerts.
+
+    <div align="center"> 
+      <img width="1500" src="assets/prometheus-alerts.png" alt="Prometheus query">
+    </div>
+    <div align="center">
+      <i>All alerts are current inactive.</i>
+    </div>
+   
+4. Try to execute a query in **Prometheus**.
+    <div align="center"> 
+      <img width="1500" src="assets/prometheus-query.png" alt="Prometheus query">
+    </div>
+    <div align="center">
+      <i>Try query in Prometheus to file the rate of idle CPU in 2 minutes.</i>
+    </div>
+
+5. Checkout **Alertmanager**
+    <div align="center"> 
+      <img width="1500" src="assets/alertmanager.png" alt="Alertmanager">
+    </div>
+    <div align="center">
+      <i>Current there is not any alert.</i>
+    </div>
+
+6. Try **Grafana** (after login and setup Dashboard)
+
+
+### 4. Generate alerts
+<div align="center"> 
+  <img width="1500" src="assets/prometheus-turn-off-wifi.png" alt="Prometheus">
+</div>
+<div align="center">
+  <i>Prometheus's targets.</i>
+</div>
+
+<div align="center"> 
+  <img width="1500" src="assets/alertmanager-test.png" alt="Alertmanager">
+</div>
+<div align="center">
+  <i>Alerts showed in Alertmanager.</i>
+</div>
+
+
+<div align="center"> 
+  <img width="500" src="assets/telepush-test.png" alt="Telepush Bot">
+</div>
+<div align="center">
+  <i>Alerts are sent to Telegram through TelepushBot.</i>
+</div>
+
 
 ## V. References
 <a name='references'></a>
