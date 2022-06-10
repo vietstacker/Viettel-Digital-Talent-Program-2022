@@ -45,16 +45,18 @@ Một số exporter mình kể qua như:
 
 Mục tiêu của chúng ta là sẽ deploy stack với tính sẵn sàng cao (HA).
 
-Vì vậy, chúng ta sẽ thực hiện deploy trên 2 node riêng biệt `[server1] 10.0.2.15` `[server2] 192.168.0.105` 
+Vì vậy, chúng ta sẽ thực hiện deploy trên 2 node riêng biệt `[server1] 10.0.2.15` và `[server2] 192.168.0.105` 
 
 Prometheus + Grafana sẽ được deploy trên `[server1]`
 Node Exporter + Alertmanager sẽ được deploy trên `[server2]`
 
 Trong bài này ta sẽ tiến hành theo thứ tự:
-[1] Cài đặt Ansible
-[2] Cài đặt Docker
-[3] Cài đặt Prometheus + Grafana
-[4] Cài đặt Node Exporter + Alertmanager đẩy thông báo qua Telegram
+[1] Cài đặt Ansible <br>
+[2] Cài đặt Docker <br>
+[3] Cài đặt Prometheus<br>
+[4] Cài đặt Grafana <br>
+[5] Cài đặt Node Exporter<br>
+[6] Cài đặt Alertmanager đẩy thông báo qua Telegram <br>
  
 ### 1. Ansible
 
@@ -96,18 +98,10 @@ ansible_ssh_pass = {{your_pass}}
 ansible_become_pass = {{your_pass}}
 ```
 
-### 2. Docker
-
-Thực hiện cài đặt Docker trên tất cả các node:
-```
-- hosts: all
-  become: true
-```
+### 2. Role Docker
 
 Các tasks thực hiện cài đặt Docker và các package cần thiết
 ```
-  tasks:
-  
   - name: Install aptitude
     apt:
       name: aptitude
@@ -146,18 +140,10 @@ Các tasks thực hiện cài đặt Docker và các package cần thiết
       name: docker
 ```
 
-### 3. Prometheus + Grafana
-
-Thực hiện deploy trên node `[server1]`
-```
-- host: server1
-  become: true
-```
+### 3. Role Prometheus
 
 Thực hiện các tasks sau để deploy Prometheus
 ```
-    tasks:
-  
   - name: Pull Prometheus Docker image
     docker_image:
       name: prom/prometheus:latest
@@ -165,12 +151,12 @@ Thực hiện các tasks sau để deploy Prometheus
     
   - name: Copy prometheus.yml file to /tmp
     copy:
-      src: prometheus/prometheus.yml
+      src: prometheus.yml
       dest: /tmp
   
   - name: Copy alert.rules file to /tmp
     copy:
-      src: prometheus/alert.rules
+      src: alert.rules
       dest: /tmp
 
   - name: Run Prometheus Docker image
@@ -216,15 +202,17 @@ rule_files:
 Trong đó, alert.rules là file định nghĩa những trường hợp sẽ được cảnh báo lên Prometheus weblocal
 
 Trong đó bao gồm các cảnh báo:
-[1] Dịch vụ nào đó đã sập
-[2] Máy chủ tràn bộ nhớ RAM
-[3] Máy chủ có CPU cao tải
-[4] Máy chủ hết dung lượng lưu trữ
-[5] Một dịch vụ Container bị sập
-[6] Container sử dụng nhiều bộ nhớ
-[7] Container sử dụng nhiều CPU (> 80%)
+[1] Dịch vụ nào đó đã sập <br>
+[2] Máy chủ tràn bộ nhớ RAM <br>
+[3] Máy chủ có CPU cao tải <br>
+[4] Máy chủ hết dung lượng lưu trữ <br>
+[5] Một dịch vụ Container bị sập <br>
+[6] Container sử dụng nhiều bộ nhớ <br>
+[7] Container sử dụng nhiều CPU (> 80%) <br>
 
-Chi tiết file alert.rules tại <a href="prometheus/alert.rules">Đây</a>
+Chi tiết file alert.rules tại <a href="alert.rules">Đây</a>
+
+### 4. Role Grafana
 
 Chạy các tasks sau để deploy Grafana
 ```
@@ -242,13 +230,7 @@ Chạy các tasks sau để deploy Grafana
       - "3000:3000"
 ```
 
-### 5. Node Exporter
-
-Thực hiện deploy trên node `[server2]`
-```
-- host: server2
-  become: true
-```
+### 5. Role Node Exporter
 
 Thực hiện các tasks sau để deploy Node Exporter
 ```
@@ -266,6 +248,8 @@ Thực hiện các tasks sau để deploy Node Exporter
       - "9100:9100"
 ```
 
+### 6. Role Alertmanager
+
 Thực hiện các tasks sau để deploy Alertmanager
 ```
   - name: Pull Alertmanager Docker image
@@ -275,7 +259,7 @@ Thực hiện các tasks sau để deploy Alertmanager
 
   - name: alertmanager.yml file to /tmp
     copy:
-      src: alertmanager/alertmanager.yml
+      src: alertmanager.yml
       dest: /tmp
 
   - name: Run Alertmanager Docker image
@@ -322,15 +306,38 @@ inhibit_rules:
 Cảnh báo sẽ được gửi tự động bởi Bot của Telegram, để tạo Bot tham khảo tại <a href="https://core.telegram.org/bots">Đây</a> và bot của bạn cũng sẽ được cung cấp một {{bot_token}}.
 Sau khi tạo Bot, bạn thực hiện tạo nhóm chat giữa Bot và các thành viên khác, id của nhóm chat đó sẽ là {{your_chat_group_id}}.
 
-### 6. Final deploy
+### 7. Final deploy
+
+Thực hiện các roles trong file `main.yml`
+```
+---
+- name: install & config Docker
+  host: all
+  become: true
+  roles:
+    - docker
+
+- name: deploy monitor server
+  host: server1
+  become: true
+  roles:
+    - prometheus
+    - grafana
+
+- name: deploy exporter & alertmanager
+  host: server2
+  become: true
+  roles:
+    - node-exporter
+    - alertmanager
+```
 
 Chạy câu lệnh ansible để deploy
 ```
 ansible-playbook -i hosts playbook.yml
 ```
 
-Đây là kết quả sau khi chạy nhiều lần playbook, toàn bộ task đều ok để đảm bảo tính **Idempotent**
-<img src="images/playbook.png">
+**Chạy thành công và tiến hành check**
 
 Check Prometheus alert:
 <img src="images/prom-alert.png">
