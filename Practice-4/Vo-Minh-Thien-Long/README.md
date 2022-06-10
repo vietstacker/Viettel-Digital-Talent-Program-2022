@@ -15,7 +15,7 @@ Author: **Vo Minh Thien Long**
 
 [III. Prerequisites knowledge](#hardware)
 - [1. Overview](#hardware-overview)
-- [2. Host machine](#host-machine)
+- [2. Monitor machine](#monitor-machine)
 - [3. Node machines](#node-machines)
 
 [IV. Configurations](#configurations)
@@ -152,7 +152,7 @@ an entire stack of an application. It is often used for **optimisation purposes*
 ### 2. Prometheus
 <a name='prometheus'></a>
 
-#### 1.1. Overview
+#### 2.1. Overview
 
 **Prometheus** is an **open-source** systems _monitoring_ and _alerting_ toolkit originally built at 
 SoundCloud in 2012. The project is written in **Go** and licensed under the **Apache 2 License**, with source code available on 
@@ -170,7 +170,7 @@ Foundation as the second hosted project, after Kubernetes.
   <i>Prometheus logo.</i>
 </div>
 
-#### 1.2. Architecture
+#### 2.2. Architecture
 
 The Prometheus ecosystem consists of multiple components, many of which are optional:
 
@@ -216,7 +216,7 @@ for short-lived jobs. It stores all scraped samples locally and runs rules over 
 and _record_ new time series from existing data or _generate alerts_. **Grafana** or other API consumers can be 
 used to _visualize_ the collected data.
 
-#### 1.3. Concept
+#### 2.3. Concept
 
 **1. Data model**
 
@@ -323,7 +323,7 @@ target:
 - `job`: The configured job name that the target belongs to.
 - `instance`:  The` <host>:<port>` part of the target's URL that was scraped.
 
-#### 1.4. Prometheus in practice
+#### 2.4. Prometheus in practice
 
 **When does Prometheus fit:**
 
@@ -362,7 +362,6 @@ mail, Slack, Telegram, webhooks, etc.
 <div align="center">
   <i>Alertmanager architecture.</i>
 </div>
-
 
 #### 3.3. Workflow
 
@@ -590,7 +589,6 @@ You can visit my website UI [here](#http://18.212.78.52:8080/).
   <i>My deployment's diagram.</i>
 </div>
 
-
 ## IV. Configurations
 <a name='configurations'></a>
 
@@ -606,8 +604,8 @@ localhost ansible_connection=local
 
 [nodes]
 ec2-34-230-19-242.compute-1.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./flask.pem
-ec2-54-90-221-86.compute-1.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./mongodb.pem
 ec2-18-212-78-52.compute-1.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./nginx.pem
+ec2-54-90-221-86.compute-1.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./mongodb.pem
 ```
 
 Ansible playbook `playbook.yml`:
@@ -946,7 +944,61 @@ and other targets. The results I will show in the [Deployment](#deployment) sect
 Here is my `docker-compose.yml`.
 
 ```yaml
+version: '3.1'
 
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
+
+services:
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    links:
+      - alertmanager:alertmanager
+    restart: always
+    deploy:
+      mode: global
+
+  node-exporter:
+    image: prom/node-exporter
+    ports:
+      - 9100:9100
+    restart: always
+    deploy:
+      mode: global
+
+  alertmanager:
+    image: prom/alertmanager
+    ports:
+      - 9093:9093
+    volumes:
+      - ./alertmanager/:/etc/alertmanager/
+    restart: always
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+    deploy:
+      mode: global
+
+  grafana:
+    image: grafana/grafana
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+    env_file:
+      - ./grafana/config.monitoring
+      
 ```
 
 ## V. Deployment
