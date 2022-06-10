@@ -1,0 +1,6 @@
+---
+container_name: grafana
+docker_images: grafana/grafana:8.5.5
+container_volumes:
+  - grafana-db:/var/lib/grafana
+  - ./grafana/provisioning/:/etc/grafana/provisioning/

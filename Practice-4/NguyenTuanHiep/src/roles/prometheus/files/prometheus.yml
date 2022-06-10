@@ -1,0 +1,50 @@
+global:
+  scrape_interval: 1s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'Project-technical-report'
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - alertmanager:9093
+# Load and evaluate rules in this file every 'evaluation_interval' seconds.
+rule_files:
+  - "alert.rules"
+
+scrape_configs:
+  - job_name: prometheus
+    scrape_interval: 5s
+    scrape_timeout: 2s
+    honor_labels: true
+    static_configs:
+    - targets: ['localhost:9090']
+  
+  - job_name: monitor-server-node
+    scrape_interval: 5s
+    scrape_timeout: 2s
+    honor_labels: true
+    static_configs:
+    - targets: ['172.104.170.41:9100']
+
+  - job_name: monitor-server-container
+    scrape_interval: 5s
+    scrape_timeout: 2s
+    honor_labels: true
+    static_configs:
+    - targets: ['172.104.170.41:8080']
+
+  - job_name: prod-server-node
+    scrape_interval: 5s
+    scrape_timeout: 2s
+    honor_labels: true
+    static_configs:
+    - targets: ['139.162.22.194:9100']
+
+  - job_name: prod-server-container
+    scrape_interval: 5s
+    scrape_timeout: 2s
+    honor_labels: true
+    static_configs:
+    - targets: ['139.162.22.194:8080']

@@ -1,0 +1,8 @@
+---
+- name: Create Cadvisor containers
+  docker_container:
+    name: "{{container_name}}"
+    image: "{{ docker_images }}"
+    volumes: "{{ container_volumes}}"
+    ports:
+      - 8080:8080

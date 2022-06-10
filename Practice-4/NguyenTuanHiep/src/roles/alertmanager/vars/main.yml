@@ -1,0 +1,8 @@
+---
+container_name: alertmanager
+docker_images: prom/alertmanager:v0.24.0
+container_command:
+  - '--config.file=/etc/alertmanager/config.yml'
+  - '--storage.path=/alertmanager'
+container_volumes:
+  - ./alertmanager:/etc/alertmanager

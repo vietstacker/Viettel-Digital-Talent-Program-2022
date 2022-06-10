@@ -1,0 +1,15 @@
+---
+- name: Copy Grafana Config File
+  copy: 
+    src: provisioning
+    dest: ~/grafana/
+
+- name: Create prometheus containers
+  docker_container:
+    name: "{{container_name}}"
+    image: "{{ docker_images }}"
+    volumes: "{{ container_volumes}}"
+    restart: yes
+    user: "472"
+    ports:
+      - 4000:3000
