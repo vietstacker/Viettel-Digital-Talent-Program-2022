@@ -19,8 +19,16 @@ Author: **Vo Minh Thien Long**
 - [3. Node machines](#node-machines)
 
 [IV. Configurations](#configurations)
+- [1. Using Ansbile to configurate monitor and node machines](#setup-ansible)
+- [2. Prometheus configuration](#setup-prometheus)
+- [3. Set alert rules](#setup-alert-rules)
+- [4. Alertmanager configuration](#setup-alertmanager)
+- [5. Using Docker to deploy Prometheus, Grafana and Alertmanager](#setup-docker)
 
-
+[IV. Configurations](#configurations)
+- [1. Run `ansible-playbook` to setting up our minitor and node machines](#deployment-ansible)
+- [2. Run `docker compose` to start our Prometheus, Alertmanager and Grafana](#deployment-docker)
+- [3. Generate alerts](#deployment-generate)
 
 [IV. References](#references)
 
@@ -48,7 +56,6 @@ Author: **Vo Minh Thien Long**
 <div align="center">
   <i>Homework for practice 4.</i>
 </div>
-
 
 ## II. Prerequisites knowledge
 <a name='knowledge'></a>
@@ -525,7 +532,6 @@ different functionalities.
   <i>My Grafana dashboard for Node Exporter from Practice 2.</i>
 </div>
 
-
 ## III. Prerequisites hardware
 <a name='hardware'></a>
 
@@ -574,10 +580,22 @@ for adapting to our new practice.
 
 You can visit my website UI [here](#http://18.212.78.52:8080/).
 
+### 4. Deploy diagram
+
+<div align="center">
+  <img width="1500" src="assets/diagram.png" alt="Diagram">
+</div>
+
+<div align="center">
+  <i>My deployment's diagram.</i>
+</div>
+
+
 ## IV. Configurations
 <a name='configurations'></a>
 
 ### 1. Using Ansbile to configurate monitor and node machines
+<a name='setup-ansible'></a>
 
 Connect to the hosts (include `localhost` for our machines and 3 other EC2 instance). Here is
 the `hosts` inventory content:
@@ -613,22 +631,23 @@ Ansible playbook `playbook.yml`:
   roles:
   - flask
 
-- name: Install and start MongoDB, MongoDB Exporter
-  hosts: ec2-54-90-221-86.compute-1.amazonaws.com
-  become: yes
-  roles:
-  - mongodb
-  - mongodb_exporter
-
 - name: Install and start Nginx, Nginx Exporter
   hosts: ec2-18-212-78-52.compute-1.amazonaws.com 
   become: yes
   roles:
   - nginx
   - nginx_exporter
+  
+- name: Install and start MongoDB, MongoDB Exporter
+  hosts: ec2-54-90-221-86.compute-1.amazonaws.com
+  become: yes
+  roles:
+  - mongodb
+  - mongodb_exporter
 ```
 
 ### 2. Prometheus configuration
+<a name='setup-prometheus'></a>
 
 Prometheus's configuration in `prometheus/prometheus.yml`:
 
@@ -673,6 +692,7 @@ scrape_configs:
 ```
 
 ### 3. Set alert rules
+<a name='setup-alert-rules'></a>
 
 Before going in, I will explain about my severity system. For each alert, it will have a severity
 label **minor**, **major** or **critical**, with the increasing of severity.
@@ -885,6 +905,7 @@ groups:
 ```
 
 ### 4. Alertmanager configuration
+<a name='setup-alertmanager'></a>
 
 Although **Alertmanager** supports _email_, but I prefer using **Telegram** because it is lighter and used mostly in
 our intern program. In this practice, I will use **Telepush** bot to set up and receive our alerts,
@@ -919,7 +940,8 @@ receivers:
 3. Generate alert for testing. I will turn off Wi-Fi to disable the connection between Prometheus 
 and other targets. The results I will show in the [Deployment](#deployment) section.
 
-### 5. Using `docker` to deploy Prometheus, Grafana and Alertmanager
+### 5. Using Docker to deploy Prometheus, Grafana and Alertmanager
+<a name='setup-docker'></a>
 
 Here is my `docker-compose.yml`.
 
@@ -928,11 +950,20 @@ Here is my `docker-compose.yml`.
 ```
 
 ## V. Deployment
+<a name='deployment'></a>
 
 ### 1. Run `ansible-playbook` to setting up our minitor and node machines
+<a name='deployment-ansible'></a>
 
 1. Use `ansible-playbook` to set up all the monitor and node machines
 
+    <div align="center"> 
+      <img width="1500" src="assets/ansible-playbook.png" alt="Run ansible-playbook">
+    </div>
+    <div align="center">
+      <i>Run ansible-playbook to deploy our machines.</i>
+    </div>
+   
 2. Test our deployment product
 
     <div align="center"> 
@@ -980,9 +1011,9 @@ Here is my `docker-compose.yml`.
     <div align="center">
       <i>Nginx Exporter metrics can be got at http://18.212.78.52:9113/metrics.</i>
     </div>
-   
 
 ### 2. Run `docker compose` to start our Prometheus, Alertmanager and Grafana 
+<a name='deployment-docker'></a>
 
 1. Use `docker compose` to run our **Prometheus**, **Alertmanager** and **Grafana**.
 
@@ -1029,8 +1060,9 @@ Here is my `docker-compose.yml`.
 
 6. Try **Grafana** (after login and setup Dashboard)
 
+### 3. Generate alerts
+<a name='deployment-generate'></a>
 
-### 4. Generate alerts
 <div align="center"> 
   <img width="1500" src="assets/prometheus-turn-off-wifi.png" alt="Prometheus">
 </div>
