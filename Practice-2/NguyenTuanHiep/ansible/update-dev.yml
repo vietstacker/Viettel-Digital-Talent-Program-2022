@@ -1,8 +1,0 @@
----
-- name: Update code for dev server
-  hosts: dev
-  become: true
-  vars:
-    github_branch: deploy-ansible-dev
-  roles:
-    - update
