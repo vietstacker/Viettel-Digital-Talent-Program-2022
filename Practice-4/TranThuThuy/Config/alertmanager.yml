@@ -1,0 +1,20 @@
+global:
+resolve_timeout: 1m
+
+route:
+group_by: ['alertname']
+group_wait: 10s
+group_interval: 10s
+repeat_intervel: 1h
+receiver: 'email-notifications'
+
+receivers:
+- name: 'email-notifications'
+email_configs:
+- to: <yourmail>@gmail.com
+    from: <yourmail>@gmail.com
+    smarthost: smtp.gmail.com:587
+    auth_username: <yourmail>@gmail.com
+    auth_identity: <yourmail>@gmail.com
+    auth_password: password
+    send_resolved: true
