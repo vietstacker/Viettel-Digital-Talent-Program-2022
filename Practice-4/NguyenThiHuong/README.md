@@ -169,8 +169,8 @@ receivers:
       slack_configs:
           - send_resolved: true
             text: "{{ .CommonAnnotations.description }}"
-            username: 'Prometheus'
-            channel: '#general'    # The channel or user to send notifications to.
+            username: 'huong.set'
+            channel: '#practice4'    # The channel or user to send notifications to.
             api_url: 'https://hooks.slack.com/services/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'
 ```
 - To create a alertmanager instance, I pull an image from Dockerhub.
@@ -307,8 +307,6 @@ docker logs <container_name>
  <img src="imgs/anh9.png">
  
  <img src="imgs/anh10.png">
- 
- <img src="imgs/anh11.png">
  
  <img src="imgs/anh12.png">
  
