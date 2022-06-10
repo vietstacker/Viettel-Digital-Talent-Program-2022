@@ -68,13 +68,15 @@ services:
       org.label-schema.group: "monitoring"
 
   cadvisor:
-    image: gcr.io/google-containers/cadvisor:v0.34.0
-    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor 
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker:/var/lib/docker:ro
+    devices:
+      - /dev/kmsg:/dev/kmsg
     restart: unless-stopped
     ports:
       - 8080:8080

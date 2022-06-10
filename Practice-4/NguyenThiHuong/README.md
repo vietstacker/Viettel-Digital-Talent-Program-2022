@@ -90,11 +90,37 @@ alerting:
 - Let's take a glance at the above yaml file: 
   - global: Global Prometheus config defaults. 
     - scrape_interval: 15s : Set the scrape interval to every 15 seconds. Default is every 1 minute.
-    - evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+    - evaluation_interval: 15s : Evaluate rules every 15 seconds. The default is every 1 minute.
   - rule_files: to list files that define alert rule. I will talk about th rule file later. 
   - scrape_configs: Defined scrape jobs. In this lab, I scape metrics from prometheus, docker container.
   - alerting: access to alertmanager via default port: 9093
+-  Add alert rule: 
+```
+groups:
+- name: targets
+  rules:
+  - alert: monitor_service_down
+    expr: up == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Monitor service non-operational"
+      description: "Service {{ $labels.instance }} is down."
 
+- name: host
+  rules:
+  - alert: high_cpu_load
+    expr: node_load1 > 1.5
+    for: 30s
+    labels:
+      severity: warning
+    annotations:
+      summary: "Haizzz"
+      description: "Docker host is under high load."
+
+
+```
 - To create a prometheus container, I pull an image from Dockerhub.
 ```
   prometheus:
@@ -122,10 +148,17 @@ alerting:
 - Consoles have access to all the templates defined with {{define "templateName"}}...{{end}} found in *.lib files in /etc/prometheus/console_libraries
 - - 9090:9090: we will access to prometheus via http:<host_ip>:9090, in condition of allowing port 9090 in local machine. 
 
+
 **2. Deploy alertmanager**
 
-- First of all, write configuration file: config.yml:
-- In this lab, I will sent alert via channell slack. Slack notifications are sent via Slack webhooks.
+- In this lab, I choose to send the alert massage via stack. Slack notifications are sent via Slack webhooks. First, create a new app and then get the api_url to send alert to. 
+  - Create an app named: practice4 and pick a workspace. In this lab, I use my created workspace: HUST
+ <img src="imgs/anh20.png">
+
+  - Copy the link and put it into the alertmanager configurationn file. 
+  <img src="imgs/anh21.png">
+
+- Afterwards, write configuration file: config.yml:
 
 ```
 route:
@@ -246,7 +279,14 @@ datasources:
 **6. Result**
 - docker-compose up to build images and create containers. Then we examine the result:
  <img src="imgs/anh3.png"> 
- 
+
+- To verfify my setup, let check the container logs:
+```
+docker logs <container_name>
+```
+- Here is expected result:
+ <img src="imgs/anh24.png"> 
+
 - Now, access to the local host and repective port: 
   - Access Prometheus via port 9090
  <img src="imgs/anh4.png">
@@ -257,6 +297,11 @@ datasources:
   - Then login with user: admin and password: admin: 
  <img src="imgs/anh6.png">
  
+  - Then choose a dashboard to examine the metrics: 
+ <img src="imgs/anh35.png">
+ 
+  - Let's rejoice :)))
+
  <img src="imgs/anh8.png">
  
  <img src="imgs/anh9.png">
@@ -267,23 +312,29 @@ datasources:
  
  <img src="imgs/anh12.png">
  
- <img src="imgs/anh15.png">
+ <img src="imgs/anh29.png">
  
- <img src="imgs/anh16.png">
+ <img src="imgs/anh23.png">
 
- <img src="imgs/anh17.png">
+ <img src="imgs/anh25.png">
   
   - Alertmanager: 
  <img src="imgs/anh7.png">
 
-- Access to webhooks to
+- Access to webhooks to examine the sent alert: 
+
+ <img src="imgs/anh22.png">
+
+ <img src="imgs/anh33.png">
+
 ## References
 
-- [Docker compose example](https://docs.docker.com/compose/gettingstarted/)
-- [Execute mongoimport on a Docker Container](https://stackoverflow.com/questions/49895447/i-want-to-execute-mongoimport-on-a-docker-container)
-- [Three Tier Architecture in Docker](https://mundanecode.com/posts/three-tier-architecture-in-docker/)
-- [Docker compose specification](https://docs.docker.com/compose/compose-file/)
-- [Docker document](https://docs.docker.com/)
+- [Prompose example](https://github.com/ntk148v/prompose)
+- [Prometheus configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/)
+- [Send Message to a Private Channel with Slack API](https://pipedream.com/apps/github/integrations/slack/send-message-to-a-private-channel-with-slack-api-on-new-review-request-from-github-api-int_EzsEEr)
+- [Prometheus documentations](https://prometheus.io/docs/introduction/overview/)
+- [Prometheus exporter](https://alanstorm.com/what-are-prometheus-exporters/#:~:text=A%20Prometheus%20Exporter%20is%20a,URL%20display%20the%20system%20metrics)
+- [Sending messages using Incoming Webhooks](https://api.slack.com/messaging/webhooks#getting_started)
 
-
+- [Sending messages using Incoming Webhooks - video youtube for lazy people](https://www.youtube.com/watch?v=6NJuntZSJVA)
 
