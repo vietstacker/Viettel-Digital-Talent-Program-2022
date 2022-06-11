@@ -1110,10 +1110,61 @@ services:
       <i>Current there is not any alert.</i>
     </div>
 
-6. Try **Grafana** (after login and setup Dashboard)
+6. Try **Grafana**
+
+    After assign a data source (**Prometheus**), we will create a new dashboard,
+and then add rows and panels in this dashboard.
+
+    <div align="center"> 
+      <img width="1500" src="assets/cpu-panel.png" alt="CPU load panel">
+    </div>
+    <div align="center">
+      <i>Add a panel for CPU load.</i>
+    </div>
+   
+    <div align="center"> 
+      <img width="1500" src="assets/ram-usage.png" alt="RAM usage panel">
+    </div>
+    <div align="center">
+      <i>Add a panel for RAM usage.</i>
+    </div>
+   
+    Now, I will add a **variable** to Grafana. Using variable is the good way to save
+our time, our dashboard' area and easy to manipulate the dashboard.
+
+    <div align="center"> 
+      <img width="1500" src="assets/add-variable.png" alt="Add a variable">
+    </div>
+    <div align="center">
+      <i>Try to add a variable node - all instance of Node Exporter.</i>
+    </div>
+    
+    Apply similar for the new panel of Network traffic. Our result after this step
+    
+    <div align="center"> 
+      <img width="1500" src="assets/network-traffic.png" alt="Network traffic">
+    </div>
+    <div align="center">
+      <i>Using variable for Network traffic dashboard.</i>
+    </div>
+
+    Continue, using **row** to group similar panels together. Finnaly, I have 3 groups:
+Prometheus, MongoDB Exporter and Node Exporter.
+
+    <div align="center"> 
+      <img width="1500" src="assets/final-grafana.png" alt="Final Grafana">
+    </div>
+    <div align="center">
+      <i>Our final Grafana result.</i>
+    </div>
+
+    I have saved this dashboard as `json` for later use we use Docker to run Grafana.
 
 ### 3. Generate alerts
 <a name='deployment-generate'></a>
+
+I turn off the Wi-Fi connection to make Prometheus could not scrape metrics from targets of
+other machines.
 
 <div align="center"> 
   <img width="1500" src="assets/prometheus-turn-off-wifi.png" alt="Prometheus">
@@ -1136,7 +1187,6 @@ services:
 <div align="center">
   <i>Alerts are sent to Telegram through TelepushBot.</i>
 </div>
-
 
 ## V. References
 <a name='references'></a>
