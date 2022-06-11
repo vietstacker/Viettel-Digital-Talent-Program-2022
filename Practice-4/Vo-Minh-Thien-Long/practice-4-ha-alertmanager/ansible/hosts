@@ -1,0 +1,2 @@
+ec2-35-173-247-2.compute-1.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./ha-alertmanager-1.pem
+ec2-34-227-159-188.compute-1.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./ha-alertmanager-2.pem

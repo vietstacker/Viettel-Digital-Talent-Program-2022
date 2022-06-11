@@ -1,0 +1,42 @@
+groups:
+- name: targets
+  rules:
+  - alert: PrometheusTargetMissing
+    expr: up == 0
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Prometheus target missing (instance {{ $labels.instance }})
+      description: "A Prometheus target has disappeared. An exporter might be crashed.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+  - alert: PrometheusAllTargetsMissing
+    expr: sum by (job) (up) == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus all targets missing (instance {{ $labels.instance }})
+      description: "A Prometheus job does not have living target anymore.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+- name: alertmanager
+  rules:
+  - alert: PrometheusAlertmanagerJobMissing
+    expr: absent(up{job="alertmanager"})
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Prometheus AlertManager job missing (instance {{ $labels.instance }})
+      description: "A Prometheus AlertManager job has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+  - alert: PrometheusNotConnectedToAlertmanager
+    expr: prometheus_notifications_alertmanagers_discovered < 1
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Prometheus not connected to alertmanager (instance {{ $labels.instance }})
+      description: "Prometheus cannot connect the alertmanager\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+

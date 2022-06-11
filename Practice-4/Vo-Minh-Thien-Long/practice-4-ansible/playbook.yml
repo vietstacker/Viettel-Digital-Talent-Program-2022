@@ -1,4 +1,4 @@
-- name: Install docker
+- name: Install Docker
   hosts: monitor
   become: yes
   roles:

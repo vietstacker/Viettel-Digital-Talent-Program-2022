@@ -31,6 +31,8 @@ Author: **Vo Minh Thien Long**
 - [3. Generate alerts](#deployment-generate)
 
 [VI. Additional: High Availability Alertmanager](#additional)
+- [1. Set up a new EC2 instance](#set-up-ha)
+- [2. Test our High availability Alertmanager](#test-ha)
 
 [VII. References](#references)
 
@@ -674,21 +676,29 @@ alerting: # We will configure and use alertmanagers for alerting here.
 scrape_configs:
   - job_name: 'prometheus'
     scrape_interval: 15s     # We will not use the global scrape_interval, but instead, set it to 15s
+
+  - job_name: 'alertmanager'
+    static_configs:
+      - targets:
+        - "alertmanager:9093"
+  
   - job_name: 'node'
     static_configs:
       - targets:
-        - node-exporter:9100
-        - 54.90.221.86:9100
-        - 184.72.183.33:9100
-        - 18.212.78.52:9100
+        - "node-exporter:9100"
+        - "34.230.19.242:9100"
+        - "54.90.221.86:9100"
+        - "18.212.78.52:9100"
+
   - job_name: 'mongodb'
     static_configs:
       - targets:
-        - 54.90.221.86:9216
+        - "54.90.221.86:9216"
+
   - job_name: 'nginx'
     static_configs:
       - targets:
-        - 18.212.78.52:9113
+        - "18.212.78.52:9113"
 ```
 
 ### 3. Set alert rules
@@ -1211,11 +1221,42 @@ failure resilience.
 In this section, I will make an existing single-instance Alertmanager setup 
 highly available by adding another instances.
 
-### 1. Set up a new AWS instance
-<a name='set-up-aws'></a>
+### 1. Set up a new EC2 instance
+<a name='set-up-ha'></a>
 
-### 2. 
-<a name='set-up-aws'></a>
+I will create a new EC2 instance and setup it with Ansible. They are similar to the configuration
+above, the only difference is that now the Prometheus will have 2 targets for alerting and
+we will include the option `--cluster.peer` for each Alertmanager instance:
+
+```yaml
+...
+
+alerting: # We will configure and use alertmanagers for alerting here.
+  alertmanagers:
+  - scheme: http
+    static_configs:
+    - targets:
+      - "35.173.247.2:9093"
+      - "34.227.159.188:9093"
+      
+...
+```
+
+```yaml
+...
+
+    command:
+    - '--config.file=/tmp/config.yml'
+    - '--storage.path=/alertmanager'
+    - '--cluster-peer=34.227.159.188:9093'
+    
+...
+```
+
+### 2. Test our High availability Alertmanager
+<a name='test-ha'></a>
+
+
 
 ## VII. References
 <a name='references'></a>

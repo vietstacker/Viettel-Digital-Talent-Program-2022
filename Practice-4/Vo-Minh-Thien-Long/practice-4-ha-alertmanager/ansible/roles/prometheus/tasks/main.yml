@@ -1,0 +1,22 @@
+---
+- name: Pull Prometheus Docker image prom/prometheus:{{ version }}
+  docker_image:
+    name: prom/prometheus:{{ version }}
+    source: pull
+    
+- name: Copy all file
+  copy:
+    src: files/
+    dest: /etc/prometheus
+    
+- name: Run Prometheus Docker image prom/prometheus:{{ version }}
+  docker_container:
+    name: prometheus
+    image: prom/prometheus:{{ version }}
+    restart_policy: unless-stopped
+    volumes:
+    - /etc/prometheus:/etc/prometheus/
+    command:
+    - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+    - "9090:9090"

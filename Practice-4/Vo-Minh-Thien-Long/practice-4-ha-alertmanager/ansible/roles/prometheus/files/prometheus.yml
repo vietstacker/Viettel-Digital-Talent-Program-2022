@@ -15,21 +15,28 @@ alerting: # We will configure and use alertmanagers for alerting here.
   - scheme: http
     static_configs:
     - targets:
-      - "alertmanager:9093"
+      - "35.173.247.2:9093"
+      - "34.227.159.188:9093"
 
 scrape_configs:
   - job_name: 'prometheus'
     scrape_interval: 15s     # We will not use the global scrape_interval, but instead, set it to 15s
 
-  - job_name: 'alertmanager'
+  - job_name: 'alertmanager1'
     static_configs:
       - targets:
-        - "alertmanager:9093"
-  
+        - "35.173.247.2:9093"
+
+  - job_name: 'alertmanager2'
+    static_configs:
+      - targets:
+        - "34.227.159.188:9093"
+
   - job_name: 'node'
     static_configs:
       - targets:
-        - "node-exporter:9100"
+        - "35.173.247.2:9100"
+        - "34.227.159.188:9100"
         - "34.230.19.242:9100"
         - "54.90.221.86:9100"
         - "18.212.78.52:9100"
