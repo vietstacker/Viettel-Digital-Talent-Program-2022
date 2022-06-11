@@ -1,0 +1,4 @@
+[Service]
+{% for var in mongodb_exporter_env_vars %}
+Environment='{{ var.name }}={{ var.value }}'
+{% endfor %}

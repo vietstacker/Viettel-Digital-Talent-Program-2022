@@ -1,0 +1,88 @@
+---
+# tasks file for mongoDB setup
+
+- name: install mongoDB
+  apt: 
+    name: mongodb
+    state: present
+    update_cache: yes
+
+- name: copy config file
+  copy:
+    src: mongodb.conf
+    dest: /etc/mongodb.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart mongodb
+
+- name: create /etc/security/limits.d/mongodb.conf
+  copy:
+    src: security-mongodb.conf
+    dest: /etc/security/limits.d/mongodb.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart mongodb
+
+- name:  Set vm.dirty_ratio 
+  sysctl:
+    name: vm.dirty_ratio
+    value: '15'
+    state: present
+
+- name:  Set vm.dirty_background_ratio 
+  sysctl:
+    name: vm.dirty_background_ratio
+    value: '5'
+    state: present
+
+- name: Set vm.swappiness
+  sysctl:
+    name: vm.swappiness
+    value: '10'
+    state: present
+
+- name: Set net.core.somaxconn 
+  sysctl:
+    name: net.core.somaxconn
+    value: '4096'
+    state: present
+
+- name: Set net.ipv4.tcp_fin_timeout
+  sysctl:
+    name: net.ipv4.tcp_fin_timeout
+    value: '30'
+    state: present
+
+- name: net.ipv4.tcp_keepalive_intvl
+  sysctl:
+    name: net.ipv4.tcp_keepalive_intvl
+    value: '30'
+    state: present
+
+- name: net.ipv4.tcp_keepalive_time
+  sysctl:
+    name: net.ipv4.tcp_keepalive_time
+    value: '120'
+    state: present
+
+- name: net.ipv4.tcp_max_syn_backlog 
+  sysctl:
+    name: net.ipv4.tcp_max_syn_backlog 
+    value: '4096'
+    state: present
+
+- name: Ensure mongodb is running and and enabled to start automatically on reboots
+  systemd:
+    name: mongodb
+    enabled: yes
+    state: started
+
+- name: install ntp
+  apt: 
+    name: ntp
+    state: present
+    update_cache: yes

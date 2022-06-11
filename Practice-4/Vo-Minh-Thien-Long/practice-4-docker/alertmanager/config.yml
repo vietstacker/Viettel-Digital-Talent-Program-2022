@@ -1,0 +1,12 @@
+global:
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s       
+  receiver: 'telepush' 
+  
+receivers:
+- name: 'telepush'
+  webhook_configs:
+  - url: 'https://telepush.dev/api/inlets/alertmanager/2dfe35'  
+    http_config:

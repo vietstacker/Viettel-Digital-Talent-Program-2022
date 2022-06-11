@@ -1,0 +1,139 @@
+---
+- import_tasks: preflight.yml
+
+- name: Install dependencies, if any
+  package:
+    name: "{{ item.name }}"
+    state: "{{ item.state }}"
+    update_cache: yes
+  when: mongodb_exporter_system_packages |length > 0
+  with_items:
+    - "{{ mongodb_exporter_system_packages }}"
+
+- name: Add system groups
+  group:
+    name: "{{ item }}"
+  with_items:
+    - "{{ mongodb_exporter_system_groups }}"
+
+- name: Add system user
+  user:
+    name: "{{ mongodb_exporter_system_user }}"
+    groups: "{{ mongodb_exporter_system_groups }}"
+
+- name: Ensure directories for binary, SSL key/certs and env file are present
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - {
+        path: "{{ mongodb_exporter_bin_dir.dest }}",
+        owner: "{{ mongodb_exporter_bin_dir.owner }}",
+        group: "{{ mongodb_exporter_bin_dir.group }}",
+        mode: "{{ mongodb_exporter_bin_dir.mode }}"
+      }
+    - {
+        path: "{{ mongodb_exporter_mongodb_tls_ca.dest |dirname }}",
+        owner: "{{ mongodb_exporter_mongodb_tls_ca.owner }}",
+        group: "{{ mongodb_exporter_mongodb_tls_ca.group }}",
+        mode: "0755"
+      }
+    - {
+        path: "{{ mongodb_exporter_mongodb_tls_cert.dest |dirname }}",
+        owner: "{{ mongodb_exporter_mongodb_tls_cert.owner }}",
+        group: "{{ mongodb_exporter_mongodb_tls_cert.group }}",
+        mode: "0755"
+      }
+    - {
+        path: "{{ mongodb_exporter_mongodb_tls_private_key.dest |dirname }}",
+        owner: "{{ mongodb_exporter_mongodb_tls_private_key.owner }}",
+        group: "{{ mongodb_exporter_mongodb_tls_private_key.group }}",
+        mode: "0710"
+      }
+    - {
+        path: "{{ mongodb_exporter_env_file.dest |dirname }}",
+        owner: "{{ mongodb_exporter_env_file.owner }}",
+        group: "{{ mongodb_exporter_env_file.group }}",
+        mode: "0755"
+      }
+
+- name: Ensure SSL key and certificates are present
+  no_log: true
+  copy:
+    dest: "{{ item.dest }}"
+    content: "{{ item.content }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  when: mongodb_exporter_mongodb_tls and ( item.dest and item.content )
+  with_items:
+    - {
+        dest: "{{ mongodb_exporter_mongodb_tls_ca.dest }}",
+        content: "{{ mongodb_exporter_mongodb_tls_ca.content }}",
+        owner: "{{ mongodb_exporter_mongodb_tls_ca.owner }}",
+        group: "{{ mongodb_exporter_mongodb_tls_ca.group }}",
+        mode: "{{ mongodb_exporter_mongodb_tls_ca.mode }}"
+      }
+    - {
+        dest: "{{ mongodb_exporter_mongodb_tls_cert.dest }}",
+        content: "{{ mongodb_exporter_mongodb_tls_cert.content }}",
+        owner: "{{ mongodb_exporter_mongodb_tls_cert.owner }}",
+        group: "{{ mongodb_exporter_mongodb_tls_cert.group }}",
+        mode: "{{ mongodb_exporter_mongodb_tls_cert.mode }}"
+      }
+    - {
+        dest: "{{ mongodb_exporter_mongodb_tls_private_key.dest }}",
+        content: "{{ mongodb_exporter_mongodb_tls_private_key.content }}",
+        owner: "{{ mongodb_exporter_mongodb_tls_private_key.owner }}",
+        group: "{{ mongodb_exporter_mongodb_tls_private_key.group }}",
+        mode: "{{ mongodb_exporter_mongodb_tls_private_key.mode }}",
+      }
+  notify:
+    - restart mongodb exporter
+
+- name: Download precompiled binary
+  unarchive:
+    src: "{{ mongodb_exporter_release_url }}"
+    dest: "{{ mongodb_exporter_bin_dir.dest }}"
+    owner: "{{ mongodb_exporter_system_user }}"
+    group: "{{ mongodb_exporter_system_groups[0] }}"
+    mode: 0750
+    remote_src: yes
+  notify:
+    - restart mongodb exporter
+
+- name: Symlink binary (version > 0.20.0)
+  file:
+    src: "{{ mongodb_exporter_bin_dir.dest }}/mongodb_exporter-{{ mongodb_exporter_version }}.{{ ansible_system |lower }}-amd64/mongodb_exporter"
+    dest: "{{ mongodb_exporter_bin_dir.dest }}/mongodb_exporter"
+    owner: "{{ mongodb_exporter_system_user }}"
+    group: "{{ mongodb_exporter_system_groups[0] }}"
+    state: link
+    mode: 0750
+  when: "{{ mongodb_exporter_version is version('0.20.0', '>') }}"
+  notify:
+    - restart mongodb exporter
+
+- name: Create drop-in systemd file with preset environment variables
+  template:
+    src: mongodb_exporter.environment.conf.j2
+    dest: "{{ mongodb_exporter_env_file.dest }}"
+    owner: "{{ mongodb_exporter_env_file.owner }}"
+    group: "{{ mongodb_exporter_env_file.group }}"
+    mode: "{{ mongodb_exporter_env_file.mode }}"
+  when: mongodb_exporter_env_vars |length > 0
+  notify:
+    - restart mongodb exporter
+
+- name: Create systemd service file
+  template:
+    src: mongodb_exporter.service.j2
+    dest: /etc/systemd/system/mongodb_exporter.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart mongodb exporter

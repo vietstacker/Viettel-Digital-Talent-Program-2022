@@ -25,12 +25,14 @@ Author: **Vo Minh Thien Long**
 - [4. Alertmanager configuration](#setup-alertmanager)
 - [5. Using Docker to deploy Prometheus, Grafana and Alertmanager](#setup-docker)
 
-[IV. Configurations](#configurations)
+[V. Deployment](#deployment)
 - [1. Run `ansible-playbook` to setting up our minitor and node machines](#deployment-ansible)
 - [2. Run `docker compose` to start our Prometheus, Alertmanager and Grafana](#deployment-docker)
 - [3. Generate alerts](#deployment-generate)
 
-[IV. References](#references)
+[VI. Additional: High Availability Alertmanager](#additional)
+
+[VII. References](#references)
 
 ---- 
 
@@ -1182,13 +1184,40 @@ other machines.
 
 
 <div align="center"> 
-  <img width="500" src="assets/telepush-test.png" alt="Telepush Bot">
+  <img width="500" src="assets/telepush-test.png" alt="Telepush Bot test">
 </div>
 <div align="center">
   <i>Alerts are sent to Telegram through TelepushBot.</i>
 </div>
 
-## V. References
+Later, after finish the Practice 4, I finally receive a _real_ alert.
+
+<div align="center"> 
+  <img width="500" src="assets/telepush-real.png" alt="Telepush Bot real">
+</div>
+<div align="center">
+  <i>"Real" alert to TelepushBot about CPU.</i>
+</div>
+
+
+## VI. Additional: High Availability Alertmanager
+<a name='additional'></a>
+
+Although, Alertmanager is a great tool for handling Prometheus alerts. However, a lone 
+instance of Alertmanager can serve as a single point of failure if it goes down. 
+That's why we can configure Alertmanager to run in a multi-instance cluster to provide 
+failure resilience.
+
+In this section, I will make an existing single-instance Alertmanager setup 
+highly available by adding another instances.
+
+### 1. Set up a new AWS instance
+<a name='set-up-aws'></a>
+
+### 2. 
+<a name='set-up-aws'></a>
+
+## VII. References
 <a name='references'></a>
 
 [1] [An Introduction to Metrics, Monitoring, and Alerting](https://www.digitalocean.com/community/tutorials/an-introduction-to-metrics-monitoring-and-alerting)
