@@ -1256,7 +1256,25 @@ alerting: # We will configure and use alertmanagers for alerting here.
 ### 2. Test our High availability Alertmanager
 <a name='test-ha'></a>
 
+- Check the Alertmanager at http://35.173.247.2:9093.
 
+<div align="center"> 
+  <img width="1500" src="assets/HA-1.png" alt="HA Alertmanager 1">
+</div>
+<div align="center">
+  <i>Alertmanager in http://35.173.247.2:9093 show 2 alerts.</i>
+</div>
+
+- We can see these alerts also display in http://34.227.159.188:9093.
+
+<div align="center"> 
+  <img width="1500" src="assets/HA-2.png" alt="HA Alertmanager 2">
+</div>
+<div align="center">
+  <i>Alertmanager in http://34.227.159.188:9093 show 2 identical alerts.</i>
+</div>
+
+- When we try to silent a alerts, this alerts will also be silenced in the other Alertmanager.
 
 ## VII. References
 <a name='references'></a>

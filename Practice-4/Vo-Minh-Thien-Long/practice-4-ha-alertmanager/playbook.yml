@@ -2,8 +2,8 @@
   hosts: all
   become: yes
   roles:
-#  - docker
-#  - node_exporter
+  - docker
+  - node_exporter
   - prometheus
 
 - name: Install Alertmanager-HA-1
