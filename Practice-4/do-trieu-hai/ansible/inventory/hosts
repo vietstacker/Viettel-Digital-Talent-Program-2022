@@ -1,0 +1,2 @@
+[servers]
+server ansible_host=192.168.56.111 ansible_ssh_user=master ansible_ssh_pass=0 ansible_become_password=0
