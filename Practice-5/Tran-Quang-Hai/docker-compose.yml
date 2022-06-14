@@ -6,18 +6,27 @@ services:
     restart: always
     container_name: mongodb_vt
     ports:
-      - 27017:27017
+      - 27016:27017
+
   pythonapp:
     image: haitranquangofficial/viettel:hw3-python
     restart: always
     ports:
       - 5000:5000
+    
   nginx:
     image: haitranquangofficial/viettel:hw3-nginx
     restart: always
     ports:
-      - 80:80
+      - 83:80
     depends_on:
       - pythonapp
+    extra_hosts:
+      - "host.docker.internal:127.0.0.1"
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: httpd.access
 volumes:
   flask_vt:
