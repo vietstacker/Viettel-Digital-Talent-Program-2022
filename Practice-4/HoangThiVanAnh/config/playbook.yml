@@ -1,0 +1,122 @@
+- hosts: all
+  become: yes
+  gather_facts: false
+  tasks:
+   - name: Install docker packages
+     remote_user: ansible_ubuntu_demo
+     apt:
+       name: name: ['apt-transport-https','ca-certificates', 'curl', 'software-properties-common']
+       state: present
+       update_cache: yes
+     tags:
+     - docker
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Configure Docker for ubuntu stable repository
+  remote_user: ansible_ubuntu_demo
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
+    state: present
+    update_cache: yes
+  tags:
+  - docker
+
+- name: Update apt packages
+  remote_user: ansible_ubuntu_demo
+  apt:
+    update_cache: yes
+  tags:
+  - docker
+
+- name: Update apt and install docker-ce
+  apt:
+    name: docker-ce
+    state: latest
+
+- name: Install Docker Module for Python
+  pip:
+    name: docker
+      
+- hosts: sẻver1
+  become: true
+  tasks:
+  - name: Pull Prometheus Docker image
+    docker_image:
+      name: prom/prometheus:latest
+      source: pull
+    
+  - name: Copy prometheus.yml file to /tmp
+    copy:
+      src: prometheus.yml
+      dest: /tmp
+  
+  - name: Copy alert.rules.yml file to 
+    copy:
+      src: alert.rules.yml
+      dest: /tmp
+
+  - name: Run Prometheus Docker image
+    docker_container:
+      name: prometheus
+      image: prom/prometheus:latest
+      restart_policy: unless-stopped
+      volumes: 
+      - /tmp/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /tmp/alert.rules.yml:/etc/prometheus/alert.rules.yml
+      command:
+            - '--config.file=/etc/prometheus/prometheus.yml'
+      ports:
+      - "9090:9090"
+
+  - name: Pull Grafana Docker image
+    docker_image:
+      name: grafana/grafana-enterprise
+      source: pull
+    
+  - name: Run Grafana Docker image
+    docker_container:
+      name: grafana
+      image: grafana/grafana-enterprise
+      restart_policy: unless-stopped
+      ports:
+      - "3000:3000"
+    
+- hosts: server2
+  tasks:
+  - name: Pull Node Exporter Docker image
+    docker_image:
+      name: prom/node-exporter:latest
+      source: pull
+    
+  - name: Run Node Exporter Docker image
+    docker_container:
+      name: node-exporter
+      image: prom/node-exporter:latest
+      restart_policy: unless-stopped
+      ports: 
+      - "9100:9100"
+
+  - name: Pull Alertmanager Docker image
+    docker_image:
+      name: prom/alertmanager:latest
+      source: pull
+
+  - name: alertmanager.yml file to /tmp
+    copy:
+      src: alertmanager.yml
+      dest: /tmp
+
+  - name: Run Alertmanager Docker image
+    docker_container:
+      name: alertmanager
+      image: prom/alertmanager:latest
+      ports:
+      - "9093:9093"
+      restart_policy: unless-stopped
+      volumes:
+        - /tmp/alertmanager.yml:/alertmanager.yml
+      command:
+          - '--config.file=/alertmanager.yml'

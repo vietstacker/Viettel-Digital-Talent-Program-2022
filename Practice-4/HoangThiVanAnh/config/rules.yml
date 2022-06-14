@@ -1,0 +1,51 @@
+groups:
+- name: rules
+  rules:
+  - alert: HostHighCpuLoad
+    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 80
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Host high CPU load (instance {{ $labels.instance }})
+      description: "CPU load is > 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+  - alert: HostOutOfMemory
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: Host out of memory (instance {{ $labels.instance }})
+      description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+  - alert: HostPhysicalComponentTooHot
+    expr: node_hwmon_temp_celsius > 75
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: Host physical component too hot (instance {{ $labels.instance }})
+      description: "Physical hardware component too hot\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+  - alert: InstanceDown
+    expr: up == 0
+    for: 1m
+    annotations:
+      title: 'Instance {{ $labels.instance }} down'
+      description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute.'
+    labels:
+        severity: 'critical'
+  - alert: ContainerKilled
+    expr: time() - container_last_seen > 60
+    for: 0m
+    labels:
+      severity: warning
+    annotations:
+      summary: Container killed (instance {{ $labels.instance }})
+      description: "A container has disappeared\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+  - alert: ContainerCpuUsage
+    expr: (sum(rate(container_cpu_usage_seconds_total{name!=""}[3m])) BY (instance, name) * 100) > 80
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: Container CPU usage (instance {{ $labels.instance }})
+      description: "Container CPU usage is above 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"

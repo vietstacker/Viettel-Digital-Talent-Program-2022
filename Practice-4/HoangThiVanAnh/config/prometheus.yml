@@ -1,0 +1,22 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+- job_name: prometheus
+  static_configs:
+  - targets:
+    - 192.168.56.109:9090
+
+- job_name: node
+  static_configs:
+  - targets: 
+    - 192.168.56.106:9100
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - 192.168.56.106:9093
+
+rule_files:
+  - "/etc/prometheus/rules.yml"
