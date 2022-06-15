@@ -1,0 +1,20 @@
+global:
+resolve_timeout: 1m
+
+route:
+group_by: ['alertname']
+group_wait: 10s
+group_interval: 10s
+repeat_intervel: 1h
+receiver: 'email-notifications'
+
+receivers:
+- name: 'email-notifications'
+email_configs:
+- to: phu18052k@gmail.com
+    from: phu18052k@gmail.com
+    smarthost: smtp.gmail.com:587
+    auth_username: phu18052k@gmail.com
+    auth_identity: phu18052k@gmail.com
+    auth_password: password
+    send_resolved: true
