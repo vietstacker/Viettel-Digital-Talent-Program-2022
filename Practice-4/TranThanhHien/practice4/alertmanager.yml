@@ -1,0 +1,22 @@
+global:
+  resolve_timeout: 1m
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'slack-notifications'
+receivers:
+- name: 'slack-notifications'
+  slack_configs:
+  - api_url: https://hooks.slack.com/services/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
+    channel: '#monitoring'
+    send_resolved: true
+    
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']
