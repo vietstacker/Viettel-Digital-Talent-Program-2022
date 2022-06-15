@@ -11,11 +11,11 @@ services:
       - 24224:24224/udp
     extra_hosts:
       - "host.docker.internal:127.0.0.1"
-  elasticsearch:
-    image: elasticsearch:8.2.2
-    restart: always
-    environment:
-      - xpack.security.enabled=false
-      - "discovery.type=single-node"
-    ports:
-      - 9201:9200
+  # elasticsearch:
+  #   image: elasticsearch:8.2.2
+  #   restart: always
+  #   environment:
+  #     - xpack.security.enabled=false
+  #     - "discovery.type=single-node"
+  #   ports:
+  #     - 9201:9200
