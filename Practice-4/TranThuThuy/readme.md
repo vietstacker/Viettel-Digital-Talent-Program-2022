@@ -1,6 +1,7 @@
-#**SET UP WEB APP USING DOCKER COMPOSE**
+#**PROMETHEUS + GRAFANA + NODE EXPORTER AND ALERT MANAGER**
 
 #Content
+
 #####I/ Knowledge base
  
 #####1.1 Prometheus
@@ -66,6 +67,7 @@ As above you can see an architecture of Prometheus monitoring tool. It was made 
 - In Prometheus server data is scraped from the target nodes and then stored int the database.
 
   - Storage: Storage in Prometheus server has a local on disk storge.
+  
   - PromQL: Prometheus uses its own query language i.e. PromQL which is very powerful querying language.
 PromQL allows the user to select and aggregate the data.
 
