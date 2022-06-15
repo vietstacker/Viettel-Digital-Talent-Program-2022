@@ -287,18 +287,21 @@ Create a docker-compose.yml file as below:
 
 - So I will check the prometheus status and version
 
-![image](images/promethus-status.png)
+ ![image](images/promethus-status.png)
 
-![image](images/promethus-version.png)
+ ![image](images/promethus-version.png)
 
 - And promtool version
 
-![image](images/promtool-version.png)
+ ![image](images/promtool-version.png)
 
-Go to _20.212.248.94_ to check dashboard
+- Go to _20.212.248.94_ to check dashboard
 
-![image](images/promethus-9090.png)
+ ![image](images/promethus-9090.png)
 
+- View the graph
+
+ ![image](images/promethus-graph.png)
 
 ## 2.2 Define alert rules 
 
@@ -355,19 +358,19 @@ Prometheus configurations directory /etc/prometheus
           summary: "Host high CPU load (instance {{ $labels.instance }})"
           description: "CPU load is > 80%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
 
-We have 4 rules group in this file, starting with 'name: <rule-groups-name>'
+- 04 rules group in this file, starting with 'name: <rule-groups-name>'
 
-- 'expr' is the condition required for the alert to trigger.
+  - 'expr': condition required for the alert to trigger.
 
-- 'for' is the minimum duration for an alert’s expression to be true (active) before updating to a firing status
+  - 'for': minimum duration for an alert’s expression to be true (active) before updating to a firing status
 
-- 'labels' can be anything, any labels that attached to the alert
+  - 'labels' can be anything, any labels that attached to the alert
 
-- 'annotations' is a way to communicate actionable or contextual information such as a description or runbook link
+  - 'annotations': way to communicate actionable or contextual information such as a description or runbook link
 
 ## 2.3 Configure alertmanager to push alert to mail
 
-Config file alertmanager.yml with command
+Config file _alertmanager.yml_ with command
 
     $ vim /etc/alertmanager/alertmanager.yml
 
@@ -394,12 +397,21 @@ In this setup, I will be sending the alerts via Email and I will use Gmail in th
         auth_password: password
         send_resolved: true
     
-  - Save and exit the configuration file. Be sure to set the email settings appropriately.
+  - Save and exit the configuration file. 
+  - 03 main components:
+
+    - global: contain global variables use to send alert message
+
+    - route: define groups và group user to receive notifications
+
+    - receivers: define the group user, list email adress, information like username, password
 
   - Run Alertmanager:
   
-      $alertmanager --config.file /etc/alertmanager/alertmanager.yml
-   
+      $ alertmanager --config.file /etc/alertmanager/alertmanager.yml
+  - The alert push to email
+  ![image](images/alert-email.png)
+  ![image](images/alert-instancedown.png)
    
 ## 2.4 Create Grafana dashboard
 
@@ -407,15 +419,14 @@ In this setup, I will be sending the alerts via Email and I will use Gmail in th
 
     $ sudo systemctl status grafana-server
 
-![image](images/grafana-status.png)
+ ![image](images/grafana-status.png)
 
 - Log into Grafana by port 3000, enter password and username both are 'admin' 
 
-![image](images/grafana-3000.png)
+ ![image](images/grafana-3000.png)
 
 
  ## V. References
- - [Rules](https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/)
- - [EmailALert](https://hocchudong.com/prometheus-tich-hop-canh-bao-qua-email-phan-4/)
- - [Monitoring Stack](https://docs.openshift.com/dedicated/osd_cluster_admin/osd_monitoring/osd-understanding-the-monitoring-stack.html)
+ - https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/
+ - https://docs.openshift.com/dedicated/osd_cluster_admin/osd_monitoring/osd-understanding-the-monitoring-stack.html
  
