@@ -1,0 +1,15 @@
+---
+- name: Create prometheus container
+  docker_container:
+    image: prom/prometheus:latest
+    name: prometheus
+    ports:
+     - 9090:9090
+    command:
+    - '--config.file=/etc/prometheus/prometheus.yml'
+    - '--storage.tsdb.path=/prometheus'
+    volumes:
+    - ./prometheus:/etc/prometheus
+    - prometheus-db:/prometheus
+    - ./prometheus/alert.rules.yml:/alertmanager/alert.rules
+    

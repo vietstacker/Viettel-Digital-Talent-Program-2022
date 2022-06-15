@@ -1,0 +1,12 @@
+route:
+  receiver: 'telegram'
+  group_by: ['alertname']
+  repeat_interval: 3h
+
+receivers:
+  - name: 'telegram'
+    telegram_configs:
+      - send_resolved: true
+        api_url: 'https://api.telegram.org'
+        bot_token: '5572355106:AAGz-mHulSaaWsj-rXgE-v1ur5KK-t6cj2Y'
+        parse_mode: 'Markdown'
