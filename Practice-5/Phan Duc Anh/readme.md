@@ -1,313 +1,253 @@
-# TABLE OF CONTENT
+# 1. Tìm hiểu về Elasticsearch
 
-- [TABLE OF CONTENT](#table-of-content)
-- [1. PHÂN BIỆT CÁC INSTRUCTION](#1-phân-biệt-các-instruction)
-  - [1.1. ARG vs ENV](#11-arg-vs-env)
-  - [1.2. COPY vs ADD](#12-copy-vs-add)
-  - [1.3. CMD vs ENTRYPOINT](#13-cmd-vs-entrypoint)
-- [2. THREE-TIER WEB APPLICATION WITH DOCKER](#2-three-tier-web-application-with-docker)
-  - [2.1. Tổng quan về kiến trúc three-tier](#21-tổng-quan-về-kiến-trúc-three-tier)
-  - [2.2. Tạo Dockerfile cho mongoDB](#22-tạo-dockerfile-cho-mongodb)
-  - [2.2. Tạo Dockerfile cho Python Web Server](#22-tạo-dockerfile-cho-python-web-server)
-  - [2.3. Tạo Dockerfile cho NGINX](#23-tạo-dockerfile-cho-nginx)
-  - [2.4. Deploy bằng Docker-compose](#24-deploy-bằng-docker-compose)
-- [TÀI LIỆU THAM KHẢO](#tài-liệu-tham-khảo)
+## 1.1. Giới thiệu về Elasticsearch
 
-# 1. PHÂN BIỆT CÁC INSTRUCTION
+Elasticsearch là một open source full-text search và analytics engine theo thời gian thực. Truy cập elasticsearch được thông qua một RESTful web service interface và nó sử dụng JSON documents để lưu dữ liệu. Elasticsearch được viết bằng Java nên nó có thể chạy được trên nhiều nền tảng. Elasticsearch cho phép truy cập và truy vấn dữ liệu lớn ở một tốc độc cao.
 
-## 1.1. ARG vs ENV
+Một số tính năng của Elasticsearch có thể kể đến như:
 
-Cả ARG và ENV đều là các instruction dùng để define các biến trong Docker tuy nhiên, phạm vi các biến khai bảo bởi 2 instruction này là khác nhau.
+- Elasticsearch có khả năng scale lên tới petabytes
+- Elasticsearch có khả năng phân tích và thống kê dữ liệu
+- Elasticsearch có khả năng phân tán và mở rộng
+- Elasticsearch lưu dữ liệu dưới dạng JSON
 
-> ENV dùng để khai bao các biển dùng khi chạy container trong tương lai còn ARG dùng cho quá trình building image.
+### 1.1.1. Ưu điểm
 
-Cụ thể:
+- Elasticsearch được viết bằng Java giúp cho nó có thể sử dụng trên hầu hết các nền tảng.
+- Elasticsearch là một engine thời gian thực, tức là dữ liệu vừa được thêm vào có thể được tìm kiếm ngay lập tức
+- Elasticsearch là một server có thể phân tán, điều này giúpc cho việc scale và kết hợp với các nền tảng khác nhau trong một tổ chức lớn trở nên dễ dàng.
+- Có thể backups dễ dàng
+- Elasticsearch sử dụng JSON để lưu trữ dữ liệu giúp cho nó dẽ dàng được xử lí và phát triển
+- Hiệu năng của elasticsearch là tương đối tốt so với các loại database khác trong việc indexing cũng như querying
 
-- ENV được sử dụng khi để define các biến môi trường mà các app chạy container sẽ truy cập được các biến này. Thường thì các biến này sẽ được dùng để configure các app chạy trong container.
-- ARG được sử dụng để define các biến mà sau khi build xong image sẽ không sử dụng được các biến này nữa.
+### 1.1.2. Nhược điểm
 
-![docker-env-vs-arg](images/docker-var-vs-arg.webp)
+- Request cũng như response data chỉ hỗ trợ một dạng, không flexible như một số loại database khác.
+- Có thể xuất hiện hiện tượng split brain
+- Elasticsearch được thiết kế cho mục đích search, do vậy với những nhiệm vụ khác ngoài search như CRUD thì elastic kém thế hơn so với những database khác như Mongodb, Mysql …. Do vậy người ta ít khi dùng elasticsearch làm database chính, mà thường kết hợp nó với 1 database khác.
+- Không thích hợp với những hệ thống thường xuyên cập nhật dữ liệu. Sẽ rất tốn kém cho việc đánh index dữ liệu.
 
-Tuy nhiên, ENV cũng có thể được sử dụng trong quá trình build image. Ta có thể override biến ARG khi build image bằng --build-arg và override biến ENV bằng -e khi run container.
+## 1.2. Một số khái niệm chính trong Elasticsearch
 
-Để khai báo một biến ENV hoặc ARG ta sử dụng:
+### 1.2.1. Document
 
-        ENV variable_name=value
-        ARG variable_name=value
+Document là một JSON object với một số dữ liệu. Đây là basic information unit trong ES. Hiểu 1 cách cơ bản thì đây là đơn vị nhỏ nhất để lưu trữ dữ liệu trong Elasticsearch.
 
-Để sử dụng một biến ENV hoặc ARG ta sử dụng:
+### 1.2.2. Index
 
-        ${var_name}
+Trong Elasticsearch, sử dụng một cấu trúc được gọi là inverted index. Nó được thiết kế để cho phép tìm kiếm full-text search. Cách thức của nó khá đơn giản, các văn bản được phân tách ra thành từng từ có nghĩa sau đó sẽ được map xem thuộc văn bản nào. Khi search tùy thuộc vào loại search sẽ đưa ra kết quả cụ thể.
 
-Ta có thể chỉ định giá trị mới (thay vì giá trị khai báo trong Dockerfile) của biến ARG khi build image bằng cách override bằng --build-arg nhưng không thể làm như vậy với biến ENV, nhưng ta có thể thay đổi bằng cách set biến ENV bằng 1 biến ARG như sau:
+### 1.2.3. Index
 
-        ARG var_1 = value
-        ENV var_2 = ${var_1}
+Trong Elasticsearch, sử dụng một cấu trúc được gọi là inverted index. Nó được thiết kế để cho phép tìm kiếm full-text search. Cách thức của nó khá đơn giản, các văn bản được phân tách ra thành từng từ có nghĩa sau đó sẽ được map xem thuộc văn bản nào. Khi search tùy thuộc vào loại search sẽ đưa ra kết quả cụ thể.
 
-## 1.2. COPY vs ADD
+Ví dụ:
 
-COPY và ADD đều có tính năng tương tự nhau đó là copy file từ local vào trong container. Điểm khác chính là ADD hỗ trợ thêm 2 tính năng là local-only tar extraction và fetch packages from remote URLs.
+- The quick brown fox jumped over the lazy dog
+- Quick brown foxes leap over lazy dogs in summer
 
-Về cơ bản thì COPY được khuyên dùng hơn do nó dễ hiểu và rõ ràng hơn. ADD được sử dụng trong các trường hợp ta cần extract file tar trong container.
+Để tạo ra một inverted index, trước hết chúng ta sẽ phân chia nội dung của từng tài liệu thành các từ riêng biệt (chúng gọi là terms), tạo một danh sách được sắp xếp của tất cả terms duy nhất, sau đó liệt kê tài liệu nào mà mỗi thuật ngữ xuất hiện. Kết quả như sau:
 
-Nếu ta có Dockerfile sử dụng nhiều file thì lệnh COPY nên được dùng riêng ra thay vi copy hết tất cả các file. Điều này sẽ tận dụng được việc caching khi mà các file riêng lẻ không có sự thay đổi.
+<p align="center">
+  <img src="./images/index-1.png" />
+</p>
 
-Ta không nên sử dụng lệnh ADD để fetch các packages từ remote URL, thay vào đó ta nên sử dụng curl hoặc wget để xoá được các packeage không cần thiết sau khi đã extract và không bị mất thêm một layer cho lệnh ADD, ví dụ, thay vì sử dụng:
+Bây giờ, nếu chúng ta muốn tìm kiếm quick brown, chúng ta chỉ cần tìm trong các tài liệu trong đó mỗi thuật ngữ có xuất xuất hiện hay không. Kết quả như sau:
 
-    ADD https://example.com/big.tar.xz /usr/src/things/
-    RUN tar -xJf /usr/src/things/big.tar.xz -C /usr/src/things
-    RUN make -C /usr/src/things all
+<p align="center">
+  <img src="./images/index-2.png" />
+</p>
 
-Ta có thể dùng curl:
+Như vậy, cả 2 đoạn văn bản đều thích hợp với từ khóa. Tuy nhiên có thể dễ dàng nhận ra rằng Doc_1 chính xác hơn nhiều.
 
-    RUN mkdir -p /usr/src/things \
-        && curl -SL https://example.com/big.tar.xz \
-        | tar -xJC /usr/src/things \
-        && make -C /usr/src/things all
+### 1.2.3. Shard
 
-## 1.3. CMD vs ENTRYPOINT
+Shard là là tập con các documents của 1 Index. Một Index có thể được chia thành nhiều shard. Mỗi node bao gồm nhiều Shard. Chính vì thế Shard mà là đối tượng nhỏ nhất, hoạt động ở mức thấp nhất, đóng vai trò lưu trữ dữ liệu. Chúng ta gần như không bao giờ làm việc trực tiếp với các Shard vì Elasticsearch đã support toàn bộ việc giao tiếp cũng như tự động thay đổi các Shard khi cần thiết. Có 2 loại Shard là: primary shard và replica shard.
 
-CMD và ENTRYPOINT đều dùng để định ra program mà ta muốn execute khi mà ta chạy docker run.
+#### 1.2.3.1. Primary Shard
 
-Điểm khác nhau giữa CMD và ENTRYPOINT đó là ENTRYPOINT sẽ configure khi run container như một lệnh (executable), nói cách khác mọi biến được define sau tên của image sẽ được append vào lệnh trong ENTRYPOINT như một biến còn đối với CMD thì khi ta thêm vào đằng sau tên image của lệnh docker run image thì nó sẽ override lệnh CMD này (do CMD chỉ là lệnh default sẽ được chạy khi docker run), ví dụ:
+Dữ liệu được lưu tại 1 primary shard, được đánh index ở đây trước khi chuyển đến replica shard. Mặc định của Elasticsearch là 5 primary shard cho một index (một index trong Elasticsearch tương đương với một database trong MySQL). Một khi đã khởi tạo index thì không thể thay đổi số lượng primary shard cho nó.
 
-        FROM ubuntu
-        CMD  ["echo", "Hello World"]
+#### 1.2.3.2. Replica Shard
 
-Khi ta build và chạy image này output sẽ là Hello world. Khi ta thêm arg vào docker run như sau:
+Một primary shard có thể không có, hoặc có replica shard. Mặc định Elasticsearch là 1 replica shard trên một primary shard. Vai trò của replica shard cũng giống như slave trong MySQL, đảm bảo khi primary shard có sự cố thì dữ liệu vẫn toàn vẹn và thay thế được primary shard, đồng thời tăng tốc độ đọc vì replica shard có thể là nhiều hơn 1. Trong quá trình hoạt động, bạn được thay thế số lượng replica shard một cách thoải mái (không như primary shard).
 
-        docker run test echo "Vietnam"
+Dưới đây là một mô hình đơn giản cho kiến trúc cluster-node-shard của Elasticsearch.
 
-Output sẽ là Vietnam thay vì Hello World (do lệnh CMD sẽ bị override):
+![shard](images/shard.png)
 
-![docker-cmd](images/docker-cmd.png)
+Nhìn vào hình trên chúng ta có thể thấy, dữ liệu được lưu trữ ở cluster với 3 nodes trong đó node 1 là master. Có 3 primary shards, 2 trong số đó được đặt ở node 1, còn lại ở node 3. Mỗi primary shard có 2 replica shard (ví dụ primary shard P0 ở node 3 thì có replica shard R0 ở node 1 và một shard nữa ở Node 2). Việc sắp đặt vị trí primary shard là ngẫu nhiên, còn các replica shard luôn được đảm bảo là nó không nằm cùng node với primary shard (điều này đảm bảo khi 1 node ngưng hoạt động thì đảm bảo dữ liệu không bị mất). Thêm nữa là không bắt buộc primary shard đều nằm ở node master, vì việc phân tán các primary shard giúp phân tán công đoạn ghi dữ liệu, giúp giảm tải cho một node.
 
-Đối với ENTRYPOINT thì các arguments được thêm vào sau docker run sẽ chỉ được append vào sau lệnh ENTRYPOINT. Ví dụ:
+### 1.2.4. Cluster
 
-        FROM ubuntu
-        ENTRYPOINT ["echo", "Hello World"]
+Tập hợp các nodes hoạt động cùng với nhau, chia sẻ cùng thuộc tính cluster.name. Mỗi cluster có một/các node chính (master), được lựa chọn một cách tự động và có thể thay thế nếu sự cố xảy ra. Một cluster có thể gồm 1 hoặc nhiều nodes. Các nodes có thể hoạt động trên cùng 1 server với mục đích test. Tuy nhiên trong thực tế vận hành, một cluster sẽ gồm nhiều nodes hoạt động trên các server khác nhau để đảm bảo nếu 1 server gặp sự cố thì server khác (node khác) có thể hoạt động đầy đủ chức năng so với khi có 2 servers. Các node có thể tìm thấy nhau để hoạt động trên cùng 1 cluster qua giao thức unicast.
 
-Vậy khi ra chạy docker run test "Hi" thì "Hi" sẽ được append vào lệnh echo "Hello World" thay vì override:
+### 1.2.5. Node
 
-![entrypoint-append](images/entrypoint-append.png)
+Là trung tâm hoạt động của Elasticsearch. Là nơi lưu trữ dữ liệu, tham gia thực hiện đánh index của cluster cũng như thực hiện các thao tác tìm kiếm. Mỗi node được định danh bằng 1 unique name.
 
-Nếu ta thêm echo "Hi" vào thì sẽ như thế nào, rõ ràng lệnh này sẽ bị output Hello world echo Hi do khi append thì nó sẽ thành echo "Hello World" echo "Hi", khi này ["Hello World", "echo", "Hi"] sẽ là argument của lệnh echo:
+#### 1.2.5.1. Master Node
 
-![entrypoing-check-override](images/entrypoint-check-override.png)
+Master node phụ trách điều phối hoạt động của cluster. Nó thay đổi, xoá, tạo các index, trường, thêm xoá nodes và phân bổ shard cho các nodes. Mỗi cluster có một/các node master được chọn từ các master eligible nodes bằng một giải thuật đồng thuận và nó sẽ được bình chọn lại nếu master node bị lỗi.
 
-Một điểm đặc biệt nữa là khi mà CMD không khai báo ở dạng [arg1, agr2] mà không phải CMD cmd agr1... hoặc CMD ["executable","arg1",...] thì nó sẽ được coi như là default argument cho ENTRYPOINT. Như vậy trong trường hợp này, khi mà ta không thêm argument vào sau docker run image thì CMD argument sẽ được sử dụng. Ngược lại thì argument trong CMD sẽ bị override khi có argument mà ta append sau lệnh docker run image.
+#### 1.2.5.2. Data Node
 
-# 2. THREE-TIER WEB APPLICATION WITH DOCKER
+Data nodes gồm các shards chứa dữ liệu đã được index. Data nodes sẽ xử lí các công việc như CRUD, search và aggregations. Lợi ích của việc có data nodes là có thể phân biệt rõ ràng được các roles của nodes như master hay data.
 
-## 2.1. Tổng quan về kiến trúc three-tier
+Ta có thể mô tả cụ thể một data nodes thành các loại: data_content, data_hot, data_warm, data_cold, data_frozen.
 
-Three-tier architecture tổ chức web app thành 3 lớp logical và physical: presentation tier hay còn gọi là user interface; application layer nơi mà các data được xử lí và cuối cùng là data tier dùng để store và manage data, đây là một mô hình phổ biến của client-server application:
+#### 1.2.5.3. Coordinating Node
 
-- Presentation tier: đây là tier cung cấp giao diện cho người dùng để giao tiếp với ứng dụng. Nó được chạy trên một web browser. Thường được viết bằng HTML, CSS và JS. Để serving được các file HTML, CSS và JS ta sẽ sử dụng NGINX. Đồng thời NGINX cũng sẽ đóng vai trò là một proxy server để pass các request đến application tier, củ thể ở project này là request data thông tin attendee của lớp học.
-- Application tier: ở tier này sẽ tiến hành lấy và xử lí thông tin từ data tier, đồng thời cũng có thực hiện các thao tác CRUD trên datat tier. Ở project này ta sẽ sử dụng Python với Flask framework để develop.
-- Data tier: hay còn gọi là database tier, tier này có nhiệm vụ chính là lưu trữ và quản lí dữ liệu. Ta sẽ sử dụng một NoSQL DB là MongoDB trong project này.
-
-![three-tier-architecture](images/three-tier-architecture.png)
-
-## 2.2. Tạo Dockerfile cho mongoDB
-
-Đối với mongoDB ta có thể sử dụng ngay image mongo để chạy container, tuy nhiên ở đây ta sẽ custom lại DB một chút để nó init sẵn collection attendee chứa thông tin của các thành viên trong lớp.
-
-Trước hết ta vẫn sử dụng base image là mongo:5.0
-
-        FROM mongo:5.0
-
-Ta sẽ đặt các biến enviroment để mongod sẽ khởi tạo sẵn database và user admin như biến ta đặt:
-
-        ENV MONGO_INITDB_ROOT_USERNAME="admin"
-        ENV MONGO_INITDB_ROOT_PASSWORD="Phananh272"
-        ENV MONGO_INITDB_DATABASE="class"
-
-Khi chạy container thì image mongo:5.0 sẽ có entrypoint là chạy file shell script docker-entrypoint.sh, ở trong file này trước hết nó sẽ tạo sẵn DB và user theo biến ENV mà ta đặt, sau đó nó sẽ chạy file sh hoặc js trong folder /docker-entrypoint-initdb.d/. Trước hết ta sẽ tạo file [db-init.js](mongo/db-init.js) để init collection attendee trong data base class rồi COPY file này vào thư mục /docker-entrypoint-initdb.d/.
-
-        COPY ./db-init.js /docker-entrypoint-initdb.d/
-
-Tuy vậy để load được một file csv có các documents mặc định vào collection attendee thì không được hỗ trợ trong db-init.js. Thay vào đó ta phải sử dụng một tool của mongoDB là mongoimport có sẵn trong image mongo:5.0. Có rất nhiều cách để sử dụng công cụ này, ta có thể run container xong rồi dùng _docker exec \<container> mongoimport_
-(cách này thì khá thủ công). Một cách nữa là ta sẽ chạy 2 container mongo, mongo thứ 2 sẽ chỉ để sử dụng để chạy mongoimport như trong [tutorial của Shan's Corner](https://shantanoo-desai.github.io/posts/technology/seeding-mongodb-docker-compose/). Cách thứ 3 là ta có thể chỉnh sử một chút file docker-entrypoint.sh để có thể load được documents trong file csv. Ta sẽ custom file [docker-entrypoint.sh](https://github.com/docker-library/mongo/blob/master/5.0/docker-entrypoint.sh) (đây cũng là file official được public trên github). Chắc chắc sẽ có một số cách hay hơn để seeding được database nhưng trong thời gian giới hạn em vẫn chưa tìm hiểu thêm được.
-
-Trong file này, dòng cuối cùng sử dụng lệnh exec để chạy mongod (Mongo Deamon), như vậy để sử dụng được file này ta chắc chắn phải chạy mongod trước để nó tạo ra được database, collection và user rồi mới sử dụng được mongoimport để kết nối tới mongo để import file csv. Một cách đơn giản là ta có thể thêm lệnh mongoimport vào ngay dòng exec "$@" [docker-entrypoint.sh](https://github.com/docker-library/mongo/blob/master/5.0/docker-entrypoint.sh) như sau:
-
-        exec "$@" &
-        mongoimport --db class --collection attendee --type=csv --username admin --password Phananh272 --authenticationDatabase admin --headerline --file=/data/datasource.csv --uri mongodb://localhost:27017
-
-Như vậy khi run container thì sẽ bị exit ngay lập tức do ta chạy file này thì **exec \"&#36;\@\" &#38;** sẽ chạy trong một process có pid không phải là 1, pid 1 giờ đây sẽ là của shell, sau khi chạy đến lệnh mongoimport xong thì pid 1 này cũng hoàn thành xong công việc và terminate. Khi pid terminate thì container cũng sẽ tự động exit do không có một init process đang chạy (Nếu không có operator &#38; ở cuối thì đương nhiên sẽ không chạy lệnh mongoimport do lệnh trên không bao giờ exit). Như vậy mục tiêu của ta là phải để **exec \"&#36;\@\"** chạy trên pid 1 và mongimport phải thực hiện sau **exec \"&#36;\@\"**. Ta chỉ cần chạy (sleep && mongoimport) &#38; trước **exec \"&#36;\@\"** (ta sleep nhằm mục đích cho mongd hoàn tất khởi tạo), thì sleep && mongoimport sẽ được chạy trên một pid khác và sau đó khi chạy **exec "\$@"** nó sẽ thay thế shell và chạy trên pid 1 \(nhược điểm của phương pháp này là sẽ tạo ra zoombie process hay defunct process do khi mongimport chạy xong thì parent process của nó là chính là pid 1 đang chạy mongod thay thế shell do lệnh exec, chính vì thế mà pid 1 này sẽ không wait process con này, dẫn tới nó không thể nhận accept để exit -> trở thành zombie):
-
-        (sleep 5 && mongoimport --db class --collection attendee --type=csv --username admin --password Phananh272 --authenticationDatabase admin --headerline --file=/data/datasource.csv --uri mongodb://localhost:27017) &
-
-        exec "$@"
-
-Sau khi chỉnh xong, ta copy file csv và file docker-entrypoint.sh vào:
-
-        COPY ./datasource.csv /data/datasource.csv
-        COPY docker-entrypoint.sh /usr/local/bin/
-
-## 2.2. Tạo Dockerfile cho Python Web Server
-
-Python Web Server sẽ sử dụng 2 thư viện là Flask (viết API) và pymongo (kết nối với database). App này khá đơn giản, chỉ có 1 API GET /api/attendees để lấy thông tin tất cả các attdedee về:
-
-        from flask import Flask
-        from flask import jsonify
-        import pymongo
-        from bson.json_util import dumps
-
-        client = pymongo.MongoClient('mongodb://web_mongo:27017/', username='admin', password='Phananh272')
-
-        db = client["class"]
-
-        col = db['attendee']
-
-        app = Flask(__name__)
-
-        @app.route('/api/attendees', methods = ['GET'])
-        def get_attendee():
-        res = []
-        for x in col.find():
-                res.append(x)
-        return jsonify(dumps(res))
-
-Ta có thể viết thêm một số Restful API để cho app được hoàn thiện hơn, nhưng nó nằm ngoài mục đích của project này là nhằm hiển thị thông tin danh sách lớp. Ta sẽ giữ app này đơn giản nhất có thể.
-
-Trước hết, ta sẽ frezze pip3 để lấy thông tin library đẩy vào file requirements.txt:
-
-        pip3 freeze | grep Flask >> requirements.txt
-        pip3 freeze | grep
-
-Ta sử dụng base image là python:3.9 và tạo working directory app để làm việc:
-
-        FROM python:3.9
-
-        WORKDIR /app
-
-Tiếp theo là copy requirements.txt và tiến hành cài đặt các dependencies, ta cũng sẽ áp dụng việc đẩy requirements.txt và cài nó trước với --no-cache-dir để giảm thời gian build và rebuild:
-
-        COPY ./requirements.txt .
-
-        RUN pip3 install --no-cache-dir -r ./requirements.txt
-
-Copy source code vào /app và instruct Docker chạy python app tại tất cả IP của container sau khi run container bằng CMD:
-
-        COPY ./app.py .
-
-        CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
-
-## 2.3. Tạo Dockerfile cho NGINX
-
-NGINX trong project sẽ đóng 2 vai trò, 1 serving các static file như HTML, CSS, JS cho client và làm một proxy server để forward các API request đến Web Server. Như vậy, ta sẽ sử dụng file nginx.conf để configure NGINX:
-
-        server {
-                listen 80;
-
-                location / {
-                        root /usr/share/nginx/html;
-                }
-
-                location /js/ {
-                        root /usr/share/nginx/html/;
-                }
-
-                location /api/ {
-                        proxy_pass http://web_python:5000;
-                }
+Một số request như request để tìm kiếm có thể gồm data ở các node khác nhau. Ví dụ như search request được thực thi qua 2 giai đoạn và được điều khiển bởi node nhận request từ client ( hay còn gọi là coordinating node). Coordinating node sẽ forwards các request tới data nodes chứa dữ liệu và nhận dữ liệu trả về từ các data nodes rồi tổng hợp để trả về dữ liệu cho người dùng.
+
+#### 1.2.5.4. Ingest Node
+
+Ingest node là node xử lí ingest pipelines. Ingest piplines cho phép thực hiện xử lí dữ liệu trước khi indexing. Chẳng hạn ta sử dụng pipelines để xoá trường, trích xuất dữ liệu. Pipeline bao gồm một chuỗi các task gọi là processors. Mỗi processor được thực hiện theo thứ tự định trước, sau khi hoàn thành thì elasticsearch thêm dữ liệu được biến đổi vào bộ nhớ hoặc dùng để indexing.
+
+<p align="center">
+  <img src="./images/ingest_node.png" />
+</p>
+
+#### 1.2.5.5. Tribe Node
+
+Hoạt động với chức năng đặc biệt như một Client Node có khả năng giao tiếp với rất nhiều cụm ES Cluster khác nhau để thực hiện các thao tác tìm kiếm hoặc hành vi liên quan đến dữ liệu.
+
+# 2. Setup Elasticsearch
+
+Ta sẽ setup một cụm ES gồm 3 node cơ bản, như sau:
+
+    version: "2.2"
+    services:
+      es01:
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.2.3
+        container_name: es01
+        environment:
+          - node.name=es01
+          - cluster.name=es-docker-cluster
+          - discovery.seed_hosts=es02,es03
+          - cluster.initial_master_nodes=es01,es02
+          - bootstrap.memory_lock=false
+          - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+          - xpack.security.enabled=false
+        volumes:
+          - data01:/usr/share/elasticsearch/data
+        ports:
+          - 9200:9200
+        networks:
+          - elastic
+      es02:
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.2.3
+        container_name: es02
+        environment:
+          - node.name=es02
+          - cluster.name=es-docker-cluster
+          - discovery.seed_hosts=es01,es03
+          - cluster.initial_master_nodes=es01,es02
+          - bootstrap.memory_lock=false
+          - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+          - xpack.security.enabled=false
+        volumes:
+          - data02:/usr/share/elasticsearch/data
+        networks:
+          - elastic
+      es03:
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.2.3
+        container_name: es03
+        environment:
+          - node.name=es03
+          - cluster.name=es-docker-cluster
+          - discovery.seed_hosts=es01,es02
+          - cluster.initial_master_nodes=es01,es02
+          - bootstrap.memory_lock=false
+          - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+          - xpack.security.enabled=false
+        volumes:
+          - data03:/usr/share/elasticsearch/data
+        networks:
+          - elastic
+      kibana:
+        image: docker.elastic.co/kibana/kibana:8.2.3
+        environment:
+          ELASTICSEARCH_HOSTS: '["http://es01:9200","http://es02:9200","http://es03:9200"]'
+        ports:
+          - 5601:5601
+        networks:
+          - elastic
+        depends_on:
+          - es01
+          - es02
+          - es03
+    volumes:
+      data01:
+        driver: local
+      data02:
+        driver: local
+      data03:
+        driver: local
+
+    networks:
+      elastic:
+        driver: bridge
+
+Các biến môi trường ở đây khá cơ bản, có 2 trường quan trọng là discovery.seed_hosts dùng để list các eligible master node mà node này sẽ kết nối tới để thực hiện quá trình bình chọn node master. Tiếp theo là biến cluster.initial_master_node dùng để list các eligible master node lần đầu tiên khi mà cluster được khởi động, các node này sẽ là node để thực hiện election lần đầu tiên. Sau khi chạy docker-compose, ta có thể sử dụng các lệnh dưới đây để kiểm tra cluster đã chạy ổn định chưa:
+
+    curl -X GET "localhost:9200/_cat/nodes?v&pretty"
+    curl http://127.0.0.1:9200/_cluster/health\?pretty
+
+![elasticsearch_check](images/cluster-check.png)
+
+# 3. Query trong Elasticsearch
+
+Để tạo một index, ta sử dụng:
+
+    PUT /{index_name}
+
+![index_create](images/create_index.png)
+
+Ta cũng có thể cấu hình số shard và số replica của index bằng 1 JSON object:
+
+    PUT /{index_name}
+    {
+        "settings" : {
+            "index" : {
+                "number_of_shards" : 3,
+                "number_of_replicas" : 2
+            }
         }
+    }
 
-Client sẽ request để lấy file HTML và JS ở NGINX, nếu client gọi API thì NGINX sẽ forward tới Web Server, ở đây chính là container web_python mà ta đã chạy và đặt tên (Ta chỉ cần tên của container chứ không cần địa chỉ IP vì khi sử dụng docker-compose sẽ tự tạo một network mới và sẽ có một dịch vụ DNS để access container qua tên).
+Mặc định number_of_shard = 5 và number_of_replicas = 1
 
-Ta cũng sẽ copy các file index.html và js.js vào để NGINX serve các file này:
+Xoá shard, ta sử dụng:
 
-        FROM nginx:1.22.0-alpine
+    DELETE /index_name
 
-        COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+Thêm dữ liệu vào, ta sử dụng:
 
-        COPY ./index.html /usr/share/nginx/html/index.html
+    PUT /<target>/_doc/<_id>
 
-        RUN mkdir /usr/share/nginx/html/js/
+    POST /<target>/_doc/
 
-        COPY ./js/js.js /usr/share/nginx/html/js/js.js
+    PUT /<target>/_create/<_id>
 
-## 2.4. Deploy bằng Docker-compose
+    POST /<target>/_create/<_id>
 
-Project của ta sẽ gồm service, tương ứng với nginx, web_server và mongodb. Ta tổ chức file như sau:
+    {
+      "field" : "value"
+    }
 
-        .
-        ├── nginx/
-        │   ├── Dockerfile
-        │   ├── index.html
-        │   ├── nginx.conf
-        │   └── js/
-        │       └── js.js
-        ├── python/
-        │   ├── Dockerfile
-        │   ├── app.py
-        │   └── requirements.txt
-        ├── mongo/
-        │   ├── Dockerfile
-        │   ├── db-init.js
-        │   ├── docker-entrypoint.sh
-        │   └── datasource.csv
-        ├── docker-compose.yml
-        └── readme.md
+![insert_doc](images/insert_doc.png)
 
-Đối với service mongdb, ta chỉ cần sử dụng Dockerfile để build:
+Để query, ta sử dụng GET /{index_name}/\_search. Ví dụ, match query: tìm kiểu doc có \_id là 1
 
-        web_mongo:
-          build: ./mongo
+    {
+        "query": {
+            "match" : {
+                "_id" : "1"
+            }
+        }
+    }
 
-Đối với service python, tương tự như web_mongo, tuy nhiên do web_server này phụ thuộc vào web_mông nên ta thêm trường depends_on:
+Một số dạng query khác có thể kể đến như: Fuzzy, Boolean, Multimatch.
 
-        web_python:
-          build: ./python
-          depends_on:
-            - "web_mongo"
-
-Đối với service nginx, service này depend vào web_python, nên ta cũng thêm trường depend, đồng thời mount directory của html ra để dễ dàng develop do file này phải thay đổi thường xuyên. Publish cổng 80 của container ra cổng 80 của host:
-
-        web_nginx:
-          build: ./nginx
-          depends_on:
-            - "web_python"
-          volumes:
-            - ./nginx:/usr/share/nginx/html
-          ports:
-            - 80:80
-
-File docker-compose.yml đầy đủ:
-
-        version: "3.9"
-        services:
-          web_mongo:
-            build: ./mongo
-          web_python:
-            build: ./python
-            depends_on:
-              - "web_mongo"
-          web_nginx:
-            build: ./nginx
-            depends_on:
-              - "web_python"
-            volumes:v
-              - ./nginx:/usr/share/nginx/html
-            ports:
-              - 80:80
-
-Thực hiện build, kết qủa với 3 image:
-
-![docker-build](images/build-image.png)
-
-Chạy các container bằng docker-compose up, dùng browser truy cập vào localhost cổng 80:
-
-![serivce-check](images/service-check.png)
-
-Như vậy, ta đã deploy thành công project.
-
-# TÀI LIỆU THAM KHẢO
-
-- https://docs.docker.com/
-- https://shantanoo-desai.github.io/posts/technology/seeding-mongodb-docker-compose/
-- https://www.mongodb.com/docs/
-- http://nginx.org/en/docs/
-- https://vsupalov.com/docker-arg-vs-env/
+![match_query](images/match_query.png)

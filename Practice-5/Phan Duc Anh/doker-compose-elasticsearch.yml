@@ -21,6 +21,47 @@ services:
       - elasticsearch
     ports:
       - 5601:5601
+        es_data_01:
+    image: elasticsearch:8.2.3
+    environment:
+      node.name: "es_data_01"
+      node.roles: ["data", "ingest"]
+      cluster.name: "es_docker_cluster"
+      discovery.seed_hosts:
+        - es_master_01
+        - es_master_02
+        - es_master_03
+      cluster.initial_master_nodes:
+        - es_master_01
+        - es_master_02
+      bootstrap.memory_lock: false
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    depends_on:
+      - es_master_01
+      - es_master_02
+      - es_master_03
+    volumes:
+      - data04:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+  es_data_02:
+    image: elasticsearch:8.2.3
+    environment:
+      node.name: "es_data_02"
+      node.roles: ["data", "ingest"]
+      cluster.name: "es-docker-cluster"
+      discovery.seed_hosts: ["es-master-01", "es-master-02", "es-master-03"]
+      cluster.initial_master_nodes: ["es-master-01", "es-master-02"]
+      bootstrap.memory_lock: false
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    depends_on:
+      - es_master_01
+      - es_master_02
+      - es_master_03
+    volumes:
+      - data05:/usr/share/elasticsearch/data
+    networks:
+      - elastic
 networks:
   es-net:
     driver: bridge
