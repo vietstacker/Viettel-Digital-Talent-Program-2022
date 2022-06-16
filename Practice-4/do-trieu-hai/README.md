@@ -326,28 +326,16 @@ Chạy câu lệnh ansible để deploy
 ansible-playbook -i inventory/hosts playbook.yml
 ```
 
-**Chạy thành công**
-
-<img src="">
 
 **Kiểm tra kết quả**
-Check Prometheus alert:
-<img src="">
-<img src="">
 
 
 Check Grafana:
-<img src="">
+<img src="./imgs/grafanarun.jpg">
 
-Sau khi import data từ Prometheus
-<img src="">
+Check Prometheus:
+<img src="./imgs/runprometheus.jpg">
 
-Check Alertmanager status
-<img src="">
-
-Check thông báo đẩy về Gmail
-<img src="">
-<img src="">
 
 ## **III. Tham khảo**
 [**Bài của bạn Phùng Hoàng Long**](https://github.com/longph2710/Viettel-Digital-Talent-Program-2022/tree/practice4/Practice-4/PhungHoangLong)
