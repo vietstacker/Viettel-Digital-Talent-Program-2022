@@ -58,7 +58,12 @@ The Prometheus ecosystem consists of multiple components, many of which are opti
 Most Prometheus components are written in  [Go](https://golang.org/), making them easy to build and deploy as static binaries.
 ### ***d. Architecture***
 This diagram illustrates the architecture of Prometheus and some of its ecosystem components.
-Them anh
+<div align="center">
+  <img src="img/prometheus_architecture.png">
+</div>
+<div align="center">
+  <i>Prometheus Architecture</i>
+</div>
 Prometheus scrapes metrics from instrumented jobs, either directly or via an intermediary push gateway for short-lived jobs. It stores all scraped samples locally and runs rules over this data to either aggregate and record new time series from existing data or generate alerts. Grafana or other API consumers can be used to visualize the collected data.
 ###  **2. Exporter**
 Prometheus exporter for hardware and OS metrics exposed by *NIX kernels, written in Go with pluggable metric collectors.
@@ -390,7 +395,43 @@ cd Prometheus
 docker-compose up -d
 ```
 ###  **6. Result**
-Them anh
+<div align="center">
+  <img src="img/prometheus.jpg">
+</div>
+<div align="center">
+  <i>Prometheus Target</i>
+</div>
+<div align="center">
+  <img src="img/rules.jpg">
+</div>
+<div align="center">
+  <i>Rules Define</i>
+</div>
+<div align="center">
+  <img src="img/alert.jpg">
+</div>
+<div align="center">
+  <i>Alert Define</i>
+</div>
+<div align="center">
+  <img src="img/alertmanager.jpg">
+</div>
+<div align="center">
+  <i>Alert Manager</i>
+</div>
+<div align="center">
+  <img src="img/grafana.jpg">
+</div>
+<div align="center">
+  <i>Grafana Dashboard</i>
+</div>
+<div align="center">
+  <img src="img/gmail.jpg">
+</div>
+<div align="center">
+  <i>Send Alert via Email</i>
+</div>
+
 ##  **IV. References**
 - [My GitHub Repository](https://github.com/nhok8t1/Prometheus)
 - [Real time monitoring stack (Prometheus, Grafana, Node_Exporter, Docker) setup using docker-compose - YouTube](https://www.youtube.com/watch?v=5Ri1KfdBTm4)
