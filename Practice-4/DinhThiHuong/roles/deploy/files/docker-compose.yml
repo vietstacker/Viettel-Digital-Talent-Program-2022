@@ -19,6 +19,7 @@ services:
     container_name: alertmanager
     command:
       - '--config.file=/etc/alertmanager/config.yml'
+      - '--cluster-peer=192.168.1.176:9093'
     volumes:
       - ./alertmanager:/etc/alertmanager
     restart: unless-stopped

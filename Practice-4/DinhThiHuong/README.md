@@ -13,14 +13,16 @@
 
 - Prometheus is an open-source systems monitoring and alerting toolkit originally built at SoundCloud. 
 - Prometheus collects and stores its metrics as time series data, i.e. metrics information is stored with the timestamp at which it was recorded, alongside optional key-value pairs called labels.
-- Components: 
+
+- Architecture: 
+ <img src="imgs/architecture.png">
+
+ - Components: 
   - Prometheus server: scrapes and stores time series data
   - client libraries: instrumentes application code
   - push gateway: supports short-lived jobs. These tasks do not exist long enough for server to pull metrics. So, at first, metrics are pushed to push gateway and then pulled by Prometheus server.
   - exporters: fetch statistics from the system and sent data to Prome sever as expected.
   - alertmanager:  handle alerts
-- Architecture: 
- <img src="imgs/prometheus.png">
 
 ### 2. Exporter
 - Exporters are apps written for common things like Database, Server. We just need to run it and it will export the collected metrics for us.
@@ -33,11 +35,17 @@
 
 ### 3. Grafana
 
- <img src="imgs/grafana.png">
+ <img src="imgs/Grafana.png">
 
 - Grafana is a multi-platform open source analytics and interactive visualization web application. Grafana allows you to query, visualize, alert on and understand your metrics no matter where they are stored. Create, explore, and share beautiful dashboards with your team and foster a data driven culture.
 
-- The two parts of Grafana, front end and back end are written in TypeScript and Go, respectively.
+- Grafana also enables us to write plugins from scratch for integration with several data sources. These are some useful features of Grafana:
+
+  - Time series analytics: Study, analyse and monitor data over period of time.
+
+  - Tracking behaviour: Track the user behaviour, application behaviour, frequency of errors popping up in production or a pre-prod environment, type of errors popping up & the contextual scenarios by providing relative data.
+
+  - On-prem deployed: our data will not be streamed to the third party organization or vendor cloud, but it will be self deployed by us.
 
 ### 4. Alerting
 - The Alertmanager handles alerts sent by client applications such as the Prometheus server. It takes care of deduplicating, grouping, and routing them to the correct receiver integration such as email, PagerDuty, or OpsGenie. It also takes care of silencing and inhibition of alerts.
@@ -60,12 +68,8 @@
   - Create the dashboards Grafana to monitoring host, container,..
 
 
-Here is my reposity structure:
-<img src="imgs/repo.png">
-
-
-**1. Deploy Prometheus**
-- Create folder named `prometheus` and write Prometheus configuration file `prometheus.yml` inside:
+**1. Prometheus Config**
+- Prometheus configuration file `prometheus.yml`:
 ```
 global:
   scrape_interval: 15s 
@@ -91,6 +95,7 @@ alerting:
     static_configs:
     - targets: 
       - 'alertmanager:9093'
+      - '192.168.1.176:9093'
 ```
 
 - Create file `alert.rules.yml` containing alerting rules in the same directory:
@@ -148,25 +153,65 @@ groups:
   - alerting: access to alertmanager via default port: 9093
 
 
-**2. Deploy alertmanager**
+- For high avalibility, I configure Alert Manager to run in a 2-node cluster including my VM and my host (192.168.1.176).
+
+
+**2. Alert Manager Config**
 - Create folder named `alertmanager` then write configuration file `config.yml` inside:
-- In this lab, I will sent alert via Slack. Slack notifications are sent via Slack webhooks.
 ```
 route:
     receiver: 'slack'
+
 receivers:
     - name: 'slack'
       slack_configs:
           - send_resolved: true
             text: "{{ .CommonAnnotations.description }}"
-            username: 'Prometheus'
-            channel: '#general'    # The channel or user to send notifications to.
-            api_url: 'https://hooks.slack.com/services/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'
+            username: 'rdinh522'
+            channel: '#head-in-the-clouds'    # The channel or user to send notifications to.
+            api_url: 'https://hooks.slack.com/services/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'
 ```
 
+- In this lab, I will sent alert via Slack. Slack notifications are sent via Slack webhooks. To get `api_url`, let's create a new app then pick a workspace and a channel to sent alert to.
 
-**3. Deploy node-exporter**
+<img src="slackapp.png">
+
+
+<img src="slackurl.png">
+
+
+**3. docker-compose file**
 ```
+version: '3'
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.17.1
+    container_name: prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    expose:
+      - 9090
+    networks:
+      - monitor-net
+
+  alertmanager:
+    image: prom/alertmanager:v0.20.0
+    container_name: alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--cluster-peer=192.168.1.176:9093'
+    volumes:
+      - ./alertmanager:/etc/alertmanager
+    restart: unless-stopped
+    ports:
+      - 9093:9093
+    networks:
+      - monitor-net
+
   nodeexporter:
     image: prom/node-exporter:v0.18.1
     container_name: nodeexporter
@@ -177,13 +222,7 @@ receivers:
       - 9100:9100
     networks:
       - monitor-net
-```
-- Docker can produce a lot of churn if there's a crashloop and the filesystems themselves should already already covered, so those paths are ignored out of the box by flag --collector.filesystem.ignored-mount-points
 
-
-**4. Deploy Grafana**
-- To create Grafana container: 
-```
   grafana:
     image: grafana/grafana:6.7.2
     container_name: grafana
@@ -192,10 +231,158 @@ receivers:
       - 3000:3000
     networks:
       - monitor-net
+
+networks:
+  monitor-net:
+    driver: bridge
 ```
 
+- Docker can produce a lot of churn if there's a crashloop and the filesystems themselves should already already covered, so those paths are ignored out of the box by flag --collector.filesystem.ignored-mount-points.
 
-**5. Result**
+
+**4. Ansible Playbooks**
+- In this lab, I will utilize the VM and inventory file from [my previous practice 2](https://github.com/dinhuong/Viettel-Digital-Talent-Program-2022/tree/main/Practice-2/Dinh-Thi-Huong)
+
+- Ansible playbook `playbook.yml`:
+```
+---
+- name: Install docker
+  hosts: servers
+  become: yes
+  roles:
+  - docker
+
+- name: Deploy monitoring system
+  hosts: servers
+  become: yes
+  roles:
+  - deploy
+```
+
+- Create `roles` directory follow my reposity structure. For details, `files` contains static files to be copied to nodes and `tasks` contains actions to take, using modules.
+
+- Role `docker` to install Docker and Docker compose in my VM:
+```
+---
+- name: Install aptitude
+  apt:
+    name: aptitude
+    state: latest
+    update_cache: true
+
+- name: Install required system packages
+  apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
+    state: latest
+    update_cache: true
+
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu focal stable
+    state: present
+
+- name: Update apt and install docker-ce
+  apt:
+    name: docker-ce
+    state: latest
+    update_cache: true
+
+- name: Install Docker, Docker Compose Modules for Python
+  pip:
+    name: 
+      - docker
+      - docker-compose
+```
+
+- Role `deploy` to deploy monitoring system:
+```
+---
+- name: copy Docker Compose files
+  copy:
+    src: files/
+    dest: /tmp/
+
+- name: deploy Docker Compose stack
+  community.docker.docker_compose:
+    project_src: /tmp
+    files:
+    - docker-compose.yml
+```
+
+- By default, roles directoy is in */etc/ansible/roles*. I will custom location of roles by setting **roles_path** setting in the default section of `ansible.cfg` file:
+```
+[defaults]
+roles_path = ./roles
+```
+
+**5. Delployment**
+- Run `ansible-playbook` to start our system
+```
+ansible-playbook -i inventory playbook.yml -K
+```
+
+**6. Result**
+- Run successfully playbook:
+
+
+<img src="imgs/run-playbook.png">
+
+
+- Check Alertmanager in high availability:
+
+
+<img src="imgs/ha.png">
+
+
+- Check container status:
+
+
+<img src="imgs/dockerps.png">
+
+
+<img src="imgs/dockerlogs.png">
+
+
+- To check the alertmanager works fine, I try stopping container **nodeexporter**:
+```
+docker container stop nodeexporter 
+```
+
+<img src="imgs/alertmanager.png">
+
+
+<img src="imgs/slackalert.png">
+
+
+- Access Grafana Dashboard via port 3000 then enter `admin` for username and password.
+
+<img src="imgs/login.png">
+
+- Create new datasource Prometheus, enter url **http://prometheus:9090"**:
+<img src="imgs/datasource.png">
+
+- It's your creative time to visualize metrics :))
+
+<img src="img/visualize.png">
 
 
 ## III. References
+- [Prometheus docs](https://prometheus.io/docs/introduction/overview/)
+
+- [How to Use Ansible to Install and Set Up Docker on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-20-04)
+
+- [How to run docker-compose commands with ansible?](https://stackoverflow.com/questions/62452039/how-to-run-docker-compose-commands-with-ansible)
+
+- [Send Message to a Private Channel with Slack API](https://pipedream.com/apps/github/integrations/slack/send-message-to-a-private-channel-with-slack-api-on-new-review-request-from-github-api-int_EzsEEr)
