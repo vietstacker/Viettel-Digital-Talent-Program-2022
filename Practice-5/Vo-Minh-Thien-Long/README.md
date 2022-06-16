@@ -1,4 +1,4 @@
-# Using Ansible to deploy Prometheus, Grafana and Node Exporter
+# Push logs using Fluentd, Elasticsearch and Kibana
 
 
 Author: **Vo Minh Thien Long**
