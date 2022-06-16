@@ -1,6 +1,6 @@
 ---
 - name: stop all container
-  hosts: monitors
+  hosts: node_exporters
 
   tasks:
     - name: Get info on docker host and list images

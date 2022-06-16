@@ -9,3 +9,4 @@
     - grafana-db:/var/lib/grafana
     - ./grafana/provisioning/:/etc/grafana/provisioning/
     # restart: always
+    

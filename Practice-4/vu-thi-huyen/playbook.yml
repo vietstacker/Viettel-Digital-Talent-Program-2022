@@ -1,21 +1,20 @@
-# - name: install docker 
-#   hosts: monitors
-#   tasks:
-#   - name: install docker.io
-#     become: yes
-#     apt:
-#       name: docker.io
-#       state: present
-#   - name: install docker-compose
-#     become: yes
-#     apt:
-#       name: docker-compose
-#       state: present
-#   - name: test docker service is running
-#     become: yes
-#     service:
-#       name: docker
-#       state: started
+- name: install docker 
+  hosts: node_exporters
+  tasks:
+  - name: install docker
+    become: yes
+    apt:
+      name:
+        - containerd
+        - docker.io
+        - docker-compose
+      state: latest
+
+  - name: test docker service is running
+    become: yes
+    service:
+      name: docker
+      state: started
 
 - name: create exporter server
   hosts: node_exporters

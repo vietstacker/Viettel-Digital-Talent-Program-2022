@@ -20,7 +20,7 @@ scrape_configs:
     honor_labels: true
 
     static_configs:
-    - targets: ['192.168.18.106:9090']
+    - targets: ['192.168.18.108:9090']
   
   - job_name: node-exporter
     scrape_interval: 5s
