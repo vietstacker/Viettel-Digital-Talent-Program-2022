@@ -1,3 +1,24 @@
+- [1. Tìm hiểu về Elasticsearch](#1-tìm-hiểu-về-elasticsearch)
+  - [1.1. Giới thiệu về Elasticsearch](#11-giới-thiệu-về-elasticsearch)
+    - [1.1.1. Ưu điểm](#111-ưu-điểm)
+    - [1.1.2. Nhược điểm](#112-nhược-điểm)
+  - [1.2. Một số khái niệm chính trong Elasticsearch](#12-một-số-khái-niệm-chính-trong-elasticsearch)
+    - [1.2.1. Document](#121-document)
+    - [1.2.2. Index](#122-index)
+    - [1.2.3. Index](#123-index)
+    - [1.2.3. Shard](#123-shard)
+      - [1.2.3.1. Primary Shard](#1231-primary-shard)
+      - [1.2.3.2. Replica Shard](#1232-replica-shard)
+    - [1.2.4. Cluster](#124-cluster)
+    - [1.2.5. Node](#125-node)
+      - [1.2.5.1. Master Node](#1251-master-node)
+      - [1.2.5.2. Data Node](#1252-data-node)
+      - [1.2.5.3. Coordinating Node](#1253-coordinating-node)
+      - [1.2.5.4. Ingest Node](#1254-ingest-node)
+      - [1.2.5.5. Tribe Node](#1255-tribe-node)
+- [2. Setup Elasticsearch với Docker](#2-setup-elasticsearch-với-docker)
+- [3. Query trong Elasticsearch](#3-query-trong-elasticsearch)
+
 # 1. Tìm hiểu về Elasticsearch
 
 ## 1.1. Giới thiệu về Elasticsearch
@@ -112,9 +133,9 @@ Ingest node là node xử lí ingest pipelines. Ingest piplines cho phép thực
 
 Hoạt động với chức năng đặc biệt như một Client Node có khả năng giao tiếp với rất nhiều cụm ES Cluster khác nhau để thực hiện các thao tác tìm kiếm hoặc hành vi liên quan đến dữ liệu.
 
-# 2. Setup Elasticsearch
+# 2. Setup Elasticsearch với Docker
 
-Ta sẽ setup một cụm ES gồm 3 node cơ bản, như sau:
+Ta sẽ setup một cụm ES gồm 3 node cơ bản, với file [docker-compose.yml](elasticsearch/docker-compose.yml) như sau:
 
     version: "2.2"
     services:
