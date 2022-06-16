@@ -174,10 +174,10 @@ receivers:
 
 - In this lab, I will sent alert via Slack. Slack notifications are sent via Slack webhooks. To get `api_url`, let's create a new app then pick a workspace and a channel to sent alert to.
 
-<img src="slackapp.png">
+<img src="imgs/slackapp.png">
 
 
-<img src="slackurl.png">
+<img src="imgs/slackurl.png">
 
 
 **3. docker-compose file**
@@ -370,12 +370,12 @@ docker container stop nodeexporter
 
 <img src="imgs/login.png">
 
-- Create new datasource Prometheus, enter url **http://prometheus:9090"**:
+- Create new datasource Prometheus, enter url **http://prometheus:9090**:
 <img src="imgs/datasource.png">
 
 - It's your creative time to visualize metrics :))
 
-<img src="img/visualize.png">
+<img src="imgs/visualize.png">
 
 
 ## III. References
