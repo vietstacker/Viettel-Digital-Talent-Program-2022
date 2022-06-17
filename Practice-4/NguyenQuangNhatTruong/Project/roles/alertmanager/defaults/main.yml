@@ -1,0 +1,5 @@
+---
+# defaults file for alertmanager
+docker_image: "prom/alertmanager:latest"
+docker_name: "alertmanager"
+alertmanager_dir_config: "/etc/alertmanager"
