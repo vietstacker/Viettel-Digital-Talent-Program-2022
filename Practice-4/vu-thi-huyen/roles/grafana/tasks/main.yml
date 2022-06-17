@@ -1,8 +1,8 @@
 ---
-# - name: Copy Grafana Config File
-#   copy: 
-#     src: ./provisioning/
-#     dest: ~/grafana/pro
+- name: Copy Grafana Config File
+  copy: 
+    src: ./provisioning
+    dest: ~/grafana/
 
 - name: Create Grafana container
   docker_container:
@@ -12,7 +12,4 @@
     - 4000:3000
     volumes:
     - grafana-db:/var/lib/grafana
-    - ./grafana/provisioning/:/etc/grafana/provisioning/
-    # - ./datasources:/etc/grafana/provisioning/datasources/
-    # - ./dashboards:/etc/grafana/provisioning/dashboards/
-    
+    - ~/grafana/provisioning/:/etc/grafana/provisioning/

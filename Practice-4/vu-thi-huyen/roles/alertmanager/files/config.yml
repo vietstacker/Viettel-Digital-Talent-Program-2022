@@ -1,12 +1,14 @@
 route:
-  receiver: 'telegram'
+  receiver: 'email'
   group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
   repeat_interval: 3h
 
 receivers:
   - name: 'telegram'
     telegram_configs:
       - send_resolved: true
-        api_url: 'https://api.telegram.org'
-        bot_token: '5572355106:AAGz-mHulSaaWsj-rXgE-v1ur5KK-t6cj2Y'
+        chat_id: '622739777'
+        bot_token: '5517574482:AAGkzQRxHfd9b42jShLSEPcFRyFErGVVL7I'
         parse_mode: 'Markdown'

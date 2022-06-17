@@ -14,9 +14,9 @@
     image: prom/prometheus:latest
     name: prometheus
     volumes:
-      - ./prometheus:/etc/prometheus
+      - ~/prometheus:/etc/prometheus
       - prometheus-db:/prometheus
-      - ./prometheus/alert.rules:/alertmanager/alert.rules.yml
+      - ~/prometheus/alert.rules.yml:/alertmanager/alert.rules.yml
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
