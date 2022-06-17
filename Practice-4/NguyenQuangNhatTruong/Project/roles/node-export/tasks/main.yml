@@ -1,0 +1,14 @@
+---
+# tasks file for node-export
+- name: Pull Node Exporter Docker image
+  docker_image:
+    name: "{{docker_image}}"
+    source: pull
+    
+- name: Run Node Exporter Docker image
+  docker_container:
+    name: "{{docker_name}}"
+    image: "{{docker_image}}"
+    restart_policy: unless-stopped
+    ports: 
+    - "9100:9100"

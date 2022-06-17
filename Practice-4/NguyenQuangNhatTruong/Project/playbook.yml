@@ -1,0 +1,16 @@
+---
+- hosts: all
+  become: true
+  roles: 
+    - docker
+- hosts: monitor
+  become: true
+  roles: 
+    - prometheus
+    - grafana
+       
+- hosts: node
+  become: true
+  roles:
+    - node-export
+    - alertmanager  

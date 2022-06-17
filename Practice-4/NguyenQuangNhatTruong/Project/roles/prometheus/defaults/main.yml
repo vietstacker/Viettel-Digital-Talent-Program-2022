@@ -1,0 +1,6 @@
+---
+# defaults file for prometheus
+
+prometheus_dir_config: "/etc/prometheus"
+docker_name: "prometheus"
+docker_image: "prom/prometheus:latest"

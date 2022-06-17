@@ -1,0 +1,29 @@
+---
+# tasks file for prometheus
+- name: Pull Prometheus Docker image
+  docker_image:
+    name: "{{ docker_image }}"
+    source: pull
+    
+- name: Copy prometheus.yml file to /tmp
+  copy:
+    src: prometheus.yml
+    dest: /tmp
+
+- name: Copy alert rules file to /tmp
+  copy:
+    src: alert_rules.yml
+    dest: /tmp
+
+- name: Run Prometheus Docker image
+  docker_container:
+    name: "{{ docker_name }}"
+    image: "{{ docker_image }}"
+    restart_policy: unless-stopped
+    volumes:
+    - /tmp/prometheus.yml:{{prometheus_dir_config}}/prometheus.yml
+    - /tmp/alert_rules.yml:{{prometheus_dir_config}}/alert_rules.yml
+    command:
+      - '--config.file={{prometheus_dir_config}}/prometheus.yml'
+    ports:
+      - 9090:9090

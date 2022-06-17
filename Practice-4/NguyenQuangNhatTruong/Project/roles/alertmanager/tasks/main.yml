@@ -1,0 +1,24 @@
+---
+# tasks file for alertmanager
+- name: Pull Alertmanager Docker image
+  docker_image:
+    name: "{{docker_image}}"
+    source: pull
+    
+- name: Copy alertmanager.yml file to /tmp
+  copy:
+    src: alertmanager.yml
+    dest: /tmp
+
+- name: Run Alertmanager Docker image
+  docker_container:
+    name: "{{docker_name}}"
+    image: "{{docker_image}}"
+    ports:
+    - "9093:9093"
+    restart_policy: unless-stopped
+    volumes:
+      - /tmp/alertmanager.yml:{{alertmanager_dir_config}}/alertmanager.yml
+    command:
+        - '--config.file={{alertmanager_dir_config}}/alertmanager.yml'
+        - '--storage.path=/alertmanager'

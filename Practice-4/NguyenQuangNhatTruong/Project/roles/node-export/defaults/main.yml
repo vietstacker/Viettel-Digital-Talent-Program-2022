@@ -1,0 +1,4 @@
+---
+# defaults file for node-export
+docker_image: "prom/node-exporter:latest"
+docker_name: "node-exporter"
