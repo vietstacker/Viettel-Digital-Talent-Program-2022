@@ -121,7 +121,7 @@ networks:
 ```
 
 Chạy `docker-compose up` và xem kết quả thôi:
-<img src="images/elastic-home.png">
+<img src="images/eslastic-home.png">
 <img src="images/kibana.png">
 
 # II. Tiến hành đẩy log
@@ -214,3 +214,8 @@ webapp:
 
 Thành công đẩy lên `27.71.229.80:5601`
 <img src="images/success.png">
+
+# III. REFERENCES
+
+- [1] <a href="https://www.youtube.com/watch?v=ZP0NmfyfsoM&t=298s">What is Elasticsearch | IBM</a>
+- [2] <a href="https://blog.vietnamlab.vn/quan-ly-log-voi-logstash-elasticsearch-kibana/">Quản lý log với EFK</a>
