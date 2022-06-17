@@ -28,13 +28,31 @@ Elasticsearch is the distributed, RESTful search and analytics engine at the hea
 -   Application monitoring
 -   Endpoint security
 ... and more!
-Them anh
+<div align="center">
+  <img src="img/elastic.jpg">
+</div>
+<div align="center">
+  <i>Elasticsearch</i>
+</div>
+
 ###  **2. Fluentd**
 **Fluentd** collects events from various data sources and writes them to files, RDBMS, NoSQL, IaaS, SaaS, Hadoop and so on. Fluentd helps you unify your logging infrastructure (Learn more about the Unified Logging Layer).
-Them anh
+<div align="center">
+  <img src="img/fluentd.png">
+</div>
+<div align="center">
+  <i>Fluentd</i>
+</div>
+
 ###  **3. Kibana**
 **Kibana** is a proprietary data visualization dashboard software for Elasticsearch, whose free and open source successor in OpenSearch is OpenSearch Dashboards.
-Them anh
+<div align="center">
+  <img src="img/kibana.png">
+</div>
+<div align="center">
+  <i>Kibana</i>
+</div>
+
 ##  **III. Step-by-step**
 To push log into Elasticsearch, we create three files:
 -   Dockerfile for Fluentd
@@ -116,6 +134,12 @@ cd NodeApp
 docker-compose up -d
 ```
 ###  **6. Result**
-Them anh
+<div align="center">
+  <img src="img/result.png">
+</div>
+<div align="center">
+  <i>Result</i>
+</div>
+
 ##  **IV. References**
 - [nhok8t1/Fluentd (github.com)](https://github.com/nhok8t1/Fluentd)
