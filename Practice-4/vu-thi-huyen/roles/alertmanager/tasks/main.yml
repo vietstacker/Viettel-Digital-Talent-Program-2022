@@ -3,7 +3,7 @@
   copy:
     src: config.yml
     dest: ~/alertmanager/
-
+    
 - name: Create alertmanager container
   docker_container:
     image: prom/alertmanager:v0.22.2
