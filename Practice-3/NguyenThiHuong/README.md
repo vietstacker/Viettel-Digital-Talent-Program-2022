@@ -224,6 +224,10 @@ EXPOSE 5000
   - RUN: allows you to install your application and packages required for it. It executes any commands on top of the current image and creates a new layer by committing the results. Often you will find multiple RUN instructions in a Dockerfile.
   - CMD: allows you to set a default command, which will be executed only when you run container without specifying a command. If Docker container runs with a command, the default command will be ignored. If Dockerfile has more than one CMD instruction, all but last CMD instructions are ignored.
   - ENTRYPOINT: allows you to configure a container that will run as an executable. It looks similar to CMD, because it also allows you to specify a command with parameters. The difference is ENTRYPOINT command and parameters are not ignored when Docker container runs with command line parameters. (There is a way to ignore ENTTRYPOINT, but it is unlikely that you will do it.)
+- ENV and ARG: ENV is for future running containers. ARG for building your Docker image. 
+- COPY and ADD: 
+  - COPY is a docker file command that copies files from a local source location to a destination in the Docker container.
+  - ADD command is used to copy files/directories into a Docker image.
 -  Lastly, the required libraries is list in the requirements.txt
 ```
 Jinja2
