@@ -1,5 +1,5 @@
 - name: install docker 
-  hosts: node_exporters
+  hosts: monitors
   tasks:
   - name: install docker
     become: yes
