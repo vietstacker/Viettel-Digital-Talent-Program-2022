@@ -1,0 +1,43 @@
+version: '3.3'   
+services:                                                                                                                                                                                                                               services:                                                                                                                   
+  fluentd:                                                                                                                    
+    build: ./fluentd                                                                                                       
+    volumes:                                                                                                                  
+      - ./fluentd/conf:/fluentd/etc
+    ports:                                                                                                                    
+      - "24224:24224"
+      - "24224:24224/udp"
+  api:                                                                                                                        
+    build:                                                                                                                   
+      context: ./api                                                                                                          
+      dockerfile: Dockerfile                                                                                              
+    volumes:                                                                                                                   
+      - ./api/:/app
+    ports:                                                                                                                    
+      - 5000:5000                                                                                                           
+    environment:                                                                                                              
+      - FLASK_APP=api.py
+    command: flask run --host=0.0.0.0                                                                                    
+    logging:                                                                                                                 
+      driver: "fluentd"                                                                                                     
+      options:                                                                                                                
+        fluentd-address: "0.0.0.0:24224"                                                                                    
+        tag: flask   
+  webserver:                                                                                                                                                                                                                            webserver:                                                                                                                 
+    build:                                                                                                                    
+      context: ./client                                                                                                      
+      dockerfile: Dockerfile                                                                                              
+    ports:                                                                                                                    
+      - 80:80
+    volumes:                                                                                                                
+      - ./client/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./client:/usr/share/nginx/html
+    logging:                                                                                                                 
+      driver: "fluentd"                                                                                                    
+      options:                                                                                                               
+        fluentd-address: "0.0.0.0:24224"                                                                                     
+        tag: webserver                                                                                                                                                                                                                           mongodb:                                                                                                                  
+  mongodb
+    image: mongo:5.0                                                                                                      
+    volumes:                                                                                                                   
+      - .docker/data/db:/data/db 
