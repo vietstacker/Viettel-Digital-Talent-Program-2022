@@ -1,0 +1,63 @@
+version: '3'
+networks:
+  web-server:
+services:
+  frontend:
+    build: frontend
+    volumes:
+      - ./frontend/nginx.conf:/tmp/nginx.conf
+    ports:
+      - 80:80
+    depends_on:
+      - backend
+    networks:
+      - web-server
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: 127.0.0.1:24224
+        tag: nginx
+
+  backend:
+    build: backend
+    volumes:
+      - ./backend:/src
+    command:
+      - /bin/bash
+      - -c
+      - |
+        python3 -m flask run -h 0.0.0.0
+    ports: 
+      - 5000:5000
+    depends_on:
+      - mongo
+    networks:
+      - web-server
+    restart: always
+    extra_hosts:
+      - "dockerhost:host-gateway"
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: 127.0.0.1:24224
+        tag: flask
+
+  mongo:
+    image: mongo:5.0
+    hostname: mongo
+    ports:
+      - '27017'
+    volumes:
+      - ./db/data.js:/docker-entrypoint-initdb.d/data.js
+    networks:
+      - web-server
+
+  fluentd:
+      build: fluentd
+      volumes:
+        - ./fluentd:/fluentd/etc
+      #   - ./fluentd:/etc/fluentd
+      ports:
+        - "24224:24224"
+  
+      
