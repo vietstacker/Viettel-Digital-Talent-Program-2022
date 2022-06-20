@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+    api:
+        build:
+          context: ./api
+          dockerfile: Dockerfile
+        volumes:
+            - ./api/:/app
+        ports:
+          - 5000:5000
+        environment:
+            - FLASK_APP=api.py
+        command: flask run --host=0.0.0.0
+
+    webserver:
+        build:
+          context: ./client
+          dockerfile: Dockerfile
+        ports:
+            - 80:80
+        volumes:
+            - ./client/nginx/conf.d/:/etc/nginx/conf.d/
+            - ./client:/usr/share/nginx/html
+
+    mongodb:
+        image: mongo:5.0
+        volumes:
+            - .docker/data/db:/data/db
