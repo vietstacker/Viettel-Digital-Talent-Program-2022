@@ -1,0 +1,7 @@
+[prometheus_servers]
+10.211.55.34 ansible_user=parallels ansible_become_pass=Phananh272 
+10.211.55.35 ansible_user=parallels ansible_become_pass=Phananh272
+
+[alert_servers]
+10.211.55.35 ansible_user=parallels ansible_become_pass=Phananh272
+10.211.55.36 ansible_user=parallels ansible_become_pass=Phananh272

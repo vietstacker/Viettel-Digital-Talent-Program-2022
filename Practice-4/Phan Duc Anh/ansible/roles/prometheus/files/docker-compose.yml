@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  prometheus:
+    build: .
+    container_name: prometheus
+    ports:
+      - 9090:9090
+
+networks:
+  default:
+    name: mornitor_net
+    external: true

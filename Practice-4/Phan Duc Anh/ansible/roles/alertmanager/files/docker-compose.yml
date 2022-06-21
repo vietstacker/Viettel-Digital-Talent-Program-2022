@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  alertmanager:
+    build: .
+    container_name: alertmanager
+    ports:
+      - 9093:9093
+      - 9094:9094/udp
+      - 9094:9094/tcp
+
+networks:
+  default:
+    name: mornitor_net
+    external: true

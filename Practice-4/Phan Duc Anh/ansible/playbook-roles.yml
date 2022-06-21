@@ -1,0 +1,24 @@
+- hosts: all
+  become: true
+  roles:
+    - docker
+
+- hosts: all
+  become: true
+  roles:
+    - exporter
+
+- hosts: prometheus_servers
+  become: true
+  roles:
+    - prometheus
+
+- hosts: alert_servers
+  become: true
+  roles:
+    - alertmanager
+
+- hosts: grafana_server
+  become: true
+  roles:
+    - grafana
