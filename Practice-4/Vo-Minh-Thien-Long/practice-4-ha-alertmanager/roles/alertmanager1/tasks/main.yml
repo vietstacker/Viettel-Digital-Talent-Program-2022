@@ -17,6 +17,6 @@
     command:
     - '--config.file=/etc/config.yml'
     - '--storage.path=/alertmanager'
-    - '--cluster-peer=34.227.159.188:9093'
+    - '--cluster.peer=34.227.159.188:9093'
     ports:
     - "9093:9093"
