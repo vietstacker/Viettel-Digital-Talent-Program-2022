@@ -1,0 +1,10 @@
+---
+- name: Create Node-Exporter containers
+  docker_container:
+    name: "{{container_name}}"
+    image: "{{ docker_images }}"
+    command: "{{ container_command}}"
+    volumes: "{{ container_volumes}}"
+    restart: yes
+    ports:
+      - 9100:9100

@@ -1,0 +1,15 @@
+---
+- name: Copy AlertManager Config file
+  copy:
+    src: config.yml
+    dest: ~/alertmanager/
+
+- name: Create AlertManager containers
+  docker_container:
+    name: "{{container_name}}"
+    image: "{{ docker_images }}"
+    volumes: "{{ container_volumes}}"
+    command: "{{ container_command}}"
+    restart: yes
+    # ports:
+    #   - 9093:9093

@@ -1,0 +1,76 @@
+---
+# tasks file for docker-on-ubuntu
+- name: install dependencies
+  apt:
+    name: "{{item}}"
+    state: present
+    update_cache: yes
+  loop: "{{ docker_dependencies }}"
+
+- name: add GPG key
+  apt_key:
+    url: "{{ docker_gpg_key }}"
+    state: present
+
+- name: add docker repository to apt
+  apt_repository:
+    repo: "{{ docker_repo_cmd }}"
+    state: present
+
+- name: install docker
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  loop: "{{ docker_pkgs }}"
+
+- name: install pip
+  apt: 
+    name: python3-pip
+    state: latest
+    update_cache: yes
+
+- name: Install Docker Module for Python
+  pip:
+    name: docker
+    executable: pip3
+
+- name: Install Docker-Compose Module for Python
+  pip:
+    name: docker-compose
+    executable: pip3
+
+- name: Starting & Enable docker.
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Ensure group "docker" exists
+  group:
+    name: docker
+    state: present
+
+- name: adding user to docker group
+  user:
+    name: "{{ docker_user }}"
+    groups: docker
+    append: yes
+
+- name: Install docker-compose
+  get_url:
+    url: "{{ docker_compose_url }}"
+    dest: /usr/local/bin/docker-compose
+    mode: 'u+x,g+x'
+
+- name: Change file ownership, group and permissions
+  file:
+    path: /usr/local/bin/docker-compose
+    owner: "{{ docker_user }}"
+    group: "{{ docker_user }}"
+
+- name: Testing Docker by running Docker run hello=world
+  command: docker run hello-world
+  register: docker_test
+
+- debug: msg="{{ docker_test.stdout_lines }}"

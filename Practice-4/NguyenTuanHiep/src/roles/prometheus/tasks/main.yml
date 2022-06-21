@@ -1,0 +1,19 @@
+---
+- name: Copy Prometheus Config File
+  copy: 
+    src: prometheus.yml
+    dest: ~/prometheus/
+
+- name: Copy Alert Role File
+  copy: 
+    src: alert.rules
+    dest: ~/prometheus/
+
+- name: Create prometheus containers
+  docker_container:
+    name: "{{container_name}}"
+    image: "{{ docker_images }}"
+    volumes: "{{ container_volumes}}"
+    command: "{{ container_command}}"
+    ports:
+      - 9090:9090

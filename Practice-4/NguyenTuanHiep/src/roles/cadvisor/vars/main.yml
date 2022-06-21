@@ -1,0 +1,8 @@
+---
+container_name: cadvisor
+docker_images: google/cadvisor:v0.33.0
+container_volumes:
+  - /:/rootfs:ro
+  - /var/run:/var/run:rw
+  - /sys:/sys:ro
+  - /var/lib/docker/:/var/lib/docker:ro

@@ -1,0 +1,10 @@
+---
+container_name: prometheus
+docker_images: prom/prometheus:v2.36.0
+container_command:
+  - '--config.file=/etc/prometheus/prometheus.yml'
+  - '--storage.tsdb.path=/prometheus'
+container_volumes:
+  - ~/prometheus:/etc/prometheus
+  - prometheus-db:/prometheus
+  - ~/prometheus/alert.rules:/alertmanager/alert.rules

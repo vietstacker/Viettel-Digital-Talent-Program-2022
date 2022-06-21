@@ -1,0 +1,38 @@
+---
+- name: install & configure docker & docker-compose on Ubuntu
+  hosts: all
+  become: true
+  vars:
+    docker_user: root
+  roles:
+    - docker
+  tags: deploy-prod
+
+- name: deploy production server
+  hosts: production
+  become: true
+  vars:
+    github_branch: deploy-ansible
+  roles:
+    - deploy
+  tags: deploy-prod
+
+- name: deploy monitor to production server
+  hosts: production
+  become: true
+  roles:
+    - cadvisor
+    - node-exporter
+  tags: deploy-monitor
+
+- name: create monitor server
+  hosts: monitor
+  become: true
+  roles:
+    - prometheus
+    - grafana
+    - alertmanager
+    - cadvisor
+    - node-exporter
+  tags: monitoring
+
