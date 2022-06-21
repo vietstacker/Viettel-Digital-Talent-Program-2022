@@ -1,0 +1,12 @@
+[servers]
+; 178.128.103.48 ansible_user=root
+; 178.128.101.240 ansible_user=root
+# 178.128.109.226 ansible_user=root
+[local]
+localhost ansible_connection=local ansible_user=haivm
+[grafana]
+; 178.128.101.240 ansible_user=root
+# 178.128.109.226 ansible_user=root
+[prometheus]
+; 178.128.103.48 ansible_user=root
+

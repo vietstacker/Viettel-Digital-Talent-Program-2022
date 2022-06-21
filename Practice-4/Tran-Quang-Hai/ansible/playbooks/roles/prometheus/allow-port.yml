@@ -1,0 +1,6 @@
+- name: Allow Port 9090
+  become: true
+  shell: |
+    ufw allow 9090 
+    ufw enable
+    ufw reload

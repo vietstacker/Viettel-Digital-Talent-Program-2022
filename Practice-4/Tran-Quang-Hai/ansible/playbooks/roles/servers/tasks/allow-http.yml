@@ -1,0 +1,6 @@
+- name: Allow Port 80
+  become: true
+  shell: |
+    ufw allow 80 
+    ufw enable 
+    ufw reload

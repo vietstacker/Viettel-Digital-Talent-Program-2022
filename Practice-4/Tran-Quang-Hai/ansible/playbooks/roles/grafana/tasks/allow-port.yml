@@ -1,0 +1,6 @@
+- name: Allow Port 9100
+  become: true
+  shell: |
+    ufw allow 9100 
+    ufw enable 
+    ufw reload

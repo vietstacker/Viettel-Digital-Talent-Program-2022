@@ -1,0 +1,21 @@
+groups:
+- name: alert
+  rules:
+  - alert: full_storage
+    expr: node_filesystem_size_bytes - node_filesystem_free_bytes < 100000
+    for: 10s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Toang"
+      description: "Toang"
+- name: alert
+  rules:
+  - alert: cho_vui
+    expr: up{instance="localhost:9090", job="prometheus"} == 1
+    for: 10s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Còn lâu mới toang, báo cho vui thôi"
+      description: "Mệt"
