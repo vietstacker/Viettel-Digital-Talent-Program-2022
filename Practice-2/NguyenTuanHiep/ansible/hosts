@@ -1,0 +1,7 @@
+[production]
+139.162.45.253
+[dev]
+139.162.6.167
+[all:vars]
+ansible_user=root
+ansible_password=Hali201

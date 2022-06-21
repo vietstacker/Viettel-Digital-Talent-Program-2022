@@ -1,0 +1,13 @@
+---
+- name: Pull Node Exporter Docker image prom/node-exporter:latest:{{ version }}
+  docker_image:
+    name: prom/node-exporter:{{ version }}
+    source: pull
+    
+- name: Run Node Exporter Docker image prom/node-exporter:latest:{{ version }}
+  docker_container:
+    name: node-exporter
+    image: prom/node-exporter:latest:{{ version }}
+    restart_policy: unless-stopped
+    ports: 
+    - "9100:9100"

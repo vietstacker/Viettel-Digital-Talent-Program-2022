@@ -1,0 +1,4 @@
+# tasks file for PHP    
+- name: Install PHP Extensions  
+  apt: name={{ item }} update_cache=yes state=latest    
+  loop: "{{ php_modules }}"   

@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve vm1
+After=network.target
+
+[Service]
+User=vm1
+Group=www-data
+WorkingDirectory=/home/vm1/flask-ansible
+Environment="PATH=/home/vm1/flask-ansible/env/bin"
+ExecStart=/home/vm1/flask-ansible/env/bin/gunicorn --workers 3 --bind unix:flask-ansible.sock -m 007 wsgi:app
+
+[Install]
+WantedBy=multi-user.target

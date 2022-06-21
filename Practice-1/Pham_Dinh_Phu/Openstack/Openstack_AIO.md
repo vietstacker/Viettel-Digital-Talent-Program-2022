@@ -13,8 +13,10 @@
 - [III. Các bước thực hiện](#các_bước_thực_hiện)        
    - [1. Thiết lập môi trường ](#thiết_lập_môi_trường)    
    - [2. Cấu hình Openstack All In One](#cấu_hình_openstack_all_in_one)       
-   - [3. Cài đặt Openstack All In One](#cài_đặt_openstack_all_in_one)                 
-   - [4. Đăng nhập vào Horizon ](#đăng_nhập_vào_Horizon)          
+   - [3. Cài đặt Openstack All In One](#cài_đặt_openstack_all_in_one)   
+   - [4. Cài đặt OpenstackClient](#cài_đặt_OpenstackClient)        
+   - [5. Đăng nhập vào Horizon ](#đăng_nhập_vào_Horizon)   
+   - [6. Debugging](#debug)       
 - [IV. Tài liệu tham khảo](#Tài_liệu_tham_khảo)             
 
 ----  
@@ -162,7 +164,7 @@ kolla_base_distro: "ubuntu"
 kolla_install_type: "source"    
 
 network_interface: "enp0s8"   
-neutron_external_interface: enp0s3    
+neutron_external_interface: "enp0s3"    
 kolla_internal_vip_address: 192.168.56.105         
 
 nova_compute_virt_type: "qemu" 
@@ -218,10 +220,27 @@ $ kolla-ansible -i all-in-one post-deploy
  
 ![image](image/post-deploy.png)   
 
-  
-<a name='đăng_nhập_vào_Horizon'></a>   
+<a name='cài_đặt_OpenstackClient'></a>   
 
-### 4. Đăng nhập vào Horizon 
+### 4. Cài đặt OpenstackClient    
+- Cài đặt các gói cần thiết   
+```   
+pip install python3-openstackclient python3-glanceclient python3-neutronclient    
+```    
+- Chạy script để lấy cấu hình:  
+```  
+source /etc/kolla/admin-openrc.sh  
+```    
+- Kiểm tra dịch vụ:   
+```  
+openstack token issue   
+```    
+Kết quả như này là thành công  
+
+
+<a name='đăng_nhập_vào_Horizon'></a>    
+
+### 5. Đăng nhập vào Horizon 
 - Lấy mật khẩu để đăng nhập tài khoản admin:  
 ```    
 cat /etc/kolla/passwords.yml | grep keystone_admin    
@@ -236,7 +255,15 @@ keystone_admin_password: G7J5dKrgQ1huOYtN0JbhjD9LVi5yPCNgVkFCKxIP
 
 - Đăng nhập thành công:     
 
-![image](image/OpenstackSuccess.png)   
+![image](image/OpenstackSuccess.png)     
+
+<a a name='debug'></a>   
+
+### 6. Debugging   
+
+![image](image/Error.jpg)   
+
+- Lỗi này do cài kolla-ansible nhưng lại không tương thích với version của ansible. Nên cài lại đúng theo version đã nói ở trên.   
 
 ----    
 
