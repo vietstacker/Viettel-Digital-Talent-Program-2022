@@ -1,0 +1,4 @@
+---
+application_directory: /usr/src/app/frontend
+nginx_config_directory: /etc/nginx/conf.d/default.conf
+nginx_directory: /usr/share/nginx/html

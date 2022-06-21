@@ -1,0 +1,19 @@
+- name: Install Docker, Node Exporter, Prometheus
+  hosts: all
+  become: yes
+  roles:
+  - docker
+  - node_exporter
+  - prometheus
+
+- name: Install Alertmanager-HA-1
+  hosts: ec2-35-173-247-2.compute-1.amazonaws.com
+  become: yes
+  roles:
+  - alertmanager1
+
+- name: Install Alertmanager-HA-2
+  hosts: ec2-34-227-159-188.compute-1.amazonaws.com
+  become: yes
+  roles:
+  - alertmanager2

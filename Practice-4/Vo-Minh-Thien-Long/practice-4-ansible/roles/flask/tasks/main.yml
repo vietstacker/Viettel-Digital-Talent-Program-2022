@@ -1,0 +1,24 @@
+---
+- name: Install required system packages
+  apt:
+    pkg:
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
+    state: latest
+    update_cache: true
+    
+- name: Copy backend directory
+  copy:
+    src: backend
+    dest: /usr/src/app/
+    
+- name: Install requirements for Flask server
+  pip:
+    requirements: /usr/src/app/backend/requirements.txt
+
+- name: Start our Flask server (on background)
+  command: python3 /usr/src/app/backend/app.py
+  async: 10
+  poll: 0
+

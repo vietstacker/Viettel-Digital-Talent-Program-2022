@@ -1,0 +1,30 @@
+groups:
+- name: mongodb
+  rules:
+  - alert: MongodbDown
+    expr: mongodb_up == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: MongoDB Down (instance {{ $labels.instance }})
+      description: "MongoDB instance is down\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+  - alert: MongodbTooManyConnections
+    expr: avg by(instance) (rate(mongodb_connections{state="current"}[1m])) / avg by(instance) (sum (mongodb_connections) by (instance)) * 100 > 80
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: MongoDB too many connections (instance {{ $labels.instance }})
+      description: "Too many connections (> 80%)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+  - alert: MongodbVirtualMemoryUsage
+    expr: (sum(mongodb_memory{type="virtual"}) BY (instance) / sum(mongodb_memory{type="mapped"}) BY (instance)) > 3
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: MongoDB virtual memory usage (instance {{ $labels.instance }})
+      description: "High memory usage\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+

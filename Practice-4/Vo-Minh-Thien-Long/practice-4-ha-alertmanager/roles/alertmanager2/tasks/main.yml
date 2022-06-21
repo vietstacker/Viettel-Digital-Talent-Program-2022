@@ -1,0 +1,22 @@
+---
+- name: Pull Alertmanager Docker image prom/alertmanager:{{ version }}
+  docker_image:
+    name: prom/alertmanager:{{ version }}
+    source: pull
+
+- name: Copy all file
+  copy:
+    src: files/
+    dest: /etc/
+    
+- name: Run Alertmanager Docker image prom/alertmanager:{{ version }}
+  docker_container:
+    name: alertmanager
+    image: prom/alertmanager:{{ version }}
+    restart_policy: unless-stopped
+    command:
+    - '--config.file=/etc/config.yml'
+    - '--storage.path=/alertmanager'
+    - '--cluster.peer=35.173.247.2:9093'
+    ports:
+    - "9093:9093"

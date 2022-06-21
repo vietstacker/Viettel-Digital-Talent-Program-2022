@@ -1,0 +1,27 @@
+---
+galaxy_info:
+  role_name: mongodb_exporter
+  author: Kostiantyn Nemchenko
+  description: An Ansible role which installs and configures Percona MongoDB Exporter
+  company:
+  license: MIT
+  min_ansible_version: 2.4
+  platforms:
+  - name: EL
+    versions:
+    - 6
+    - 7
+  - name: Ubuntu
+    versions:
+    - xenial
+    - bionic
+  - name: Debian
+    versions:
+    - jessie
+    - stretch
+  galaxy_tags:
+  - monitoring
+  - mongodb
+  - prometheus
+  - percona
+dependencies: []

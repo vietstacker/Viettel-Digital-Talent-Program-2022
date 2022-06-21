@@ -1,0 +1,101 @@
+#jinja2: lstrip_blocks: True
+[Unit]
+Description=Percona MongoDB Exporter
+After=syslog.target network.target
+StartLimitInterval=0
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User={{ mongodb_exporter_system_user }}
+Group={{ mongodb_exporter_system_groups[0] }}
+
+ExecStart={{ mongodb_exporter_bin_dir.dest }}/mongodb_exporter \
+                --web.listen-address={{ mongodb_exporter_web_listen_address }} \
+                --web.telemetry-path={{ mongodb_exporter_web_telemetry_path }} \
+            {% if 'MONGODB_URI' not in mongodb_exporter_env_vars |map(attribute='name') |list %}
+                --mongodb.uri={{ mongodb_exporter_mongodb_uri }} \
+            {% endif %}
+	    {% if mongodb_exporter_version is version('0.20.0', '>') %}
+            {% if mongodb_exporter_compatible_mode %}
+                --compatible-mode \
+            {% endif %}
+            {% if mongodb_exporter_discovering_mode %}
+                --discovering-mode \
+            {% endif %}
+            {% if mongodb_exporter_direct_connect %}
+                --mongodb.direct-connect \
+            {% endif %}
+            {% if mongodb_exporter_global_conn_pool %}
+                --mongodb.global-conn-pool \
+            {% endif %}
+            {% if mongodb_exporter_disable_diagnosticdata %}
+                --disable.diagnosticdata \
+            {% endif %}
+            {% if mongodb_exporter_disable_replicasetstatus %}
+                --disable.replicasetstatus \
+            {% endif %}
+	    {% endif %}
+	    {% if mongodb_exporter_version is version('0.20.0', '<') %}
+            {% if mongodb_exporter_collect_database %}
+                --collect.database \
+            {% endif %}
+            {% if mongodb_exporter_collect_collection %}
+                --collect.collection \
+            {% endif %}
+            {% if mongodb_exporter_collect_topmetrics %}
+                --collect.topmetrics \
+            {% endif %}
+            {% if mongodb_exporter_collect_indexusage %}
+                --collect.indexusage \
+            {% endif %}
+
+            {% if mongodb_exporter_mongodb_tls %}
+                --mongodb.tls \
+              {% if mongodb_exporter_mongodb_tls_cert.dest and mongodb_exporter_mongodb_tls_cert.content %}
+                --mongodb.tls-cert={{ mongodb_exporter_mongodb_tls_cert.dest }} \
+              {% endif %}
+              {% if mongodb_exporter_mongodb_tls_private_key.dest and mongodb_exporter_mongodb_tls_private_key.content %}
+                --mongodb.tls-private-key={{ mongodb_exporter_mongodb_tls_private_key.dest }} \
+              {% endif %}
+              {% if mongodb_exporter_mongodb_tls_ca.dest and mongodb_exporter_mongodb_tls_ca.content %}
+                --mongodb.tls-ca={{ mongodb_exporter_mongodb_tls_ca.dest }} \
+              {% endif %}
+              {% if mongodb_exporter_mongodb_tls_disable_hostname_validation %}
+                --mongodb.tls-disable-hostname-validation \
+              {% endif %}
+            {% endif %}
+	    {% endif %}
+	    {% if mongodb_exporter_version is version('0.11.0', '<') %}
+                --mongodb.max-connections={{ mongodb_exporter_mongodb_max_connections }} \
+                --mongodb.socket-timeout={{ mongodb_exporter_mongodb_socket_timeout }} \
+                --mongodb.sync-timeout={{ mongodb_exporter_mongodb_sync_timeout }} \
+                --mongodb.authentification-database={{ mongodb_exporter_authentification_database }} \
+                --groups.enabled={{ mongodb_exporter_groups_enabled }}
+	    {% endif %}
+                --log.level={{ mongodb_exporter_log_level }}
+
+SyslogIdentifier=mysqld_exporter
+Restart=always
+RestartSec=5
+
+LockPersonality=true
+NoNewPrivileges=true
+MemoryDenyWriteExecute=true
+PrivateTmp=true
+ProtectHome=true
+RemoveIPC=true
+RestrictSUIDSGID=true
+
+{% if mongodb_exporter_systemd_version | int >= 232 %}
+PrivateUsers=true
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=yes
+ProtectSystem=strict
+{% else %}
+ProtectSystem=full
+{% endif %}
+
+[Install]
+WantedBy=multi-user.target

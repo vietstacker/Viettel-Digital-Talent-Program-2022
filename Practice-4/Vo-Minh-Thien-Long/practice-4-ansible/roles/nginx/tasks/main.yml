@@ -1,0 +1,42 @@
+---
+- name: Install required system packages
+  apt:
+    pkg:
+      - nginx
+      - npm
+    state: latest
+    update_cache: true
+    
+- name: Install Yarn by NPM
+  npm:
+    name: yarn
+    global: yes
+        
+- name: Copy Frontend directory
+  copy:
+    src: frontend/
+    dest: "{{ application_directory }}"
+    
+- name: Install Node dependencies
+  command: sudo yarn --ignore-engines
+  args:
+    chdir: "{{ application_directory }}"
+    
+- name: Build production
+  command: sudo yarn build --ignore-engines
+  args:
+    chdir: "{{ application_directory }}"
+    
+- name: Copy built Frontend to Nginx
+  copy:
+    src: "{{ application_directory }}/build/"
+    dest: "{{ nginx_directory }}"
+    
+- name: Copy configuration file
+  copy:
+    src: nginx.conf 
+    dest: "{{ nginx_config_directory }}"
+    
+- name: Start Nginx
+  command: nginx
+

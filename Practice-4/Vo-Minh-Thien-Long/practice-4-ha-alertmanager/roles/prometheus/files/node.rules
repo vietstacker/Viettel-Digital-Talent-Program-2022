@@ -1,0 +1,59 @@
+groups:
+- name: memory
+  rules:
+  - alert: HostOutOfMemoryMinor
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 20 and node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 >= 15
+    for: 2m
+    labels:
+      severity: minor
+    annotations:
+      summary: Host out of memory (instance {{ $labels.instance }})
+      description: "Node memory is filling up (< 20% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+  - alert: HostOutOfMemoryMajor
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 15 and node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 >= 10
+    for: 2m
+    labels:
+      severity: major
+    annotations:
+      summary: Host out of memory (instance {{ $labels.instance }})
+      description: "Node memory is filling up (< 15% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+  - alert: HostOutOfMemoryCritical
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: Host out of memory (instance {{ $labels.instance }})
+      description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+- name: cpu
+  rules:
+  - alert: HostHighCpuLoadMinor
+    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) >= 80 and 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) < 90
+    for: 0m
+    labels:
+      severity: minor
+    annotations:
+      summary: Host high CPU load (instance {{ $labels.instance }})
+      description: "CPU load is > 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+  - alert: HostHighCpuLoadMajor
+    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) >= 90 and 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) < 95
+    for: 0m
+    labels:
+      severity: major
+    annotations:
+      summary: Host high CPU load (instance {{ $labels.instance }})
+      description: "CPU load is > 85%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+  - alert: HostHighCpuLoadCritical
+    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) >= 95
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Host high CPU load (instance {{ $labels.instance }})
+      description: "CPU load is > 90%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+

@@ -1,0 +1,31 @@
+- name: Install Docker
+  hosts: monitor
+  become: yes
+  roles:
+  - docker
+
+- name: Install Node Exporter
+  hosts: nodes
+  become: yes
+  roles:
+  - node_exporter
+
+- name: Install and start Flask
+  hosts: ec2-34-230-19-242.compute-1.amazonaws.com
+  become: yes
+  roles:
+  - flask
+
+- name: Install and start Nginx, Nginx Exporter
+  hosts: ec2-18-212-78-52.compute-1.amazonaws.com 
+  become: yes
+  roles:
+  - nginx
+  - nginx_exporter
+  
+- name: Install and start MongoDB, MongoDB Exporter
+  hosts: ec2-54-90-221-86.compute-1.amazonaws.com
+  become: yes
+  roles:
+  - mongodb
+  - mongodb_exporter

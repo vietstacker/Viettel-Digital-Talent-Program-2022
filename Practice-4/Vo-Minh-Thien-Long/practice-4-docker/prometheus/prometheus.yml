@@ -1,0 +1,45 @@
+global:
+  scrape_interval:     30s # How frequently to scrape targets from all job
+  evaluation_interval: 30s # How frequently to evaluate rules
+  external_labels:
+      monitor: 'practice-4'
+
+rule_files: # Our rules files (in the same directory with prometheus)
+  - 'prometheus.rules'
+  - 'node.rules'
+  - 'mongodb.rules'
+  - 'nginx.rules'
+
+alerting: # We will configure and use alertmanagers for alerting here.
+  alertmanagers:
+  - scheme: http
+    static_configs:
+    - targets:
+      - "alertmanager:9093"
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 15s     # We will not use the global scrape_interval, but instead, set it to 15s
+
+  - job_name: 'alertmanager'
+    static_configs:
+      - targets:
+        - "alertmanager:9093"
+  
+  - job_name: 'node'
+    static_configs:
+      - targets:
+        - "node-exporter:9100"
+        - "34.230.19.242:9100"
+        - "54.90.221.86:9100"
+        - "18.212.78.52:9100"
+
+  - job_name: 'mongodb'
+    static_configs:
+      - targets:
+        - "54.90.221.86:9216"
+
+  - job_name: 'nginx'
+    static_configs:
+      - targets:
+        - "18.212.78.52:9113"

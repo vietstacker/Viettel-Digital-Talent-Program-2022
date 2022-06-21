@@ -1,0 +1,7 @@
+[monitor]
+localhost ansible_connection=local
+
+[nodes]
+ec2-34-230-19-242.compute-1.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./flask.pem
+ec2-18-212-78-52.compute-1.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./nginx.pem
+ec2-54-90-221-86.compute-1.amazonaws.com ansible_ssh_user=ubuntu ansible_ssh_private_key_file=./mongodb.pem

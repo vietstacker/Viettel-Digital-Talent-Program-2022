@@ -1,0 +1,111 @@
+---
+# Exporter version to install
+mongodb_exporter_version: 0.20.5
+# Exporter repository URL
+mongodb_exporter_base_url: https://github.com/percona/mongodb_exporter
+# Exporter download URL
+mongodb_exporter_release_url: "{{ mongodb_exporter_base_url }}/releases/download/v{{ mongodb_exporter_version }}/mongodb_exporter-{{ mongodb_exporter_version }}.{{ ansible_system |lower }}-amd64.tar.gz"
+
+# OS user to run exporter under
+mongodb_exporter_system_user: mongodb_exporter
+# OS groups to include user into
+mongodb_exporter_system_groups: ['mongodb_exporter', 'ssl-cert']
+# Additional packages to setup as role/exporter dependencies
+mongodb_exporter_system_packages:
+  - { name: ca-certificates, state: present }
+  - { name: tar,             state: present }
+
+# List of environment variables to set before starting exporter
+mongodb_exporter_env_vars: []
+#  - { name: MONGODB_URI, value: "mongodb://127.0.0.1:27017" } # takes precedence over {{ mongodb_exporter_mongodb_uri }} variable
+#  - { name: HTTP_AUTH,   value: "user:password" }             # used to enable HTTP basic authentication
+
+# Path to file that contains preset environment variables
+mongodb_exporter_env_file:
+  dest: /etc/systemd/system/mongodb_exporter.service.d/environment.conf
+  owner: root
+  group: root
+  mode: "0640"
+# Path to directory that contains exporter binary
+mongodb_exporter_bin_dir:
+  dest: /usr/local/bin
+  owner: root
+  group: root
+  mode: "0755"
+
+# Address to listen on for web interface and telemetry
+mongodb_exporter_web_listen_address: :9216
+# Path under which to expose metrics
+mongodb_exporter_web_telemetry_path: /metrics
+
+# Only log messages with the given severity or above. Valid levels: [debug,
+# info, warn, error]
+mongodb_exporter_log_level: warn
+
+# MongoDB URI in format [mongodb://][user:pass@]host1[:port1][,host2[:port2],...][/database][?options]
+mongodb_exporter_mongodb_uri: mongodb://127.0.0.1:27017/admin?ssl=false
+
+#### vairables > 0.20.0 ####
+
+# Exposes new metrics in the new and old format at the same time
+mongodb_exporter_compatible_mode: false
+# Enable autodiscover collections from databases which set in collstats-colls
+# and indexstats-colls
+mongodb_exporter_discovering_mode: true
+# Whether or not a direct connect should be made
+mongodb_exporter_direct_connect: false
+# Use global connection pool instead of creating new connection for each http
+# request.
+mongodb_exporter_global_conn_pool: true
+# Disable collecting metrics from getDiagnosticData
+mongodb_exporter_disable_diagnosticdata: false
+# Disable collecting metrics from getDiagnosticData
+mongodb_exporter_disable_replicasetstatus: false
+
+#### variables < 0.20.x ####
+
+# Enable collection of database metrics
+mongodb_exporter_collect_database: false
+# Enable collection of collection metrics
+mongodb_exporter_collect_collection: false
+# Enable collection of table top metrics
+mongodb_exporter_collect_topmetrics: false
+# Enable collection of per index usage stats
+mongodb_exporter_collect_indexusage: false
+
+# Max number of pooled connections to the database
+mongodb_exporter_mongodb_max_connections: 1
+# Amount of time to wait for a non-responding socket to the database before it is forcefully closed
+mongodb_exporter_mongodb_socket_timeout: 3s
+# Amount of time an operation with this session will wait before returning an error in case a connection to a usable server can't be established
+mongodb_exporter_mongodb_sync_timeout: 1m
+# Specifies the database in which the user was created
+mongodb_exporter_authentification_database: ""
+# Currently ignored
+mongodb_exporter_groups_enabled: ""
+
+# Enable tls connection with mongo server
+mongodb_exporter_mongodb_tls: false
+# Path to PEM file that contains the CAs that are trusted for server connections
+mongodb_exporter_mongodb_tls_ca:
+  dest: /etc/ssl/certs/mongodb_exporter_CA.pem
+  owner: root
+  group: root
+  mode: "0644"
+  content: ""
+# Path to PEM file that contains the certificate (and optionally also the decrypted private key in PEM format)
+mongodb_exporter_mongodb_tls_cert:
+  dest: /etc/ssl/certs/mongodb_exporter.crt
+  owner: root
+  group: root
+  mode: "0644"
+  content: ""
+# Path to PEM file that contains the decrypted private key (if not contained in mongodb.tls-cert file)
+mongodb_exporter_mongodb_tls_private_key:
+  dest: /etc/ssl/private/mongodb_exporter.key
+  owner: root
+  group: ssl-cert
+  mode: "0640"
+  content: ""
+# Disable hostname validation for server connection
+mongodb_exporter_mongodb_tls_disable_hostname_validation: false
