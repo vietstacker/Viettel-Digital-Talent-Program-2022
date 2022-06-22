@@ -1,0 +1,4 @@
+Kiến trúc Jenkins:
+https://www.jenkins.io/doc/developer/architecture/
+
+https://delftswa.gitbooks.io/desosa2018/content/jenkins/chapter.html
