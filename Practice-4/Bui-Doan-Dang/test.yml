@@ -1,0 +1,8 @@
+- hosts: nodes
+  gather_facts: false
+  become: yes
+  tasks:
+  - name: Stop running containers
+    docker_container:
+      name: "node-exporter"
+      state: stopped
