@@ -1,0 +1,34 @@
+- name: install docker 
+  hosts: monitors
+  tasks:
+  - name: install docker
+    become: yes
+    apt:
+      name:
+        - containerd
+        - docker.io
+        - docker-compose
+      state: latest
+
+  - name: test docker service is running
+    become: yes
+    service:
+      name: docker
+      state: started
+
+- name: create exporter server
+  hosts: node_exporters
+  become: yes
+  roles:
+    - cadvisor
+    - node-exporter
+  tags: exporting
+
+- name: create monitor server
+  hosts: monitors
+  become: yes
+  roles:
+    - prometheus
+    - grafana
+    - alertmanager
+  tags: monitoring

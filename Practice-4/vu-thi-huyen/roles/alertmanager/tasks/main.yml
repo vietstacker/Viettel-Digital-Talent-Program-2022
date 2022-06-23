@@ -1,0 +1,24 @@
+---
+- name: Copy AlertManager Config file
+  copy:
+    src: config.yml
+    dest: ~/alertmanager/
+    
+- name: Create alertmanager container
+  docker_container:
+    image: prom/alertmanager:v0.22.2
+    name: alertmanager
+    volumes:
+      - ~/alertmanager:/etc/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+    ports:
+    - 9093:9093
+    # environment:
+      # - ALERTMANAGERURL=http://192.168.18.109:9093 # dont set to disable buttons
+      # - TOKEN=5517574482:AAGkzQRxHfd9b42jShLSEPcFRyFErGVVL7I # botfather will tell you
+      # - USERS=-622739777 # one or more user or group chat ids, but it is better to use ony user chat ids because of https://core.telegram.org/bots/faq#my-bot-is-hitting-limits-how-do-i-avoid-this
+      # - SILENCETIME=1 # minimum one hour, set 0 to disable buttons
+      # - MSGDELAYMS=50 # more than 1000 to GROUP chat and LESS than 20 messages per minute; more then 30 to SINGLE USER chat
+      # - CHECKINTERVALS=10 # checkIntervalS * 1000 > msgDelayMs * max count of alerts you are recieving, otherwise 429 errors

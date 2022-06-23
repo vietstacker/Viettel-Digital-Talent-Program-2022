@@ -1,0 +1,21 @@
+global:
+
+route:
+  receiver: 'telegram'
+  group_by: ['alertname']
+  group_wait: 10s
+
+receivers:
+  - name: 'telegram'
+    # telegram_configs:
+    #   - send_resolved: true
+    #     # url: http://192.168.18.109:9093
+    #     api_url: https://api.telegram.org
+    #     # chat_id: -622739777
+    #     chat_id: -723072834
+    #     bot_token: '5517574482:AAGkzQRxHfd9b42jShLSEPcFRyFErGVVL7I'
+    #     parse_mode: 'HTML'
+      
+    webhook_configs:
+        - url: 'https://telepush.dev/api/inlets/alertmanager/90282b'    # add your Telepush token here
+          http_config:

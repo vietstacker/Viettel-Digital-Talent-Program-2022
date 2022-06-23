@@ -1,0 +1,5 @@
+[node_exporters]
+localhost ansible_connection=local
+
+[monitors]
+192.168.18.109 ansible_ssh_user=huyenvu ansible_ssh_pass=Ubuntu01

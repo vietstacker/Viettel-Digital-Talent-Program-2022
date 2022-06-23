@@ -1,0 +1,26 @@
+---
+- name: Copy Prometheus Config file
+  copy:
+    src: prometheus.yml
+    dest: ~/prometheus/
+
+- name: Copy alert rules file
+  copy:
+    src: alert.rules.yml
+    dest: ~/prometheus/
+
+- name: Create prometheus container
+  docker_container:
+    image: prom/prometheus:latest
+    name: prometheus
+    volumes:
+      - ~/prometheus:/etc/prometheus
+      - prometheus-db:/prometheus
+      - ~/prometheus/alert.rules.yml:/alertmanager/alert.rules.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+     - 9090:9090
+    
+    
