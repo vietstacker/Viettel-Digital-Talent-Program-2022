@@ -1,0 +1,21 @@
+  - name: Pull Alertmanager Docker image
+    docker_image:
+      name: prom/alertmanager:latest
+      source: pull
+
+  - name: alertmanager.yml file to /tmp
+    copy:
+      src: alertmanager.yml
+      dest: /tmp
+
+  - name: Run Alertmanager Docker image
+    docker_container:
+      image: prom/alertmanager:v0.12.0
+      ports:
+        - 9093:9093
+      volumes:
+        - ./alertmanager/:/etc/alertmanager/
+      restart: always
+      command:
+        - '-config.file=/etc/alertmanager/config.yml'
+        - '-storage.path=/alertmanager'

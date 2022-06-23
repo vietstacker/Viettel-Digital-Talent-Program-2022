@@ -1,0 +1,22 @@
+- name: Pull Node Exporter Docker image
+    docker_image:
+      name: prom/node-exporter:latest
+      source: pull
+    
+  - name: Run Node Exporter Docker image
+    docker_container:
+      name: node-exporter
+      image: prom/node-exporter:latest
+      restart_policy: unless-stopped
+      volumes:
+        - /proc:/host/proc:ro
+        - /sys:/host/sys:ro
+        - /:/rootfs:ro
+      command:
+        - '--path.procfs=/host/proc'
+        - '--path.sysfs=/host/sys'
+        - --collector.filesystem.ignored-mount-points
+        - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+      ports:
+        - 9100:9100
+      restart: always
