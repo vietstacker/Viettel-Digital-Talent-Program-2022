@@ -46,7 +46,9 @@ Thêm ảnh
 
 - **_Phân tích, Trực quan hóa, Giám sát (Analyse, Visualise, Monitor)_**
 
-  Thành phần thứ ba của cơ chế là cung cấp trực quan hóa dữ liệu đã xử lý có thể được phân tích và giám sát từ một giao diện. Nó cung cấp quyền truy cập một điểm vào log của tất cả các dịch vụ ứng dụng liên quan
+  Thành phần thứ ba của cơ chế là cung cấp trực quan hóa dữ liệu đã xử lý có thể được phân tích và giám sát từ một giao diện. Nó cung cấp quyền truy cập một điểm vào log của tất cả các dịch vụ ứng dụng liên quan.
+
+Tùy vào từng phần mềm mà các thành phần trên có thể có hoặc không hoặc được biến đổi.
 ##  **II. Mô hình triển khai Centrialized Logging**
 
 **1. On-Premise**
@@ -196,9 +198,7 @@ Việc gắn thẻ dữ liệu bằng Relay cho Data Node biết cách lưu tr�
 - Không thể customize tính năng như là Open-Source
 - Vì là bên thứ ba nên mọi vấn đề về dữ liệu, bảo mật, đường truyền đều phụ thuộc vào nhà cung cấp dịch vụ
 
-Vì những lý do trên, mô hình triển khai On Cloud phù hợp
-- Với giải pháp Open Source: phù hợp với các hệ thống scale nhỏ và vừa
-- Với giải pháp third-party (SaaS), không cần các tính năng đặc biệt: phù hợp với tất cả các loại hệ thống từ nhỏ đến lớn
+Vì những lý do trên, mô hình triển khai On Cloud phù hợp với tất cả các dạng hệ thống scale từ nhỏ đến lớn.
 ##  **III. Tài liệu tham khảo**
 [Centralized Logging for Microservices — an Overview | by Maaz Silotri | Medium](https://maazs.medium.com/centralized-logging-for-microservices-an-overview-98f5bc4a7dac)
 
