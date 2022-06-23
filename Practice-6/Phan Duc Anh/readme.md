@@ -360,3 +360,13 @@ Và case study của họ cũng là một system với lượng log thu thập h
 Với việc MR là một mô hình distributed rất dễ triển khai và phổ biến nên em nghĩ hệ thống này hoàn toàn dễ dàng triển khai được.
 
 Như vậy, em đã trình bày xong về phần tìm hiểu về Apache Lucene. Source code được em để [tại mục này](./apache-lucene/).
+
+# TÀI LIỆU THAM KHẢO
+
+- [Apache Lucene 9.2.0 document](https://lucene.apache.org/core/9_2_0/index.html)
+- [Grokking Lab - Giới thiệu về engine Lucene](https://www.youtube.com/watch?v=hlCRTAsUdPU)
+- [Lucene Postings Format](https://github.com/mocobeta/lucene-postings-format)
+- [Lucene Tutorial – Index and Search Examples](https://howtodoinjava.com/lucene/lucene-index-search-examples/)
+- [Apache Lucene 4](https://www.researchgate.net/publication/260282732_Apache_Lucene_4)
+- [Bkd-Tree: A Dynamic Scalable kd-Tree](https://users.cs.duke.edu/~pankaj/publications/papers/bkd-sstd.pdf)
+- [Using Hadoop, Lucene, and Solr for large scale search](https://docs.huihoo.com/big-data/hic2011/using-hadoop-lucene-solr-for-large-scale-search.pdf)
