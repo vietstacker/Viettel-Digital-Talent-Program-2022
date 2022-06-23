@@ -87,9 +87,9 @@ Số_Pods_cần_thiết = ceil(Số_pods_hiện_tại * (Thông_số_hiện_tạ
 
 Ví dụ: khi bạn đang sử dụng 2 Pods, bạn muốn duy trì RAM 500MB/Pod nhưng yêu cầu hiện tại là 1300MB, vậy thì:
 ```
-Số_Pods_cần_thiết = ceil(2 * (1300 / 500)) = 4
+Số_Pods_cần_thiết = ceil(2 * (1300 / 500)) = 6
 ```
-Sau đó HPA sẽ thực hiện scale lên thành 4 Pods cho bạn.
+Sau đó HPA sẽ thực hiện scale lên thành 6 Pods cho bạn.
 
 Đó là ví dụ cho việc scale theo cấu hình chỉ có một metric. Việc cấu hình theo nhiều metrics cũng không phức tạp hơn là bao, HPA sẽ tính toán theo nhiều metrics và lấy ra số pods lớn nhất tính toán được.
 
