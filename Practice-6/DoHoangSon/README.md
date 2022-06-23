@@ -68,7 +68,7 @@ Nền tảng dữ liệu, phần cứng và phần mềm tất cả là của b�
 
 Với các On-Premise system, bạn không dựa vào kết nối internet hoặc các yếu tố bên ngoài để truy cập dịch vụ của mình.
 
-## Nhược điểm của On premise
+## Nhược điểm của On-Premise
 
 ### Chi phí vốn lớn
 
@@ -97,6 +97,8 @@ Thêm ảnh kiến trúc Splunk
 **_Nhược điểm:_**
 - Splunk mạnh về khả năng phân tích và cảnh báo tuy nhiên nó lại không mạnh và không đảm bảo về việc thu thập và truyền tải log. Cụ thể là nó chưa có cơ chế bảo mật trên đường truyền, không phù hợp với những hệ thống đòi hỏi bảo mật cao.
 - Mỗi bộ chỉ mục không thể nhập quá 250GB một ngày, vì thế khi cần scale hệ thống thì phải tăng số bộ chỉ mục lên. Điều này làm tăng chi phí đáng kể - nhất là trong mô hình On-Premise
+- Chi phí vốn ban đầu lớn
+- Yêu cầu hiểu biết rõ ngôn ngữ SPL (Search Processing Language)
 
 Vì những lý do trên, mô hình triển khai On-Premise phù hợp
 - Với các hệ thống scale nhỏ: sử dụng các giải pháp Open Source
