@@ -143,7 +143,8 @@ On Cloud là mô hình triển khai đề cập đến các máy chủ được 
 
 - **Ít tùy chỉnh hơn**: Điều này đúng với mô hình SaaS (Software-as-a-service).
 
-Sau đây, bài viết sẽ giới thiệu một số phần mềm sử dụng mô hình triển khai On Cloud để triển khai Centralized Logging
+Sau đây, bài viết sẽ giới thiệu một số phần mềm sử dụng mô hình triển khai On Cloud để triển khai Centralized Logging.
+
 **a. Self-Managed & Open Source: ELK Stack**
 
 ELK Stack là tập hợp 3 phần mềm đi chung với nhau, sử dụng mã nguồn mở, phục vụ cho công việc logging. Ba phần mềm này lần lượt là:
