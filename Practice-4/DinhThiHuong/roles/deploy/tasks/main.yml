@@ -1,0 +1,11 @@
+---
+- name: copy Docker Compose files
+  copy:
+    src: files/
+    dest: /tmp/
+
+- name: deploy Docker Compose stack
+  community.docker.docker_compose:
+    project_src: /tmp
+    files:
+    - docker-compose.yml

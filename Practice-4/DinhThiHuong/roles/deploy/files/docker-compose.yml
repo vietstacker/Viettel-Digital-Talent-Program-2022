@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.17.1
+    container_name: prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    expose:
+      - 9090
+    networks:
+      - monitor-net
+
+  alertmanager:
+    image: prom/alertmanager:v0.20.0
+    container_name: alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--cluster-peer=192.168.1.176:9093'
+    volumes:
+      - ./alertmanager:/etc/alertmanager
+    restart: unless-stopped
+    ports:
+      - 9093:9093
+    networks:
+      - monitor-net
+
+  nodeexporter:
+    image: prom/node-exporter:v0.18.1
+    container_name: nodeexporter
+    command:
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
+    ports:
+      - 9100:9100
+    networks:
+      - monitor-net
+
+  grafana:
+    image: grafana/grafana:6.7.2
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    networks:
+      - monitor-net
+
+networks:
+  monitor-net:
+    driver: bridge

@@ -1,0 +1,12 @@
+---
+- name: Install docker
+  hosts: servers
+  become: yes
+  roles:
+  - docker
+
+- name: Deploy monitoring system
+  hosts: servers
+  become: yes
+  roles:
+  - deploy

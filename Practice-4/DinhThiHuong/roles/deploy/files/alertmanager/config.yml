@@ -1,0 +1,11 @@
+route:
+    receiver: 'slack'
+
+receivers:
+    - name: 'slack'
+      slack_configs:
+          - send_resolved: true
+            text: "{{ .CommonAnnotations.description }}"
+            username: 'rdinh522'
+            channel: '#head-in-the-clouds'    # The channel or user to send notifications to.
+            api_url: 'https://hooks.slack.com/services/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'
