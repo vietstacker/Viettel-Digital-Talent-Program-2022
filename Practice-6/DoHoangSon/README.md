@@ -51,7 +51,7 @@ Thêm ảnh
 Tùy vào từng phần mềm mà các thành phần trên có thể có hoặc không hoặc được biến đổi.
 ##  **II. Mô hình triển khai Centrialized Logging**
 
-**1. On-Premise**
+### **1. On-Premise**
 
 On-Premise là mô hình triển khai trên cơ sở hạ tầng tại chỗ của khách hàng. Với mô hình sử dụng này, khách hàng thường mua hoặc thuê phần mềm dựa trên máy chủ với tư cách là người được cấp phép, phần mềm này được cài đặt trên máy chủ của chính họ. Một số Centrialized Logging tool được thiết kế cho mô hình triển khai này gồm: ELK Stack, Splunk,...
 ## Ưu điểm của On-Premise
