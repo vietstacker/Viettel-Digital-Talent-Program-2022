@@ -15,6 +15,7 @@ Autoscaling trong Kubernetes có 3 khả năng:
 - `Vertical Pod Autoscaler`: điều chỉnh giới hạn tài nguyên của container
 
 Trong đó, HPA và CPA là điều chỉnh ở `Pod level` tức là việc scale chỉ ảnh hưởng đến pod.
+
 Còn Cluster Autoscaler sẽ thực hiện scale ở mức `Cluster level`
 
 # I. kiến trúc của Kubernetes
@@ -34,7 +35,9 @@ Trong `Kubernetes` cơ bản sẽ chứa các thành phần:
 # II. Horizontal Pod Autoscale (HPA)
 
 Trong Kubernetes, HPA sẽ tự động cập nhập tài nguyên của workload để phù hợp với nhu cầu.
+
 `Horizontal scaling` nghĩa là chúng ta phải triển khai nhiều pods hơn để phản ứng với việc tăng tải.Nếu như lượng tải giảm và số lượng Pods nhiều hơn số lượng tối thiểu thì HPA sẽ thực hiện scale down.
+
 HPA được triển khai như một Kubernetes API resource và một controller. HPA controller chạy trong `control plane` sẽ định kỳ điều chỉnh tài nguyên của pods để phù hợp với những thông số thu thập được của CPU, RAM, bộ nhớ hay bất kỳ metric tùy chọn nào được cài đặt.
 
 ## Cách thức hoạt động
@@ -73,7 +76,9 @@ Chúng ta có thể nhận thấy, việc scale-up cũng không chỉ làm tăng
 ### 3. Thuật toán
 
 Câu hỏi của chúng ta ở đây là HPA đã tính toán tài nguyên để thực hiện scale như thế nào?
+
 Để scale một pod thì đầu tiên HPA sẽ dựa vào cấu hình tài nguyên của pod đó. Mỗi một pod sẽ được cấu hình để duy trì lượng tài nguyên mong muốn.
+
 Để scale phù hợp với tình hình hiện tại thì tất nhiên thông số tài nguyên yêu cầu trên các pods hiện tại là rất quan trọng. Công thức để tính số lượng pod cần thiết như sau:
 
 ```
@@ -98,13 +103,13 @@ Do hạn chế kỹ thuật, HPA không thể xác định chính xác pod đã 
 
 # III. Cluster Autoscaler (CA)
 
-Cluster Autoscaler tự động thêm hoặc loại bỏ các nút trong một cụm dựa trên các yêu cầu tài nguyên từ các pod. Cluster Autoscaler không trực tiếp đo lường các giá trị sử dụng CPU và bộ nhớ để đưa ra quyết định scale up. Thay vào đó, nó kiểm tra cứ sau 10 giây để phát hiện bất kỳ vỏ nào ở trạng thái đang chờ xử lý, cho thấy bộ lập lịch không thể gán chúng cho một nút do không đủ dung lượng cụm.
+Cluster Autoscaler tự động thêm hoặc loại bỏ các nút trong một cụm dựa trên các yêu cầu tài nguyên từ các pod. Cluster Autoscaler không trực tiếp đo lường các giá trị sử dụng CPU và bộ nhớ để đưa ra quyết định scale up. Thay vào đó, nó kiểm tra cứ sau 10 giây để phát hiện bất kỳ Pod nào ở trạng thái đang chờ xử lý, cho thấy bộ lập lịch không thể gán chúng cho một nút do không đủ dung lượng cụm.
 
 ## Cách thức hoạt động
 
 <img src="images/scale-node.png">
 
-Trong kịch bản scale up, CA tự động khởi động khi số lượng vỏ đang chờ xử lý (không thể lên lịch) tăng lên do thiếu tài nguyên và hoạt động để thêm các nút bổ sung vào cụm.
+Trong kịch bản scale up, CA tự động khởi động khi số lượng Pod đang chờ xử lý (không thể lên lịch) tăng lên do thiếu tài nguyên và hoạt động để thêm các nút bổ sung vào cụm.
 
 - [1] Đầu tiên, có một số pods đang trong trạng thái pending và gửi yêu cầu đến CA.
 - [2] CA nhận yêu cầu tăng Nodes và tiến hành triển khai node mới.
@@ -185,5 +190,11 @@ VPA sử dụng 3 chế độ:
 
 VPA có thể hữu ích với nhiều ứng dụng, tuy nhiên có một vài lưu ý cần để ý:
 - Không sử dụng VPA cùng với HPA khi cùng sử dụng chung nguồn metrics. Đó là vì khi tài nguyên sử dụng đến một ngưỡng nhất định thì HPA và VPA sẽ cùng xảy ra, điều này sẽ dẫn đến nhiều kết quả không mong muốn và dẫn đến các vấn đề.
-- VPA có thể đề xuất nhiều tài nguyên hơn có sẵn trong cluster, do đó khiến pod không được gán cho một nút (do không đủ tài nguyên) và do đó không bao giờ chạy. Để khắc phục hạn chế này, bạn nên đặt LimitRange ở mức tối đa có sẵn. Điều này sẽ đảm bảo rằng các vỏ không yêu cầu nhiều tài nguyên hơn LimitRange định nghĩa.
+- VPA có thể đề xuất nhiều tài nguyên hơn có sẵn trong cluster, do đó khiến pod không được gán cho một nút (do không đủ tài nguyên) và do đó không bao giờ chạy. Để khắc phục hạn chế này, bạn nên đặt LimitRange ở mức tối đa có sẵn. Điều này sẽ đảm bảo rằng các Pod không yêu cầu nhiều tài nguyên hơn LimitRange định nghĩa.
 
+
+# REFERENCES
+
+- https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+- https://www.kubecost.com/kubernetes-autoscaling
+- https://cloud.google.com/kubernetes-engine/docs/concepts/verticalpodautoscaler
