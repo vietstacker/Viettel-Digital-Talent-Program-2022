@@ -34,7 +34,6 @@ Giải pháp Centrialized Logging có những ưu, nhược điểm riêng
 -   Không phù hợp với ứng dụng có kiến trúc Monolith
 ###  **Thành phần Centrialized Logging**
 Một giải pháp Centrialized Logging dựa trên ba thành phần chính.
-Thêm ảnh
 
 - **_Thu thập, Phân tích, Chuyển đổi (Collect, Parse, Transform)_**
 
@@ -47,6 +46,14 @@ Thêm ảnh
 - **_Phân tích, Trực quan hóa, Giám sát (Analyse, Visualise, Monitor)_**
 
   Thành phần thứ ba của cơ chế là cung cấp trực quan hóa dữ liệu đã xử lý có thể được phân tích và giám sát từ một giao diện. Nó cung cấp quyền truy cập một điểm vào log của tất cả các dịch vụ ứng dụng liên quan.
+
+<div align="center">
+  <img src="img/centralized_logging_component.png">
+</div>
+<div align="center">
+  <i>Thành phần Centrialized Logging</i>
+</div>
+<br>
 
 Tùy vào từng phần mềm mà các thành phần trên có thể có hoặc không hoặc được biến đổi.
 ##  **II. Mô hình triển khai Centrialized Logging**
@@ -86,8 +93,16 @@ Sau đây, bài viết sẽ giới thiệu phần mềm Splunk - phần mềm đ
 ## Splunk
 Splunk là một phần mềm giám sát mạng dựa trên sức mạnh của việc phân tích Log. Splunk thực hiện các công việc tìm kiếm, giám sát và phân tích các dữ liệu lớn được sinh ra từ các ứng dụng, các hệ thống và các thiết bị hạ tầng mạng. Nó có thể thao tác tốt với nhiều loại dịnh dạng dữ liệu khác nhau (Syslog, csv, apache-log, access_combined…). Splunk được xây dựng dựa trên nền tảng Lucene và MongoDB.
 
-Kiến trúc Splunk tương tự như Elastic - phần mềm sẽ được nhắc tới ỏe phần sau bài viết, nhưng nó đơn giản hơn một chút. Các nguồn dữ liệu gửi thông tin đến bộ chuyển tiếp của Splunk thông qua Rsyslog, NXLog, v.v. Bộ chuyển tiếp sẽ lọc trước dữ liệu trước khi gửi đến bộ chỉ mục của Splunk. Đầu tìm kiếm phân phối các tìm kiếm đến một hoặc nhiều công cụ lập chỉ mục và kết quả tìm kiếm có sẵn trực tiếp từ trình duyệt thông qua giao diện web của Splunk. Một phiên bản đơn giản của kiến trúc này được hiển thị trong sơ đồ dưới đây
-Thêm ảnh kiến trúc Splunk
+Kiến trúc Splunk tương tự như Elastic - phần mềm sẽ được nhắc tới ỏe phần sau bài viết, nhưng nó đơn giản hơn một chút. Các nguồn dữ liệu gửi thông tin đến bộ chuyển tiếp của Splunk thông qua Rsyslog, NXLog, v.v. Bộ chuyển tiếp sẽ lọc trước dữ liệu trước khi gửi đến bộ chỉ mục của Splunk. Đầu tìm kiếm phân phối các tìm kiếm đến một hoặc nhiều công cụ lập chỉ mục và kết quả tìm kiếm có sẵn trực tiếp từ trình duyệt thông qua giao diện web của Splunk. Một phiên bản đơn giản của kiến trúc này được hiển thị trong sơ đồ dưới đây.
+
+<div align="center">
+  <img src="img/splunk_architecture.jpg">
+</div>
+<div align="center">
+  <i>Splunk Architecture</i>
+</div>
+<br>
+
 **_Ưu điểm:_**
 - Giao diện người dùng thân thiện, dễ dàng sử dụng
 - Liên kết với hầu hết các nguồn log đang có hiện nay
@@ -138,7 +153,14 @@ ELK Stack là tập hợp 3 phần mềm đi chung với nhau, sử dụng mã n
 -   **Kibana**: Giao diện để quản lý, thống kê log. Đọc thông tin từ Elasticsearch
 
 Kiến trúc Elastic sử dụng nhiều phương thức khác nhau (Beats, syslog, v.v.) để chuyển tiếp dữ liệu tới Logstash, nơi xử lý dữ liệu và gửi đến tầng Elasticsearch (dựa trên Apache Lucene) để lập chỉ mục và lưu trữ. Kibana được sử dụng để trực quan hóa dữ liệu. Trong thực tế, Kafka được sử dụng làm message broker giữa Beats và Logstash, và để đảm bảo dữ liệu đến từ Beats không bị mất. Zookeeper được sử dụng để cấu hình và đồng bộ hóa Kafka. Sơ đồ các thành phần này được hiển thị bên dưới.
-Thêm ảnh Kiến trúc ELK Stack
+
+<div align="center">
+  <img src="img/elk_stack_architecture.jpg">
+</div>
+<div align="center">
+  <i>ELK Stack Architecture</i>
+</div>
+<br>
 
 **_Ưu điểm:_**
 - **Chi phí vốn ban đầu ít**: Một trong những lý do chính cho sự tăng trưởng của ELK Stack là rào cản tài chính thấp để gia nhập. Tất cả các thành phần phần mềm của ELK đều miễn phí và mã nguồn mở - có nghĩa là không cần mua trước và không có phí cấp phép phần mềm liên tục.
@@ -184,7 +206,15 @@ Trên thị trường có rất nhiều công cụ Centralized Logging được 
 Kiến trúc Devo cung cấp một phương pháp nhập và lưu trữ dữ liệu độc đáo. Điều này mang lại lợi ích hiệu suất đáng kể về tốc độ nhập, hiệu suất tìm kiếm và nén dữ liệu.
 
 Devo sử dụng một thành phần được gọi là Relay để tổng hợp dữ liệu từ các nguồn, gắn thẻ nó và truyền nó qua kết nối an toàn. Dữ liệu từ một hoặc nhiều Relay đi vào bộ cân bằng tải sự kiện trước khi được gửi vào Data Node Devo để lưu trữ. Khi các Data Node mở rộng quy mô, các Meta Node điều phối các tìm kiếm trên nhiều Data Node. Kiến trúc này mở rộng theo chiều ngang, như được hiển thị trong sơ đồ dưới đây.
-Thêm ảnh Architecture
+
+<div align="center">
+  <img src="img/devo_architecture.jpg">
+</div>
+<div align="center">
+  <i>Devo Architecture</i>
+</div>
+<br>
+
 Việc gắn thẻ dữ liệu bằng Relay cho Data Node biết cách lưu trữ dữ liệu đó, chẳng hạn như trong web.apache.error. Các thẻ có thể có nhiều lớp để xác định và phân đoạn dữ liệu. Dữ liệu được gắn thẻ được lưu trữ trong hệ thống tệp phân cấp trong Data Node. Điều này giúp loại bỏ nhu cầu lập chỉ mục dữ liệu khi nhập. Lưu trữ dữ liệu trong cấu trúc tệp phân cấp cũng giúp việc nén dữ liệu hiệu quả hơn nhiều, vì các thuật toán nén ngày nay rất hiệu quả.
 
 **_Ưu điểm:_**
