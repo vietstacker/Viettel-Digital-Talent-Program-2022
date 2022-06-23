@@ -1,0 +1,46 @@
+version: '2'
+services:
+ prometheus:
+ image: prom/prometheus
+ ports:
+      - '9090:9090'
+    container_name: prometheus
+    restart: always
+    network_mode: host
+    volumes:
+    - '$HOME/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml'
+grafana:
+ image: grafana/grafana
+ ports:
+      - '3000:3000'
+    container_name: grafana
+    restart: always
+    network_mode: host
+    depends_on:
+      - prometheus
+ volumes:
+      - '$HOME/grafana/config/grafana.ini:/etc/grafana/grafana.ini'
+      
+ alertmanager:
+ image: prom/alertmanager:v0.20.0
+ ports:
+      - '9093:9093'
+    container_name: alertmanager
+    restart: always
+    network_mode: host
+    depends_on:
+      - prometheus
+ volumes:
+      - '$HOME/alertmanager/config.yml:/etc/alertmanager/config.yml'
+
+ nodeexporter:
+ image: image: prom/node-exporter:v0.18.1
+ ports:
+      - '9100:9100'
+    container_name: nodeexportert
+    restart: always
+    network_mode: host
+    depends_on:
+      - prometheus
+ volumes:
+      - '$HOME/grafana/config/grafana.ini:/etc/grafana/grafana.ini'
