@@ -1,3 +1,22 @@
+# TABLE OF CONTENT
+
+- [TABLE OF CONTENT](#table-of-content)
+- [AN OVERVIEW OF APACHE LUCENE](#an-overview-of-apache-lucene)
+  - [1. Kiến trúc tổng quan](#1-kiến-trúc-tổng-quan)
+  - [2. Indexing](#2-indexing)
+  - [3. Searching](#3-searching)
+    - [3.1. TermQuery](#31-termquery)
+    - [3.2. BooleanQuery](#32-booleanquery)
+    - [3.3. PhraseQuery](#33-phrasequery)
+    - [3.4. WildcardQuery](#34-wildcardquery)
+    - [3.5. FuzzyQuery](#35-fuzzyquery)
+  - [4. Kết luận](#4-kết-luận)
+    - [4.1. Tối ưu query](#41-tối-ưu-query)
+    - [4.2. Elasticsearch và Lucene](#42-elasticsearch-và-lucene)
+    - [4.3. Tìm hiểu về FSM ứng dụng vào trong Lucene](#43-tìm-hiểu-về-fsm-ứng-dụng-vào-trong-lucene)
+    - [4.4. Lucene và Distributed System](#44-lucene-và-distributed-system)
+- [TÀI LIỆU THAM KHẢO](#tài-liệu-tham-khảo)
+
 # AN OVERVIEW OF APACHE LUCENE
 
 “Apache Lucene™ is a high-performance, full-featured search engine library written entirely in Java. Apache Lucene is an open-source project available for free download.”
@@ -208,7 +227,7 @@ Ta cũng có thể thấy, có 2 segment được liệt kê tương ứng 2 v�
 
 Như vậy, ta đã đi qua sơ bộ quy trình đánh index, cách Lucene lưu index trên disk. Tiếp theo ta sẽ tìm hiểu xem, bằng cách nào Lucence có thể tận dụng được các index này thể thực hiện việc tìm kiếm.
 
-# 3. Searching
+## 3. Searching
 
 Để thực hiện một query, tương tự như indexing, ta cần một IndexReader để đọc được các các file của IndexWriter đã tạo ra, từ đó sử dụng các file này để thực hiện query. Query thì sẽ được đưa qua query parser và có thể đi qua analyzer để đưa dữ liệu query về cùng một hệ quy chiếu với document sau khi được đánh index. Kết quả được trả về và có thể được ranking về trả về theo kết quả phù hợp nhất với dựa trên việc scoring.
 
@@ -233,7 +252,7 @@ private static IndexSearcher createSearcher() throws IOException {
 }
 ```
 
-## 3.1. TermQuery
+### 3.1. TermQuery
 
 TermQuery là một dạng query đơn giản nhất (tốn ít tài nguyên nhất) và cũng là query được sử dụng nhiều nhất trong các application. Một TermQuery sẽ match toàn bộ document mà chứa một Term. Cách thực hiện của TermQuery khá đơn giản, nó sẽ lookup các term trong index, trả về tất cả các document có chưa term này. Ranking document theo BM25 (Elasticsearch cũng sử dụng thuật toán tính điểm này). Bây giờ ta sẽ thử query term “appl” từ index trước:
 
@@ -272,13 +291,13 @@ Sử dụng Luke ta có thể xem chi tiết cách tính điểm của term "app
 
 > **_NOTE:_** Ta có thể đọc thêm [bài viết này](https://www.elastic.co/blog/practical-bm25-part-2-the-bm25-algorithm-and-its-variables) để hiểu rõ về BM25 và ảnh hưởng của các tham số lên việc scoring.
 
-## 3.2. BooleanQuery
+### 3.2. BooleanQuery
 
 Ở đây ta xét một dạng BooleanQuery là Must BooleanQuery, tức là ở dạng này một document phải chứa tất cả các term đưa ra. Để tìm kiếm, Lucene thực hiện chọn ra term có DocFreq nhỏ nhất duyệt lần lượt qua từng term còn lại xem có thoả mãn document đó hay không. (Nếu sử dụng thuật toán như thế thì sẽ rất chậm, Lucene có sử dụng một giải thuật khác là Two Phase Iterator, cũng khá giống với thuật toán ta vừa đề cập nhưng có thêm bước quét để loại bỏ các doc không thoả mãn trước).
 
 ![boolean_query](images/boolean_query.png)
 
-## 3.3. PhraseQuery
+### 3.3. PhraseQuery
 
 Với PhraseQuery, ta tìm kiếm một chuỗi kí tự, slop factor trong PhraseQuery được hiểu là khoảng cách lớn nhất giữa 2 kí tự trong chuỗi mà ta vẫn coi là liên tiếp nhau (default slop fator là 0). Ví dụ: “em đẹp” sẽ không match “em rất đẹp” với slop factor là 0, tuy nhiên, với slop factor là 1, thì nó sẽ match.
 PhraseQuery hoạt động bằng cách xét các vị trí của của từng term trong từng doc, nếu chúng thoả mã slop thì sẽ match:
@@ -312,11 +331,11 @@ Do đó, nếu ta chỉnh slop lên 2 thì kết quả sẽ trả về được 
 
 > **_NOTE:_** PhraseQuery có tốc độ chậm.
 
-## 3.4. WildcardQuery
+### 3.4. WildcardQuery
 
 WildcardQuery là những query mà term là chưa xác định rõ ràng do chứa wildcard \* (match 0 hoặc nhiều kí tự) và ? (match duy nhất một kí tự). Cơ chế của wildcard sẽ là iterate qua tất cả các term và kiểm tra có match hay không. Vì lí do đó mà WildcardQuery khá chậm.
 
-## 3.5. FuzzyQuery
+### 3.5. FuzzyQuery
 
 FuzzyQuery là những query mà term được match khi nó thoả mãn khoảng cách Damerau-Levenshtein (ta có thể config để sử dụng classic Levenshtein) với query nhỏ hơn một mức nhất định (maxEdits). FuzzyQuery cũng tương đối chậm so với TermQuery, vì thế ta phải cực kỳ lưu ý khi sử dụng các loại query này. Cách hoạt động của FuzzyQuery vô cùng phức tạp (paper tại đây với [một paper 69 trang](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.16.652&rep=rep1&type=pdf). (Một số keyword cho chủ đề này như: Finite State Machine, FSA, FST).
 
@@ -324,28 +343,28 @@ FuzzyQuery là những query mà term được match khi nó thoả mãn khoản
 
 Còn một vấn đề nữa ta cần nói tới ở đây là việc caching, ta có hiểu một cách khái quát là khi đọc index ở file thì Lucene sẽ thường cache các index mà thường xuyên gặp (giúp tăng tốc độq query) chính vì lí do đó mà khi cấu hình Elasticsearch, ta luôn phải cấu hình dung lượng RAM cho JVM để Elasticsearch không ăn hết tài nguyên của hosts cho việc caching.
 
-# 4. Kết luận
+## 4. Kết luận
 
 Như vậy ta đã tìm hiểu cơ bản về các cơ chế của Apache Lucene. Elasticsearch là một trong vô vàn các engine được xây dựng trên Lucene. Sau đây, em xin đề xuất một số vấn đề có thể mở rộng sau khi tìm hiểu về Apache Lucene.
 
-## 4.1. Tối ưu query
+### 4.1. Tối ưu query
 
 Đây là một chủ đề rất thú vị. Như ta đã đề cập ở trên thì một phương án để tối ưu được query đó chính là tối đa hoá việc sử dụng các câu query nhanh như TermQuery và hạn chế sử dụng các query nặng như PhraseQuery hay FuzzyQuery.
 
 Một số kĩ thuật nâng cao ta có thể học trong [bài presentation này](https://www.youtube.com/watch?v=ToC-HM7VI7g&list=PLU2OcwpQkYCyjeQ-a3GGjkStL5CyqJ3OS).
 
-## 4.2. Elasticsearch và Lucene
+### 4.2. Elasticsearch và Lucene
 
 Vì được xây dựng trên Lucene, nên ta hoàn toàn có thể sử dụng các tính chất của Lucene để tận dụng được tối đa Elasticsearch, chẳng hạn như:
 
 - Config scoring như ta đã đề cập
 - Tối ưu câu truy vấn dựa trên đặc điểm của Lucene
 
-## 4.3. Tìm hiểu về FSM ứng dụng vào trong Lucene
+### 4.3. Tìm hiểu về FSM ứng dụng vào trong Lucene
 
 Đây là một tính năng rất đặc biệt của Lucene, giúp [tăng tốc độ query đáng kể](https://blog.mikemccandless.com/2011/03/lucenes-fuzzyquery-is-100-times-faster.html) (như commiter của Apache Lucene nói thì nó như là một revolution của Lucence).
 
-## 4.4. Lucene và Distributed System
+### 4.4. Lucene và Distributed System
 
 Sau khi tìm hiểu về Lucene và Elasticsearch thì em thấy Elasticsearch hiện đang sử dụng model distributed system để sharding các shard đảm bảo HA. Tuy nhiên việc đánh index thì vẫn chưa tận dụng được tài nguyên của các node đang rảnh. Em có nghĩ đến việc sử dụng thuật toán MapReduce sử dụng Lucene vào việc đánh index một cách hiệu quả. Sau khi tìm kiếm xem liệu hệ thống này có khả thi hay không thì em có tìm được một [slide đề cập đến vấn đề này](https://docs.huihoo.com/big-data/hic2011/using-hadoop-lucene-solr-for-large-scale-search.pdf).
 
