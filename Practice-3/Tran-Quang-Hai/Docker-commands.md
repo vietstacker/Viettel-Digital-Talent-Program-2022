@@ -43,5 +43,7 @@ RUN echo $VAR_A
 ## **3. CMD VS ENTRYPOINT**
 
 ## 3.1. CMD
+- CMD command provide defaults for an executing container which can be overridden.
 
 ## 3.2. ENTRYPOINT
+- CMD command provide defaults for an executing container which can only be overridden with --entrypoint parameters.
