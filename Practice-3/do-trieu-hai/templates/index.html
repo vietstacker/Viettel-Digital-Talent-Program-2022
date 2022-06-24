@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Practice3</title>
+    <style>
+        .todo {
+            padding: 20px;
+            margin: 10px;
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>NUM</th>
+            <th>NAME</th>
+            <th>YEAR</th>
+            <th>UNIVERSITY</th>
+            <th>MAJOR</th>
+        </tr>
+        {% for data in data %}
+        <tr>
+            <td>{{ data.number }}</td>
+            <td>{{ data.name }}</td>
+            <td>{{ data.year }}</td>
+            <td>{{ data.university }}</td>
+            <td>{{ data.major }}</td>
+        </tr>  
+
+        {% endfor %}
+    </table>
+</body>
+</html>

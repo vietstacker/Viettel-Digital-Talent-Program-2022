@@ -1,0 +1,32 @@
+version: '3.3'
+
+services:
+  web:
+    build:
+      context: nginx
+      dockerfile: Dockerfile.yml
+    ports:
+      - 80:80
+    depends_on:
+      - backend
+  backend:
+    build: 
+      context: flask
+      dockerfile: Dockerfile.yml
+    environment:
+      MONGODB_DATABASE: flaskdb
+      MONGODB_USERNAME: flaskuser
+      MONGODB_PASSWORD: mongodb_password
+      MONGODB_HOSTNAME: mongodb
+    port: 
+    - 5000:5000
+    depends_on:
+      -  mongo  
+  mongo:
+    image: mongo:5.0
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongodbuser
+      MONGO_INITDB_ROOT_PASSWORD: mongodb_password
+    ports:
+    - 27017:27017
