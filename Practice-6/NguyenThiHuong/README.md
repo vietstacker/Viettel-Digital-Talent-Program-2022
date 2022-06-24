@@ -40,7 +40,6 @@ NETWORK ID     NAME                                                DRIVER    SCO
   <img src="imgs/anh1.png">
 </div>
 
-I have just build an ubuntu image, then create a container in bridge networking mode. 
 
 
 - User-defined bridge networks are superior to the default bridge network.
@@ -170,21 +169,21 @@ When you initialize a swarm or join a Docker host to an existing swarm, two new 
   <img src="imgs/anh7.png">
 </div>   
 
-
+Docker-compose is single-node swarm.
 Docker Swarm is the docker native clustering solution that turns a pool of Docker hosts into a single virtual server allowing clustering with the built-in Swarm orchestration.The Docker Swarm follows a decentralised design where nodes can handle any role in the cluster. The node specialisations to managers and workers are chosen at runtime. As the cluster must have at least one manager, the first node initializing the cluster is assigned as such. 
 > **_NOTE:_** <em>Docker Engine Swarm mode and Docker Swarm are two different projects, with different installation steps despite they both work in a similar way.</em>
+
 Swarm architecture:
 <div align="center">
   <img src="imgs/anh10.png">
 </div> 
 
-
-      ◦ Swarm: is a cluster of one or more Docker Engines running (specifically, nodes) in Swarm mode, instead of having to run containers with commands, we will set up services to allocate replicas to nodes.
-      ◦ A node is a physical or virtual machine running a Docker Engine instance in Swarm mode. Node will include two types: Manager Node and Worker Node.
-      ◦ Manager node: perform the orchestration and cluster management functions required to maintain the desired state of the swarm. Manager nodes elect a single leader to conduct orchestration tasks.Manager node is also treated as the Worker node.
-      ◦ Worker nodes: receive and execute tasks dispatched from manager nodes. By default, manager nodes are also worker nodes, but you can configure managers to be manager-only nodes.
-      ◦ Service: specifies the image of the container and the desired number of replicas to launch in the swarm.
-      ◦ Task: a task that the worker node has to perform. This task will be down-allocated by node Manager. A task carries a Docker Container and commands to run inside the container.
+ ◦ Swarm: is a cluster of one or more Docker Engines running (specifically, nodes) in Swarm mode, instead of having to run containers with commands, we will set up services to allocate replicas to nodes.
+ ◦ A node is a physical or virtual machine running a Docker Engine instance in Swarm mode. Node will include two types: Manager Node and Worker Node.
+ ◦ Manager node: perform the orchestration and cluster management functions required to maintain the desired state of the swarm. Manager nodes elect a single leader to conduct orchestration tasks.Manager node is also treated as the Worker node.
+ ◦ Worker nodes: receive and execute tasks dispatched from manager nodes. By default, manager nodes are also worker nodes, but you can configure managers to be manager-only nodes.
+ ◦ Service: specifies the image of the container and the desired number of replicas to launch in the swarm.
+ ◦ Task: a task that the worker node has to perform. This task will be down-allocated by node Manager. A task carries a Docker Container and commands to run inside the container.
 
 Subsequent nodes joining the cluster are usually added as workers but can be assigned as either. The flexibility means that the entire swarm can be built from a single disk image with little differentiation.
 
@@ -192,9 +191,9 @@ The following port must be opened while working on docker swarm mode:\
       ◦ 2377 (TCP) - Cluster management\
       ◦ 7946 (TCP and UDP) - Nodes communication\
       ◦ 4789 (TCP and UDP) - Overlay network traffic\
-Docker swarm seems to be the same as Kuberetes because both platforms allow you to manage containers and scale application deployment, but kubernetes is much more comlplex. In Swarm, a service provides both scheduling and networking facilities, creating containers and providing tools for routing traffic to them. In Kubernetes, scheduling and networking are handled separately: deployments (or other controllers) handle the scheduling of containers as pods, while services are responsible only for adding networking features to those pods.
+Docker swarm seems to be the same as Kuberetes because both platforms allow you to manage containers and scale application deployment, but kubernetes is much more complex. In Swarm, a service provides both scheduling and networking facilities, creating containers and providing tools for routing traffic to them. In Kubernetes, scheduling and networking are handled separately: deployments (or other controllers) handle the scheduling of containers as pods, while services are responsible only for adding networking features to those pods.
  
- Docker-compose is single-node swarm.
+ 
 
  The swarm nodes enforce TLS authentication and encryption to secure communication between nodes. All of this is done by default and requires no additional attention. It is also possible to use self-signed root certificates, but for most cases, it is fine to go with the default implementation. 
 
@@ -204,7 +203,7 @@ Docker swarm seems to be the same as Kuberetes because both platforms allow you 
 
 Using TLS authentication to secure communication between nodes is an efficient security solution on doing networking. 
 
-To understand how to create a cluster, I use 2 laptop running docker engine, with IP address: 192.168.1.31 and 192.168.146, respectively.
+To understand how to create a cluster, I use 2 laptops running docker engine, with IP addresses: 192.168.1.31 and 192.168.146, respectively.
 
   <img src="imgs/anh12.png">
 
@@ -246,7 +245,7 @@ Use can see the network list created. The ingress_network and gw_bridge are auto
 
 In the above output, notice that the driver is overlay and that the scope is swarm, rather than local, host, or global scopes you might see in other types of Docker networks. This scope indicates that only hosts which are participating in the swarm can access this network. We will talk about ingress network in later part. 
 
-Then I tried on create another container in worker node and ping to the container in manager node, but unfortunatelty, I remove the overlay network before capture the screen :pig_nose: . So, I create a new overlay network named my_demo with container <em>ahii</em> in manager node and <em>ahuu</em> in worker node. 
+Then I tried on create another container in worker node and ping to the container in manager node, but unfortunatelty, I remove the overlay network before capturing the screen :pig_nose: . So, I create a new overlay network named my_demo with container <em>ahii</em> in manager node and <em>ahuu</em> in worker node. 
 
 
   <img src="imgs/anh19.png">
@@ -357,7 +356,7 @@ Let's check the docker inspect demo container in manager host:
 ```
 The demo1 is attached to ingress network because we published port to nginx service and it has IP address: 10.0.0.201.
 
-Let's check the <em>docker networkk inspect ingress</em>:
+Let's check the <em>docker network inspect ingress</em>:
 
 ```
         "Containers": {
@@ -376,32 +375,32 @@ Let's check the <em>docker networkk inspect ingress</em>:
                 "IPv6Address": ""
             }
 ```
-You can see that, there is a new container that is also attached to the ingress network. This is a hidden container created by default (checked on all servers see this container even though docker ps can't see them). It i created with network namespace and configs, purely for service discovery and load balancing.
+You can see that, there is a new container that is also attached to the ingress network. This is a hidden container created by default (checked on all servers see this container even though docker ps can't see them). It is created with network namespace and configs, purely for service discovery and load balancing.
 
-Ingress-sbox acts as an intermediary between the host machine and the ingress network, requests from this container will be further forwarded to the VIP address (10.0.0.198) on the ingress network (Docker Swarm uses IPVS for load balancing.).
+Ingress-sbox acts as an intermediary between the host and the ingress network, requests from this container will be further forwarded to the VIP(Virtual IP) address (10.0.0.198) on the ingress network (Docker Swarm uses IPVS for load balancing.).
 
 The VIP address will be generated corresponding to a deployment service that has an outbound port, meaning that each deployment service will have a corresponding VIP address for IPVS to load balance the replica containers in that service (demo service).
 
-Using  <em>nsenter</em> to switch the namespace out of the host machine, and we can exce inside to check ingress-sbox(it's hidden so we cannot exec as usual).
+Using  <em>nsenter</em> to switch the namespace out of the host, and we can excecute inside to check ingress-sbox(it's hidden so we cannot execute as usual).
 
 
 <div align="center">
   <img src="imgs/anh23.png">
 </div>
 
-You can see in figure above, line 12, packets, whose destination IP is 10.0.0.198 with 0x1e0 (480 in decimal) will be marked. These marked packets will be forward to 10.0.0.201 (manager node's IP) and 10.0.0.202(worker node's IP) to perform load balance. 
+You can see in figure above, line 12, packets, whose destination IP is 10.0.0.198 with 0x1e0 (480 in decimal) will be marked. These marked packets will be forward to 10.0.0.201 (manager node's IP) and 10.0.0.202(worker node's IP) to perform load balance( to check this, using ipvsadm stats as figure below)
 
 
 <div align="center">
   <img src="imgs/anh24.png">
 </div>
 
-Futhermore, look iptable again , in line 6 from the bottom, you will se the line:
+Futhermore, look iptable again , in line 6 from the bottom, you will see the line:
 
 ```
 -A POSTROUTING -d 10.0.0.0/24 -m ipvs -j SNAT --to -source 10.0.0.2
 ```
-NAT is established here. All packets sent out successfully will receive external reponses. However, these reponses will be tranferred to ingress-sbox(10.0.0.2) before being forwarded to internal client.
+NAT is established here. All packets sent out successfully will receive external reponses. However, these responses will be forwarded to ingress-sbox(10.0.0.2) before being forwarded to internal client.
 
 To sum up: 
 
@@ -410,13 +409,13 @@ To sum up:
 </div>
 
 
-- docker_gwbridge is the default auto-generated network on each node, this network plays a role as docker0 (bridge network): help host communicate with containers, 
-- we access the address of host with port 8080, the access request will be NATed to the IP address 172.18.0.2:8080. 
+- docker_gwbridge is the default auto-generated network on each node, this network plays a role as docker0 (bridge network): helps host communicate with containers.
+- We access the address of host with port 8080, the access request will be NATed to the IP address 172.18.0.2:8080. 
 - Because there is a docker_gwbridge network, requests from users can go into the hidden container as ingress-sbox and then reach the target service in the Docker Swarm cluster through the ingress network.
 
 #### 2. Internal overlay network
 
-- Internal overlay network is the same to ingress network (applying routing mesh using IPVS to balance load to replica containers), but it is private network, so only internall service can connect to each other.
+- Internal overlay network is the same to ingress network(applying routing mesh using IPVS to balance load to replica containers), but it is private network, so only internal service can connect to each other.
 
 #### 3. DNS round robin 
 
