@@ -12,12 +12,12 @@ Author: **Vo Minh Thien Long**
 
 [II. Secure aspects of core components](#secure-aspects)
 
-- [1. Host operating system](#host-os)
-- [2. Docker daemon](#docker-daemon)
-- [3. Docker registries](#docker-registries)
-- [4. Docker volumes](#docker-volumes)
-- [4. Docker images](#docker-images)
-- [4. Docker containers](#docker-containers)
+- [1. Host operating system (layer 1)](#host-os)
+- [2. Docker daemon (layer 2)](#docker-daemon)
+- [3. Docker registries (layer 2)](#docker-registries)
+- [4. Docker images (layer 3)](#docker-images)
+- [5. Docker containers (layer 3)](#docker-containers)
+- [6. Inter-container security (layer 4)](#docker-inter-containers)
 
 [III. Security vulnerabilities of Docker could be exploited](#security-vulnerabilities)
 
@@ -29,12 +29,13 @@ Author: **Vo Minh Thien Long**
 
 - [Securing the host OS](#best-practices-host)
 - [Securing the container images](#best-practices-images)
-- [Securing the container runtime](##best-practices-runtime) 
+- [Securing the container runtime](#best-practices-runtime) 
 
 
 [V. Conclusion](#conclusion)
 
-[V. References](#references)
+[VI. References](#references)
+
 ---- 
 
 ## I. Overview
@@ -210,6 +211,7 @@ or download images.
 </div>
 
 ### 4. Docker images (layer 3)
+<a name='docker-images'></a>
 
 The Docker images do possess _vulnerabilities_ and are **not secure** by default. The vulnerabilities might because 
 of the packages installed in the image, libraries used by the user, or even the base image. Even **Docker Official 
@@ -220,7 +222,6 @@ The ease of pushing and pulling images, while making developers lives easier, ha
 actors to spread malware. An analysis in December 2020 by Prevasio show that **51%** of the images had _exploitable 
 vulnerabilities_ over around **4 million** Docker Hub images.
 
-<a name='docker-images'></a>
 <div align="center">
   <img width="1500" src="assets/docker-images.webp" alt="Docker images vulnerabilities">
 </div>
@@ -446,7 +447,8 @@ both at compile-time and run-time, that attempt to defeat or make some
 common exploitation techniques more difficult. While not Docker-specific, these configurations
 can provide system-wide benefits without conflicting with Docker. 
 
-### 6. Inter Container Security (layer 4)
+### 6. Inter-container security (layer 4)
+<a name='docker-inter-containers'></a>
 
 The Docker containers typically rely heavily on APIs and networks to communicate with each other. That’s why it’s 
 essential to make sure that our network architectures are designed securely, and that we monitor the APIs and 
@@ -476,14 +478,14 @@ By default, Docker automatically generates and loads containers profile named `d
 `docker-default` is moderately protective while providing wide application compatibility. You can also modify the
 profile following this [template](https://github.com/moby/moby/blob/master/profiles/apparmor/template.go).
 
-#### 6.2. Communication between Containers on same hosts
+#### 6.2. Communication between containers on same hosts
 
 By default, **inter-container communication** (`icc`) is enabled - all network traffic is allowed between containers 
 on the same host (using `docker0` bridged network). This may increase disclosure of information to other containers.
 We can disable `icc` by running Docker daemon with `--icc=false` flag and using`--link=CONTAINER_NAME_or_ID:ALIAS`
 option to tell which containers can communicate.
 
-#### 6.3. Communication between Containers across hosts
+#### 6.3. Communication between containers across hosts
 
 For security reasons, Docker configures the `iptables` to prevent containers from forwarding traffic from outside 
 the host machine, on Linux hosts. Docker sets the default policy of the `FORWARD` chain to `DROP`. If we need a 
@@ -615,7 +617,7 @@ consume more resource and could make the whole system down.
 <a name='best-practices'></a>
 
 ### 1. Securing the host OS
-<a name='best-practices-os'></a>
+<a name='best-practices-host'></a>
 
 #### 1.1. Choosing an OS
 
