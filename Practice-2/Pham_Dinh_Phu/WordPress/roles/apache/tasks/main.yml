@@ -1,0 +1,35 @@
+---  
+- name: Install latest version of Apache        
+  apt: name=apache2 update_cache=yes state=latest   
+
+- name: Start apache service  
+  service: name=apache2 state=started enabled=yes   
+  
+- name: Create Apache Document Root  
+  file:   
+    path: "/var/www/{{ http_host }}"    
+    state: directory   
+    owner: "ansible"  
+    group: "ansible"   
+    mode: '0755'     
+   
+- name: Set up Apache VirtualHost    
+  template:  
+    src: "files/apache.conf.j2"  
+    dest: "/etc/apache2/sites-available/{{ http_conf }}"   
+    owner: root   
+    group: root  
+    mode: u=rw,g=r,o=r     
+  
+- name: Enable rewrite module  
+  shell: /usr/sbin/a2enmod rewrite   
+  notify: Reload Apache   
+
+- name: Enable new site   
+  shell: /usr/sbin/a2ensite {{ http_conf }}   
+  notify: Reload Apache   
+
+- name: Disable default Apache site   
+  shell: /usr/sbin/a2dissite 000-default.conf   
+  notify: Restart Apache     
+  
