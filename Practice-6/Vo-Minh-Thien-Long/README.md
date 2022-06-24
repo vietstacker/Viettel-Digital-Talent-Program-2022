@@ -210,10 +210,7 @@ or download images.
   <i>Docker Trusted Registry.</i>
 </div>
 
-### 4. Docker volumes (layer 3)
-<a name='docker-volumes'></a>
-
-### 5. Docker images (layer 3)
+### 4. Docker images (layer 3)
 
 The Docker images do possess _vulnerabilities_ and are **not secure** by default. The vulnerabilities might because 
 of the packages installed in the image, libraries used by the user, or even the base image. Even **Docker Official 
@@ -241,7 +238,7 @@ that can be costly to remediate and can damage our reputation.
 In the other hand, if you write a bad Docker image, it may leak your _sensitive information_ or _private file_, which
 could become a dangerous security problem later. 
 
-### 6. Docker containers (layer 3)
+### 5. Docker containers (layer 3)
 <a name='docker-containers'></a>
 
 Securing a Docker container requires an _end-to-end_ approach that provides protection everywhere from the host
@@ -272,7 +269,7 @@ to provide basic isolation across **containers**. Advanced isolation can be achi
   <i>Linux kernel features using in Docker container.</i>
 </div>
 
-#### 6.1 Kernel namespaces
+#### 5.1 Kernel namespaces
 
 `namespaces` are a feature of the Linux kernel that **partitions kernel resources** such that each set of processes
 see difference set of resources. The feature works by having the same namespace for a set of resources and processes,
@@ -322,7 +319,7 @@ _NIS domain name_.
 5/ **IPC Namespace**: The inter-process communication (IPC) namespace creates a grouping where containers can only 
 see and communicate with other processes in _the same IPC namespace_.
 
-#### 6.2. Control groups
+#### 5.2. Control groups
 
 **Control groups** (or `cgroups`)  are a Linux kernel feature that **limits**, **accounts** for, and 
 **isolates** the resource usage (CPU, memory, disk I/O, network, etc.) of a collection of processes.
@@ -365,7 +362,7 @@ Docker Engine uses the following `cgroups`:
 `cgroups` are essential to prevent **denial-of-service** attacks and guarantee a consistent uptime and performance
 in multi-tenancy platforms, even when some applications start to misbehave.
 
-#### 6.3. Seccomp
+#### 5.3. Seccomp
 
 `seccomp` (_secure computing mode_) is a computer security facility in the Linux kernel. We can understand it
 as a _firewall for syscalls_, to restrict the system calls that process may make. From this view, **seccomp** 
@@ -405,7 +402,7 @@ we can also customize it ourselves to improve security and adapt to our purpose.
 ... 
 ```
 
-#### 6.4. Linux kernel capabilities
+#### 5.4. Linux kernel capabilities
 
 Before `capabilities`, Linux considers OS security in terms of `root` privileges versus `user` privileges. With
 `capabilities` Linux now has a more nuanced privilege model. Restricting both **access** and **capabilities** 
@@ -436,7 +433,7 @@ to allow escalation to a fully-privileged `root` user.
   <i>Linux capabilities for host and container.</i>
 </div>
 
-#### 6.5. Other Linux kernel security features
+#### 5.5. Other Linux kernel security features
 
 Modern Linux kernels have many additional security constructs in addition to the concepts of `capabilities`, 
 `namespaces` and `cgroups`. Docker can leverage existing systems like `TOMOYO`, `SELinux` and `GRSEC`, some 
@@ -450,13 +447,13 @@ both at compile-time and run-time, that attempt to defeat or make some
 common exploitation techniques more difficult. While not Docker-specific, these configurations
 can provide system-wide benefits without conflicting with Docker. 
 
-### 7. Inter Container Security (layer 4)
+### 6. Inter Container Security (layer 4)
 
 The Docker containers typically rely heavily on APIs and networks to communicate with each other. That’s why it’s 
 essential to make sure that our network architectures are designed securely, and that we monitor the APIs and 
 network activity for anomalies that could indicate an intrusion.
 
-#### 7.1. AppArmor
+#### 6.1. AppArmor
 
 AppArmor (_Application Armor_) is a Linux kernel security module that allows the system administrator to **restrict** 
 programs' capabilities with _per-program_ profiles. In contrast to managing `capabilities` and `seccomp`,
@@ -480,14 +477,14 @@ By default, Docker automatically generates and loads containers profile named `d
 `docker-default` is moderately protective while providing wide application compatibility. You can also modify the
 profile following this [template](https://github.com/moby/moby/blob/master/profiles/apparmor/template.go).
 
-#### 7.2. Communication between Containers on same hosts
+#### 6.2. Communication between Containers on same hosts
 
 By default, **inter-container communication** (`icc`) is enabled - all network traffic is allowed between containers 
 on the same host (using `docker0` bridged network). This may increase disclosure of information to other containers.
 We can disable `icc` by running Docker daemon with `--icc=false` flag and using`--link=CONTAINER_NAME_or_ID:ALIAS`
 option to tell which containers can communicate.
 
-#### 7.3. Communication between Containers across hosts
+#### 6.3. Communication between Containers across hosts
 
 For security reasons, Docker configures the `iptables` to prevent containers from forwarding traffic from outside 
 the host machine, on Linux hosts. Docker sets the default policy of the `FORWARD` chain to `DROP`. If we need a 
