@@ -1,1 +1,0 @@
-Phân tích thiết kế, cách thức hoạt động và các ưu nhược điểm của giải pháp CI/CD mã nguồn mở Jenkins
