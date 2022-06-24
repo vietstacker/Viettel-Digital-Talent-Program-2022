@@ -178,19 +178,19 @@ Swarm architecture:
   <img src="imgs/anh10.png">
 </div> 
 
- ◦ Swarm: is a cluster of one or more Docker Engines running (specifically, nodes) in Swarm mode, instead of having to run containers with commands, we will set up services to allocate replicas to nodes.
- ◦ A node is a physical or virtual machine running a Docker Engine instance in Swarm mode. Node will include two types: Manager Node and Worker Node.
- ◦ Manager node: perform the orchestration and cluster management functions required to maintain the desired state of the swarm. Manager nodes elect a single leader to conduct orchestration tasks.Manager node is also treated as the Worker node.
- ◦ Worker nodes: receive and execute tasks dispatched from manager nodes. By default, manager nodes are also worker nodes, but you can configure managers to be manager-only nodes.
- ◦ Service: specifies the image of the container and the desired number of replicas to launch in the swarm.
- ◦ Task: a task that the worker node has to perform. This task will be down-allocated by node Manager. A task carries a Docker Container and commands to run inside the container.
+ ◦ <em><strong>Swarm</strong></em>: is a cluster of one or more Docker Engines running (specifically, nodes) in Swarm mode, instead of having to run containers with commands, we will set up services to allocate replicas to nodes.\
+ ◦ <em><strong>Node</strong></em>: a physical or virtual machine running a Docker Engine instance in Swarm mode. Node will include two types: Manager Node and Worker Node.\
+ ◦ <em><strong>Manager nodes</strong></em>: perform the orchestration and cluster management functions required to maintain the desired state of the swarm. Manager nodes elect a single leader to conduct orchestration tasks.Manager node is also treated as the Worker node.\
+ ◦ <em><strong>Worker nodes</strong></em>: receive and execute tasks dispatched from manager nodes. By default, manager nodes are also worker nodes, but you can configure managers to be manager-only nodes.\
+ ◦ <em><strong>Service</strong></em>: specifies the image of the container and the desired number of replicas to launch in the swarm.\
+ ◦ <em><strong>Task</strong></em>: a task that the worker node has to perform. This task will be down-allocated by node Manager. A task carries a Docker Container and commands to run inside the container.
 
 Subsequent nodes joining the cluster are usually added as workers but can be assigned as either. The flexibility means that the entire swarm can be built from a single disk image with little differentiation.
 
 The following port must be opened while working on docker swarm mode:\
-      ◦ 2377 (TCP) - Cluster management\
-      ◦ 7946 (TCP and UDP) - Nodes communication\
-      ◦ 4789 (TCP and UDP) - Overlay network traffic\
+      ◦ <em><strong>2377</strong></em> (TCP) - Cluster management\
+      ◦ <em><strong>7946</strong></em> (TCP and UDP) - Nodes communication\
+      ◦ <em><strong>4789</strong></em> (TCP and UDP) - Overlay network traffic\
 Docker swarm seems to be the same as Kuberetes because both platforms allow you to manage containers and scale application deployment, but kubernetes is much more complex. In Swarm, a service provides both scheduling and networking facilities, creating containers and providing tools for routing traffic to them. In Kubernetes, scheduling and networking are handled separately: deployments (or other controllers) handle the scheduling of containers as pods, while services are responsible only for adding networking features to those pods.
  
  
@@ -302,9 +302,9 @@ The reponse from nginx server is the result from <em>demo1</em> and <em>demo2</e
 
 The following two network concepts is also important to swarm services:
 
-- ingress network is a special overlay network that facilitates load balancing among a service’s nodes. When any swarm node receives a request on a published port, it hands that request off to a module called IPVS. IPVS keeps track of all the IP addresses participating in that service, selects one of them, and routes the request to it, over the ingress network. The ingress network is created automatically when you initialize or join a swarm. Most users do not need to customize its configuration, but Docker allows you to do so.
+- <em><strong>ingress network</strong></em>: is a special overlay network that facilitates load balancing among a service’s nodes. When any swarm node receives a request on a published port, it hands that request off to a module called IPVS. IPVS keeps track of all the IP addresses participating in that service, selects one of them, and routes the request to it, over the ingress network. The ingress network is created automatically when you initialize or join a swarm. Most users do not need to customize its configuration, but Docker allows you to do so.
 
-- docker_gwbridge is a bridge network that connects the overlay networks (including the ingress network) to an individual Docker daemon’s physical network. By default, each container a service is running is connected to its local Docker daemon host’s docker_gwbridge network. The docker_gwbridge network is created automatically when you initialize or join a swarm. Most users do not need to customize its configuration, but Docker allows you to do so.
+- <em><strong>docker_gwbridge</strong></em>: is a bridge network that connects the overlay networks (including the ingress network) to an individual Docker daemon’s physical network. By default, each container a service is running is connected to its local Docker daemon host’s docker_gwbridge network. The docker_gwbridge network is created automatically when you initialize or join a swarm. Most users do not need to customize its configuration, but Docker allows you to do so.
 
 
 #### 1. Ingress network
