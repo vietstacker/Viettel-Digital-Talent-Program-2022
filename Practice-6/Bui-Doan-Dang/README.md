@@ -143,6 +143,8 @@ Giống như đa phần các phần mềm quản lý cấu hình tập trung kh�
 ### **3.4 SSH**
 SSH, hoặc được gọi là Secure Shell, là một giao thức điều khiển từ xa cho phép người dùng kiểm soát và chỉnh sửa server từ xa qua Internet. Dịch vụ được tạo ra nhằm thay thế cho trình Telnet vốn không có mã hóa và sử dụng kỹ thuật cryptographic để đảm bảo tất cả giao tiếp gửi tới và gửi từ server từ xa diễn ra trong tình trạng mã hóa. Nó cung cấp thuật toán để chứng thực người dùng từ xa, chuyển input từ client tới host, và relay kết quả trả về tới khách hàng.
 
+![alt](./imgs/ssh.png)
+
 Bằng cách sử dụng SSH, Ansible có thể gửi gửi các đoạn script và thực thi trên Target Node.
 <a name="conclusion"></a>
 ### **4. Kết luận**
