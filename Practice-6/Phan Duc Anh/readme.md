@@ -32,17 +32,17 @@ Trong một search engine thì hai hoạt động chính sẽ luôn là indexing
 
 ## 2. Indexing
 
-Trong Lucene, đơn vị dữ liệu nhỏ nhất được gọi là document. Lucene sẽ modeling document theo dạng một list các field (trường) không bị nested (hay nó flat, tức là value của trường không thể là một document hay một list các trường khác). Mỗi field gồm 3 phần: name, type và value. Value có thể là string, reader, pre-analyzed TokenStream, binary hoặc numeric. Ngoài ra, field có thể được lưu lại để trả về khi search tuỳ vào mục đích của ta. Document sẽ gồm các field được implement IndexableField ( IndexableField giúp Lucene index, tokenized, stores field này). Một số field có thể kể đến như:
+Trong Lucene, đơn vị dữ liệu nhỏ nhất được gọi là document. Lucene sẽ modeling document theo dạng một list các field (trường) không bị nested (hay nó flat, tức là value của trường không thể là một document hay một list các trường khác). Mỗi field gồm 3 phần: name, type và value. Value có thể là string, reader, pre-analyzed TokenStream, binary hoặc numeric. Ngoài ra, field có thể được lưu lại giá trị để trả về khi search tuỳ vào mục đích của ta. Document sẽ gồm các field được implement IndexableField ( IndexableField giúp Lucene index, tokenized, stores field này). Một số field có thể kể đến như:
 
 - TextField: String hoặc Reader, field này sẽ được index cho full-text search
 - StringField: String, field này khác với TextField là nó sẽ không bị tokenized mà sẽ coi cả trường đó là một token
 - Các numeric field (IntPoint, LongPoint, FloatPoint): được index sử dụng cho query khoảng giá trị/ giá trị chính xác. (Cơ chế indexing cho các trường numeric này sẽ khác so với các field sử dụng cho full-text search, cụ thể là k-demensional Tree, ta có thể tham khảo thêm paper triển khai cây này tại [đây](https://users.cs.duke.edu/~pankaj/publications/papers/bkd-sstd.pdf))
 
-Ta cần phải nhấn mạnh rằng, với mỗi field thì cơ chế indexing sẽ có sự khác biệt. Tuy nhiên, do Lucene là một full-text search engine nên ta sẽ chủ yếu tập trung vào tính năng này của Lucene (TextField) với cơ chế indexing đặc biệt cho tính năng này.
+Ta cần phải nhấn mạnh rằng, với mỗi field thì cơ chế indexing sẽ có sự khác biệt (chẳng hạn như KD-Trê cho numeric field). Tuy nhiên, do Lucene là một full-text search engine nên ta sẽ chủ yếu tập trung vào tính năng này của Lucene (TextField) với cơ chế indexing đặc biệt cho tính năng này.
 
 Như vậy sau khi có document, document sẽ được chuyển tiếp sang giai đoạn analysis. Tại giai đoạn này, tuỳ vào type của field mà các field sẽ được xử lí khác nhau, chẳng hạn như StringField thì sẽ không làm gì mà chuyển tới thẳng luôn IndexWriter. Ngược lại, TextField sẽ qua một bước analysis rồi mới đưa vào IndexWriter.
 
-Trước hết, ta cần phải hiểu được cơ chế index của Lucene và tại sao ta cần analysis. Lucene sử dụng cơ chế được gọi là inverted indexing (cơ chế này đã được [đề cập tại đây](https://github.com/anhphantq/Viettel-Digital-Talent-Program-2022/tree/Pratice-5/Practice-5/Phan%20Duc%20Anh#123-index) nên ta sẽ không trình bày lại). Tức là thay vì duyệt từng document để xem có thoả mãn, thì các field sẽ được break ra thành các token, sau đó, mỗi token sẽ được lưu một số thông tin như số lần xuất hiện của nó trong các document và vị trí của nó trong các document đó. Khi đó, khi query ta thay vì scan document rồi so sánh với key word ta có thể tìm kiếm key word đấy bằng các token mà ta đã index.
+Trước hết, ta cần phải hiểu được cơ chế index của Lucene và tại sao ta cần analysis. Lucene sử dụng cơ chế được gọi là inverted indexing (cơ chế này đã được [đề cập tại đây](https://github.com/anhphantq/Viettel-Digital-Talent-Program-2022/tree/Pratice-5/Practice-5/Phan%20Duc%20Anh#123-index) nên ta sẽ không trình bày lại). Tức là thay vì duyệt từng document để xem có thoả mãn, thì các field sẽ được break ra thành các token, sau đó, mỗi token sẽ được lưu một số thông tin như số lần xuất hiện của nó trong các document và vị trí của nó trong các document đó. Khi đó, khi query ta thay vì scan document rồi so sánh với key word ta có thể tìm kiếm key word đấy bằng các token mà ta đã index. Đây là lý do vì sao giúp Lucence search nhanh như vậy.
 
 Vậy quá trình analysis sẽ thực hiện như thế nào? Đầu tiên, dữ liệu sẽ được đưa vào tokenizer, đơn giản là nó sẽ chia nhỏ đoạn text ra thành các token (hay các từ). Tiếp theo các token sẽ được chuyển đến Token Filter để modify chẳng hạn như: deletion (xoá bỏ token vô nghĩa, chẳng hạn như a, an, the….), case-folding, synonym injection (với một token chẳng hạn như beautiful, Token Filter có thể inject thêm pretty với đúng vị trí và số lần xuất hiện như beautiful, đây là một điểm thú vị, vì khi ta query, thì có thể tìm được cả những câu có nghĩa tương đồng).
 
@@ -140,7 +140,7 @@ private static Document createDocument(Integer id, String firstName, String last
 }
 ```
 
-Như vậy, ta đã viết 1 hàm tạo document với 4 trường: 3 trường TextField và 1 trường StringField, đồng thời trường “website” ta sẽ cấu hình không trường này mà chỉ đánh index. Tiếp theo, ta viết hàm khởi tạo IndexWriter:
+Như vậy, ta đã viết 1 hàm tạo document với 4 trường: 3 trường TextField và 1 trường StringField, đồng thời trường “website” ta sẽ cấu hình không lưu giá trị trường này mà chỉ đánh index. Tiếp theo, ta viết hàm khởi tạo IndexWriter:
 
 ```java
 private static IndexWriter createWriter() throws IOException
@@ -337,7 +337,7 @@ WildcardQuery là những query mà term là chưa xác định rõ ràng do ch�
 
 ### 3.5. FuzzyQuery
 
-FuzzyQuery là những query mà term được match khi nó thoả mãn khoảng cách Damerau-Levenshtein (ta có thể config để sử dụng classic Levenshtein) với query nhỏ hơn một mức nhất định (maxEdits). FuzzyQuery cũng tương đối chậm so với TermQuery, vì thế ta phải cực kỳ lưu ý khi sử dụng các loại query này. Cách hoạt động của FuzzyQuery vô cùng phức tạp (paper tại đây với [một paper 69 trang](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.16.652&rep=rep1&type=pdf). (Một số keyword cho chủ đề này như: Finite State Machine, FSA, FST).
+FuzzyQuery là những query mà term được match khi nó thoả mãn khoảng cách [Damerau-Levenshtein](https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance) (ta có thể config để sử dụng classic Levenshtein) với query nhỏ hơn một mức nhất định (maxEdits). FuzzyQuery cũng tương đối chậm so với TermQuery, vì thế ta phải cực kỳ lưu ý khi sử dụng các loại query này. Cách hoạt động của FuzzyQuery vô cùng phức tạp: paper sử dụng FSM mà FuzzyQuery implement là [một paper 69 trang](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.16.652&rep=rep1&type=pdf). Một số keyword để có thể hiểu được implement được FuzzyQuery như: Finite State Machine, FSA, FST.
 
 > **_NOTE:_** với việc sử dụng concept của Finite State Machine, Lucene đã tăng được tốc độ của query lên rất nhiều, đây là bài trình bày về chủ đề này: https://www.youtube.com/watch?v=pd2jvy2IbJE
 
@@ -353,6 +353,8 @@ Như vậy ta đã tìm hiểu cơ bản về các cơ chế của Apache Lucene
 
 Một số kĩ thuật nâng cao ta có thể học trong [bài presentation này](https://www.youtube.com/watch?v=ToC-HM7VI7g&list=PLU2OcwpQkYCyjeQ-a3GGjkStL5CyqJ3OS).
 
+Lucence có cung cấp một trang thông tin về [performance của Lucene qua các năm](https://home.apache.org/~mikemccand/lucenebench/) và lí do khiến chúng tăng/giảm performance, ta có thể tham thảo để có những quyết định riêng về các query ta sử dụng trong từng use case.
+
 ### 4.2. Elasticsearch và Lucene
 
 Vì được xây dựng trên Lucene, nên ta hoàn toàn có thể sử dụng các tính chất của Lucene để tận dụng được tối đa Elasticsearch, chẳng hạn như:
@@ -366,7 +368,7 @@ Vì được xây dựng trên Lucene, nên ta hoàn toàn có thể sử dụng
 
 ### 4.4. Lucene và Distributed System
 
-Sau khi tìm hiểu về Lucene và Elasticsearch thì em thấy Elasticsearch hiện đang sử dụng model distributed system để sharding các shard đảm bảo HA. Tuy nhiên việc đánh index thì vẫn chưa tận dụng được tài nguyên của các node đang rảnh. Em có nghĩ đến việc sử dụng thuật toán MapReduce sử dụng Lucene vào việc đánh index một cách hiệu quả. Sau khi tìm kiếm xem liệu hệ thống này có khả thi hay không thì em có tìm được một [slide đề cập đến vấn đề này](https://docs.huihoo.com/big-data/hic2011/using-hadoop-lucene-solr-for-large-scale-search.pdf).
+Sau khi tìm hiểu về Lucene và Elasticsearch thì em thấy Elasticsearch hiện đang sử dụng model distributed system để sharding đảm bảo HA. Tuy nhiên việc đánh index thì vẫn chưa tận dụng được tài nguyên của các node đang rảnh. Em có nghĩ đến việc sử dụng thuật toán MapReduce sử dụng Lucene vào việc đánh index một cách hiệu quả. Sau khi tìm kiếm xem liệu hệ thống này có khả thi hay không thì em có tìm được một [slide đề cập đến vấn đề này](https://docs.huihoo.com/big-data/hic2011/using-hadoop-lucene-solr-for-large-scale-search.pdf).
 
 Mô hình của họ cũng dựa trên MapReduce một cách thuần tuý với việc Lucene sẽ chạy trên từng Reduce Node hoặc sử dụng Map Side indexing như sau:
 
