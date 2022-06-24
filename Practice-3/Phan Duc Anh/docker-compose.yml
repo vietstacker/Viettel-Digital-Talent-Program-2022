@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  web_mongo:
+    build: ./mongo
+  web_python:
+    build: ./python
+    depends_on:
+      - "web_mongo"
+  web_nginx:
+    build: ./nginx
+    depends_on:
+      - "web_python"
+    volumes:
+      - ./nginx:/usr/share/nginx/html
+    ports:
+      - 80:80
