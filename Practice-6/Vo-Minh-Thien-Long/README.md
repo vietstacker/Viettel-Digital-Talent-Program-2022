@@ -27,9 +27,9 @@ Author: **Vo Minh Thien Long**
 
 [IV. Best practices](#best-practices)
 
-- [Securing the host OS](#best-practices-host)
-- [Securing the container images](#best-practices-images)
-- [Securing the container runtime](#best-practices-runtime) 
+- [1. Securing the host OS](#best-practices-host)
+- [2. Securing the container images](#best-practices-images)
+- [3. Securing the container runtime](#best-practices-runtime) 
 
 
 [V. Conclusion](#conclusion)
