@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+img {
+  width: 100%;
+}
+</style>
+<body>
+
+
+<img src="download.png" alt="HTML5 Icon" style="width:128px;height:128px;">
+
+</body>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>Number</th>
+            <th>Name</th>
+            <th>Date of birth</th>
+            <th>Department</th>
+            <th>Major</th>
+        </tr>
+        {% for attendee in attendees %}
+        <tr>
+            <td>{{ attendee.number }}</td>
+            <td>{{ attendee.name }}</td>
+            <td>{{ attendee.yob }}</td>
+            <td>{{ attendee.university }}</td>
+            <td>{{ attendee.major }}</td>
+        </tr>  
+        
+        {% endfor %}
+    </table>
+</body>
+</html>

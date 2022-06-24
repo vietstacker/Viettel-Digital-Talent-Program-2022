@@ -1,0 +1,173 @@
+[
+ {
+  "number": 1,
+  "name": "Long Vo Minh Thien",
+  "yob": 2000,
+  "university": "ITMO university",
+  "major": "Software Engineering"
+ },
+ [
+ {
+  "number": 2,
+  "name": "Hai Nguyen Van",
+  "yob": 2001,
+  "university": "VNU university",
+  "major": "Computer Science"
+ },
+ {
+  "number": 3,
+  "name": "Thuy Tran Thu",
+  "yob": 2000,
+  "university": "HUST university",
+  "major": "Electronics & Telecommunications"
+ }, 
+ {
+  "number": 4,
+  "name": "Khang Ho Nguyen",
+  "yob": 2000,
+  "university": "HUST university",
+  "major": "Electronics & Telecommunications"
+ },
+ {
+  "number": 5,
+  "name": "Anh Phan Duc",
+  "yob": 2001,
+  "university": "HUST university",
+  "major": "Computer Science"
+ }, 
+ {
+  "number": 6,
+  "name": "Duong Nguyen Duc",
+  "yob": 2000,
+  "university": "VNU university",
+  "major": "Computer Science"
+ }, 
+ {
+  "number": 7,
+  "name": "Binh Ta Huu",
+  "yob": 2001,
+  "university": "HUST university",
+  "major": "Computer Science"
+ }, 
+ {
+  "number": 8,
+  "name": "Truong Nguyen Nhat",
+  "yob": 2001,
+  "university": "VNU university",
+  "major": "Communications & Network"
+ },  
+ {
+  "number": 9,
+  "name": "Huong Dinh Thi",
+  "yob": 2000,
+  "university": "HUST university",
+  "major": "Computer Science"
+ }, 
+ {
+  "number": 10,
+  "name": "Hai Tran Quang",
+  "yob": 2001,
+  "university": "HUST university",
+  "major": "Global ICT"
+ },
+ {
+  "number": 11,
+  "name": "Hiep Nguyen Tuan",
+  "yob": 2001,
+  "university": "PTIT university",
+  "major": "Telecommunications Technology"
+ },
+ {
+  "number": 12,
+  "name": "Nguyen Xuan Khang",
+  "yob": 2001,
+  "university": "VNU university",
+  "major": "Information System"
+ },  
+ {
+  "number": 13,
+  "name": "Phuong Trinh Hong",
+  "yob": 2001,
+  "university": "HUST university",
+  "major": "Computer Science"
+ }, 
+ {
+  "number": 14,
+  "name": "Hai Trieu Do",
+  "yob": 2000,
+  "university": "HUST university",
+  "major": "Mechatronic Engineering"
+ },  
+ {
+  "number": 15,
+  "name": "Dang Doan Bui",
+  "yob": 2000,
+  "university": "HUST university",
+  "major": "Information System"
+ },
+ {
+  "number": 16,
+  "name": "Huong Nguyen Thi",
+  "yob": 2000,
+  "university": "HUST university",
+  "major": "Electronics & Telecommunications"
+ },  
+ {
+  "number": 17,
+  "name": "Hien Tran Thanh",
+  "yob": 2001,
+  "university": "VACT university",
+  "major": "Information Security"
+ },   
+ {
+  "number": 18,
+  "name": "Son Do Hoang",
+  "yob": 2000,
+  "university": "PTIT university",
+  "major": "Information Security"
+ }, 
+ {
+  "number": 19,
+  "name": "Huyen Vu Thi",
+  "yob": 2001,
+  "university": "VNU university",
+  "major": "Computer Network & Data Communications"
+ },
+ {
+  "number": 20,
+  "name": "Long Phung Hoang",
+  "yob": 2000,
+  "university": "PTIT university",
+  "major": "Information System"
+ }, 
+ {
+  "number": 21,
+  "name": "Phu Pham Dinh",
+  "yob": 2000,
+  "university": "UTC university",
+  "major": "Information & Telecommunications Technology"
+ },  
+ {
+  "number": 22,
+  "name": "Tung Son Kieu",
+  "yob": 2001,
+  "university": "NEU university",
+  "major": "Data Science in Industry"
+ },  
+ {
+  "number": 23,
+  "name": "Anh Hoang Thi Van",
+  "yob": 2001,
+  "university": "VACT university",
+  "major": "Information Security"
+ }, 
+ {
+  "number": 24,
+  "name": "Huy Nguyen Tan",
+  "yob": 2001,
+  "university": "VNU university",
+  "major": "Electronics"
+ }
+]
+ 
+
