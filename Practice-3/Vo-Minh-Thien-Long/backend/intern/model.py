@@ -4,12 +4,7 @@ from mongoengine import connect, Document, StringField, ReferenceField, IntField
 
 from university.model import University
 
-connect('vdt2022',
-        host="mongodb",
-        port=27017,
-        username="practice3",
-        password="practice3",
-        authentication_source='admin')
+connect('vdt2022')
 
 
 class Gender(Enum):

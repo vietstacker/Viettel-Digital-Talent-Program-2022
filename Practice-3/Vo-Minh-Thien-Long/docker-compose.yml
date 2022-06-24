@@ -2,34 +2,42 @@ version: '3.9'
 
 services:
   react:
-    build: frontend
+    image: frontend-image
+    build:
+      context: frontend
+      dockerfile: Dockerfile
     container_name: presentation_tier
     restart: unless-stopped
     ports:
-      - "9333:9333"
-    links:
-      - flask
-
+      - "9333"
+      
   flask:
-    build: backend
+    image: backend-image
+    build:
+      context: backend
+      dockerfile: Dockerfile
     container_name: logic_tier
     restart: unless-stopped
-    environment:
-      - FLASK_APP=backend/app
-    ports:
-      - "5000:5000"
-    links:
+    depends_on:
       - mongodb
-
+    networks:
+      - backend
+    ports:
+      - "5000"
+    
   mongodb:
     image: mongo:5.0
     container_name: data_tier
     restart: unless-stopped
-    hostname: mongodb
+    command: mongod --auth
     environment:
-      - MONGO_INITDB_DATABASE=vdt2022
-      - MONGO_INITDB_ROOT_USERNAME=practice3
-      - MONGO_INITDB_ROOT_PASSWORD=practice3
+      MONGO_INITDB_DATABASE: vdt2022
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null
+    networks:
+      - backend
     ports:
-      - "27017:27017"
-      
+      - "27017"
+
+networks:
+  backend:
