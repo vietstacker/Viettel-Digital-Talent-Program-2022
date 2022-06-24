@@ -7,9 +7,8 @@ Author: **Vo Minh Thien Long**
 ## Table of contents
 [I. Overview](#overview)
 
-- [Container isolation versus Virtual machine isolation](#docker-vm)
-- [Container security](#container-security)
-- [Docker security](#docker-security)
+- [1. Container isolation versus Virtual machine isolation](#docker-vm)
+- [2. Docker security](#docker-security)
 
 [II. Secure aspects of core components](#secure-aspects)
 
