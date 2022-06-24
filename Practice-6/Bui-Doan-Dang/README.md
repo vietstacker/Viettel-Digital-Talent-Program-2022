@@ -100,14 +100,15 @@ $ ansible --version
 
 <a name="ansible_workflow"></a>
 ## **3. Luồng xử lý trong Ansible**
-
+Ansible hoạt động bằng cách kết nối với các Node và đẩy ra một chương trình nhỏ gọi là modules Ansible cho chúng. Sau đó, Ansible thực thi các modules này và gỡ bỏ chúng sau khi hoàn thành. Thư viện các modules có thể nằm trên bất kỳ máy nào và không yêu cầu daemon, máy chủ hoặc cơ sở dữ liệu.
 
 ![](./imgs/ansible_workflow.png)
 
-
+Như trên biểu đồ, ta có thể thấy cụ thể hơn sẽ bao gồm các thành phần dưới đây.
 <a name="human"></a>
 ### **3.1 Người quản trị**
 Nhìn vào biểu đồ trên, bắt đầu từ trái qua phải, đầu tiên ta có thể thấy người quản trị có thể thông qua CLI (Command line interface) để tương tác với Ansible. 
+
 CLI có hai cách tiếp cận khác nhau: Chúng ta có thể gửi lệnh từ dòng lệnh bằng cách sử dụng tệp thực thi ansible và đó được gọi là tương tác Ad-hoc. Cách tiếp cận thứ hai là sử dụng playbook, là tệp YML có chứa hướng dẫn mà con người có thể đọc được để thực hiện các tác vụ trên máy chủ hoặc nhóm máy chủ mong muốn khi gọi playbook và chúng tôi sẽ sử dụng tệp thực thi ansible-playbook.
 
 <a name="playbook"></a>
@@ -119,6 +120,15 @@ Modules (còn được gọi là 'task plugins' hay 'library plugins') là nơi 
 
 Hầu hết module đều được viết bằng python, mỗi module sẽ có các tham số truyền vào là khác nhau, và hầu như tất cả các module đều có tham số theo dạng key=value, các tham số cách nhau bởi dấu cách. Ngoài ra cũng có 1 số module không có tham số như ping...
 
+Tất cả các modules đều trả về output dưới dạng JSON format. Dưới đây là một số modules cơ bản trong ansible là: 
+
+- **copy**: thực hiện copy 1 file từ máy local tới các máy hosts
+- **file**: set các thuộc tính cho 1 file, symlink hay 1 thư mục.
+- **service**: start, stop or restart 1 service.
+- **template**: generate 1 file từ 1 template và copy file đó tới các máy hosts.
+- ...
+
+(Xem tất cả các moduele của ansible tại [đây](http://docs.ansible.com/ansible/latest/list_of_all_modules.html))
 
 <a name="Ansible"></a>
 ### **3.3 Ansible**
