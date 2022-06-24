@@ -153,8 +153,8 @@ Như vậy, quá trình autoscaling bao gồm các giai đoạn chính:
 
     Số lượng pod tăng hay giảm có thể được cấu hình phụ thuộc vào một số loại metrics:
     * Sử dụng tài nguyên thực tế: ví dụ CPU, RAM
-    * Tùy chỉnh metrics: ví dụ Queries-Per-Second (QPS)
-    * External metrics: các metrics tới từ ứng dụng hoặc dịch vụ phía ngoài cluster
+    * Custom metrics: ví dụ Queries-Per-Second (QPS)
+    * External Metrics: các metrics tới từ ứng dụng hoặc dịch vụ phía ngoài cluster
 
     ![Collect metrics](./img/collect-metrics-model.png)
 
@@ -208,6 +208,11 @@ Như vậy, quá trình autoscaling bao gồm các giai đoạn chính:
 
 > Ngăn ngừa *thrashing*: *Thrashing* là một tình huống khi mà HPA cố gắng thực hiện việc autoscaling mới trong khi quá trình scaling trước đó vẫn chưa kết thúc. Để ngăn ngừa điều này, HPA thường đợi 3 phút sau khi scale up và chờ 5 phút sau khi scale down để cho phép các số liệu ổn định.
 
+* Best practice
+    * Đảm bảo tất cả các pod đều được cấu hình resource request
+    * Nếu có thể thì ưu tiên custom metrics hơn externel metrics
+    * Sử dụng chung với **Cluster Autoscaler**
+
 ### *2.3. Vertical pod autoscaling*
 
 Ta đã thấy horizontal scaling giúp ta giải quyết được nhiều vần đề performance của ứng dụng, nhưng không phải ứng dụng nào ta cũng có thể scale theo kiểu horizontal được. Khi đó chúng ta cần scale theo kiểu vertical, tức là thay vì điều chỉnh số lượng pod như horizontal scale thì chúng ta sẽ điều chỉnh lượng tài nguyên (CPU/Memory) cung cấp cho mỗi pod. Việc này được thực hiện bởi `VerticalPodAutoscaler` (VPA) cũng là một add-ons của K8s.
@@ -257,6 +262,8 @@ Ta đã thấy horizontal scaling giúp ta giải quyết được nhiều vần
 
     * **Auto**: ở mode này, sau khi recommendations được tạo ra, thì không những chỉ những Pod mới được áp dụng giá trị gợi ý này, mà kể cả những Pod hiện tại mà có giá trị không đúng với giá trị của recommendations, thì nó cũng sẽ bị restart lại.
 
+* Best practice
+    * Tránh sử dụng HPA và VPA song song: HPA và VPA không tương thích với nhau nên không thể dùng chung trên cùng một pod, trừ khi HPA được cấu hình với custom metrics hoặc external metrics
 ### *2.4. Cluster Autoscaler*
 
 Chúng ta không thể tiếp tục scale up khi không còn đủ nodes cho các pod chạy nữa, khi đó cần sử dụng Cluster Autoscaler để tự động thêm hoặc xóa các node trong một cluster dựa trên các yêu cầu tài nguyên từ pods. 
@@ -284,8 +291,9 @@ CA không trực tiếp đo mức độ sử dụng CPU hay Ram để đưa ra q
 
     Quá trình xóa node khỏi cluster: CA đánh dấu node đó là `unschedulable` và chuyển toàn bộ pod qua node khác, sau đó node mới chính thức bay màu.
 
-### *2.5 So sánh gì đó*
-
+* Best practice
+    * Đảm bảo tài nguyên có sẵn cho CA pod
+    * Đảm bảo tất cả các pod đều được định nghĩa resource request
 
 
 
