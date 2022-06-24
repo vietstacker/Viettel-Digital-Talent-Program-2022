@@ -1,0 +1,41 @@
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: always
+    network_mode: host
+    volumes:
+      - './prometheus.yml:/etc/prometheus/prometheus.yml'
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=pass
+      - GF_USERS_ALLOW_SIGN_UP=false
+    restart: always
+    network_mode: host
+    depends_on:
+      - prometheus
+    volumes:
+      - './grafana.ini:/etc/grafana/grafana.ini'
+
+  alertmanager:
+    image: prom/alertmanager:v0.20.0
+    container_name: alertmanager
+    restart: always
+    network_mode: host
+    depends_on:
+      - prometheus
+    volumes:
+      - '$HOME/alertmanager/config.yml:/etc/alertmanager/config.yml'
+
+  node_exporter:
+    image: prom/node-exporter:v0.18.1
+    container_name: node_exporter
+    restart: always
+    network_mode: host
+    depends_on:
+      - prometheus
+    volumes:
+      - '$HOME/grafana/config/grafana.ini:/etc/grafana/grafana.ini'
