@@ -1,3 +1,16 @@
+**Mục lục**
+
+- [**Tìm hiểu về cơ chế autoscaling trong Kubernetes**](#--t-m-hi-u-v--c--ch--autoscaling-trong-kubernetes--)
+  * [**1. Kubernetes**](#--1-kubernetes--)
+    + [*1.1. Kubernetes là gì?*](#-11-kubernetes-l--g---)
+    + [*1.2. Kiến trúc các thành phần trong Kubernetes*](#-12-ki-n-tr-c-c-c-th-nh-ph-n-trong-kubernetes-)
+    + [*1.3. Kubernetes Objects & Workloads*](#-13-kubernetes-objects---workloads-)
+  * [**2. Cơ chế autoscaling trong Kubernetes**](#--2-c--ch--autoscaling-trong-kubernetes--)
+    + [*2.1. Autoscaling*](#-21-autoscaling-)
+    + [*2.2. Horizontal pod autoscaling*](#-22-horizontal-pod-autoscaling-)
+    + [*2.3. Vertical pod autoscaling*](#-23-vertical-pod-autoscaling-)
+    + [*2.4. Cluster Autoscaler*](#-24-cluster-autoscaler-)
+
 # **Tìm hiểu về cơ chế autoscaling trong Kubernetes**
 
 ## **1. Kubernetes**
