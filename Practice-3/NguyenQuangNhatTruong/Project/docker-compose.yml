@@ -1,0 +1,36 @@
+version: '3'
+networks:
+  web-server:
+    name: web-server
+services:
+  frontend:
+    build: frontend
+    ports:
+      - 3000:80
+    depends_on:
+      - backend
+    networks:
+      - web-server
+
+  backend:
+    build: backend
+    hostname: localhost
+    ports: 
+      - 5000:5000
+    depends_on:
+      - mongo
+    networks:
+      - web-server
+  mongo:
+    image: mongo:5.0
+    container_name: mongo
+    restart: unless-stopped
+    command: mongod --auth
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: myUserAdmin
+      MONGO_INITDB_ROOT_PASSWORD: abc123
+      MONGO_INIT_DATABASE: datasource
+    ports:
+      - 27017:27017
+    networks:
+      - web-server
