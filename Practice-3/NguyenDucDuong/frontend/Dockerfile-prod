@@ -1,0 +1,33 @@
+# Create image based on node image
+FROM node:latest as build
+
+# Set working directory
+WORKDIR /app
+ADD . /app
+
+# Add /app/node_modules/.bin to environment variables
+ENV PATH /app/node_modules/.bin:$PATH
+
+# Install all app dependencies
+COPY package.json /app/package.json
+RUN npm install
+RUN npm install react-scripts -g
+
+# Build the app
+RUN npm run build
+
+# Create image based on nginx and deploy React app
+FROM nginx:1.22.0-alpine
+
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Remove the default.conf to reduce the size of the resulting image
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Copy the nginx.conf web server configuration inside of the container
+COPY nginx.conf /etc/nginx/conf.d
+
+EXPOSE 80
+
+# Start the Nginx server.
+CMD ["nginx", "-g", "daemon off;"]
