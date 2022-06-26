@@ -1,0 +1,14 @@
+---
+# tasks file for grafana
+- name: Pull Grafana Docker image
+  docker_image:
+    name: "{{docker_image}}" 
+    source: pull
+  
+- name: Run Grafana Docker image
+  docker_container:
+    name: "{{docker_name}}"
+    image: "{{docker_image}}"
+    restart_policy: unless-stopped
+    ports:
+    - "3000:3000"
