@@ -1,0 +1,10 @@
+**/node_modules
+**/npm-debug.log
+**/build
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.Python
+.git
+README.md
