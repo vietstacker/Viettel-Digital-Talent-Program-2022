@@ -1,0 +1,50 @@
+version: '3.9'
+
+services:
+  react:
+    build: frontend
+    container_name: presentation_tier
+    restart: unless-stopped
+    ports:
+      - "9333:9333"
+    links:
+      - flask
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "0.0.0.0:24224"
+        tag: react
+
+  flask:
+    build: backend
+    container_name: logic_tier
+    restart: unless-stopped
+    environment:
+      - FLASK_APP=backend/app
+    ports:
+      - "5000:5000"
+    links:
+      - mongodb
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "0.0.0.0:24224"
+        tag: flask
+
+  mongodb:
+    image: mongo:5.0
+    container_name: data_tier
+    restart: unless-stopped
+    hostname: mongodb
+    environment:
+      - MONGO_INITDB_DATABASE=vdt2022
+      - MONGO_INITDB_ROOT_USERNAME=practice3
+      - MONGO_INITDB_ROOT_PASSWORD=practice3
+    ports:
+      - "27017:27017"
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "0.0.0.0:24224"
+        tag: mongodb
+

@@ -1,0 +1,11 @@
+version: '3.9'
+
+services:
+  fluentd:
+    build: fluentd
+    container_name: fluentd
+    volumes:
+      - ./fluentd/:/fluentd/etc
+    ports:
+      - "24224:24224"
+
