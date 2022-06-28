@@ -1,0 +1,22 @@
+body {
+  display:flex; flex-direction:column; justify-content:center;
+  min-height:100vh;
+  max-width: max-content;
+  margin: auto;
+}
+
+h1 {
+    font-family: sans-serif;
+    color: #04AA6D;
+  }
+
+th, td {
+  padding: 15px;
+  text-align: left;
+}
+
+tr:hover {background-color: coral;}
+th {
+  background-color: #04AA6D;
+  color: white;
+}
