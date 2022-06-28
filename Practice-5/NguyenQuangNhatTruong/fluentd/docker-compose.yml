@@ -1,0 +1,8 @@
+version: '3'
+services:
+  fluentd:
+      build: .
+      volumes:
+        - ./:/fluentd/etc
+      ports:
+        - "24224:24224"
