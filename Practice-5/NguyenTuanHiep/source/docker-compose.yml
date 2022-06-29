@@ -1,0 +1,65 @@
+version: '3.9'
+
+services:
+    api:
+        build:
+          context: ./api
+          dockerfile: Dockerfile
+        volumes:
+            - ./api/:/app
+        ports:
+          - 5000:5000
+        environment:
+            - FLASK_APP=api.py
+        command: flask run --host=0.0.0.0
+
+    webserver:
+        build:
+          context: ./client
+          dockerfile: Dockerfile
+        ports:
+            - 80:80
+        volumes:
+            - ./client/nginx/conf.d/:/etc/nginx/conf.d/
+            - ./client:/usr/share/nginx/html
+
+        logging:
+            driver: "fluentd"
+            options:
+                fluentd-address: localhost:24224
+                tag: nginx.access
+        depends_on: 
+            - fluentd
+
+    mongodb:
+        image: mongo:5.0
+        volumes:
+            - .docker/data/db:/data/db
+
+    fluentd:
+        build: ./fluentd
+        restart: always
+        ports:
+        - "24224:24224"
+        - "24224:24224/udp"
+    #     depends_on:
+    #         - elasticsearch
+
+    # elasticsearch:
+    #     image: elasticsearch:8.2.2
+    #     ports: # Exposes the default port 9200
+    #         - 9200:9200
+    #     environment:
+    #         - discovery.type=single-node # Runs as a single-node
+    #         - xpack.security.enabled=false
+
+    # kibana:
+    #     image: kibana:7.17.0
+    #     links: # Links kibana service to the elasticsearch container
+    #         - elasticsearch
+    #     depends_on:
+    #         - elasticsearch
+    #     ports: # Runs kibana service on default port 5601
+    #         - 5601:5601
+    #     environment: # Defined host configuration
+    #         - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
