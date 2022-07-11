@@ -1,0 +1,22 @@
+- name: Create a bridge network
+  community.docker.docker_network:
+    name: web_net
+  become: yes
+- name: Run DB container
+  community.docker.docker_container:
+    name: web_db
+    image: anhphantq/web_db
+    networks:
+      - name: web_net
+    state: started
+  become: yes
+- name: Run Web server container
+  community.docker.docker_container:
+    name: web_server
+    image: anhphantq/web_server
+    networks:
+      - name: web_net
+    state: started
+    ports:
+      - 80:8080
+  become: yes

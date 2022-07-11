@@ -1,0 +1,6 @@
+[servers]
+10.211.55.34 ansible_user=parallels ansible_become_pass=Phananh272 
+
+
+
+
